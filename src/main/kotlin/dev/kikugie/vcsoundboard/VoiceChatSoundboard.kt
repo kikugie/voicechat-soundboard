@@ -13,6 +13,7 @@ import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.MinecraftClient
 import org.slf4j.LoggerFactory
+import java.util.*
 
 object VoiceChatSoundboard : VoicechatPlugin, ClientModInitializer {
     const val MOD_ID = "voicechat-soundboard"
@@ -43,9 +44,10 @@ object VoiceChatSoundboard : VoicechatPlugin, ClientModInitializer {
             cache.clear()
         }
         registration.registerEvent(MergeClientSoundEvent::class.java) {
-            if (scheduler.value == null) return@registerEvent
-            it.mergeAudio(scheduler.value)
-            scheduler.schedule(null)
+            scheduler.next()?.run {
+                channel.play(this)
+                it.mergeAudio(this)
+            }
         }
     }
 }

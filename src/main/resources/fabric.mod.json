@@ -32,6 +32,9 @@
   ],
   "depends": {
     "fabricloader": ">=0.15",
-    "minecraft": "${mcdep}"
+    "minecraft": "${mcdep}",
+    "fabric-language-kotlin": ">=0.10",
+    "fabric-api": "*",
+    "voicechat": "*"
   }
 }

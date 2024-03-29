@@ -68,7 +68,9 @@ fun registerCommands() {
                     literal(it.name) {
                         argument("value", delegate.arg) { arg ->
                             runs {
-                                delegate.setValue(VoiceChatSoundboard.config, it, arg())
+                                val value = arg()
+                                delegate.setValue(VoiceChatSoundboard.config, it, value)
+                                source.sendSuccess(Text.of("Set ${it.name} to $value"))
                             }
                         }
                     }
@@ -81,7 +83,8 @@ fun registerCommands() {
         }
         literal("cancel") {
             runs {
-                VoiceChatSoundboard.scheduler.schedule(null)
+                VoiceChatSoundboard.scheduler.reset()
+                source.sendSuccess(Text.of("Cancelled soundboard playback"))
             }
         }
     }
