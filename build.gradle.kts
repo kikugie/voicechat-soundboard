@@ -1,5 +1,6 @@
 plugins {
     `maven-publish`
+    kotlin("jvm") version "1.9.23"
     id("fabric-loom")
     id("me.modmuss50.mod-publish-plugin")
     id("me.fallenbreath.yamlang")
@@ -16,42 +17,38 @@ val mod = ModData()
 val mcVersion = stonecutter.current.version
 val mcDep = property("mod.mc_dep").toString()
 
-version = "${mod.id}.v+$mcVersion"
+version = "${mod.version}+$mcVersion"
 group = mod.group
 base { archivesName.set(mod.id) }
 
-loom {
-    splitEnvironmentSourceSets()
-
-    mods {
-        create("template") {
-            sourceSet(sourceSets["main"])
-            sourceSet(sourceSets["client"])
-        }
-    }
-}
-
 repositories {
-    exclusiveContent {
-        forRepository { maven("https://www.cursemaven.com") { name = "CurseForge" } }
-        filter { includeGroup("curse.maven") }
+    mavenCentral()
+    fun strictMaven(url: String, vararg groups: String) = exclusiveContent {
+        forRepository { maven(url) }
+        filter { groups.forEach(::includeGroup) }
     }
-    exclusiveContent {
-        forRepository { maven("https://api.modrinth.com/maven") { name = "Modrinth" } }
-        filter { includeGroup("maven.modrinth") }
-    }
+    strictMaven("https://api.modrinth.com/maven", "maven.modrinth")
+    strictMaven("https://maven.maxhenkel.de/releases", "de.maxhenkel.voicechat")
 }
 
 dependencies {
-    fun fapiModules(vararg modules: String) {
-        modules.forEach { fabricApi.module(it, "${property("deps.fapi")}") }
+    fun modules(vararg modules: String) {
+        modules.forEach { modImplementation(fabricApi.module("fabric-$it", "${property("deps.fabric_api")}")) }
     }
 
     minecraft("com.mojang:minecraft:${mcVersion}")
     mappings("net.fabricmc:yarn:${mcVersion}+build.${property("deps.yarn_build")}:v2")
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+    modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.flk")}+kotlin.1.9.23")
+    modImplementation("de.maxhenkel.voicechat:voicechat-api:${property("deps.vc_api")}")
+    modImplementation("maven.modrinth:simple-voice-chat:${property("deps.simple_vc")}")
+    include(implementation("com.googlecode.soundlibs:mp3spi:${property("deps.mp3spi")}") {
+        exclude(group = "junit", module = "junit")
+    })
+    include(modImplementation("net.silkmc:silk-commands:${property("deps.silk")}")!!)
 
     modLocalRuntime("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
+    modules("command-api-v2")
 }
 
 loom {
@@ -93,10 +90,10 @@ afterEvaluate {
             configureEach {
                 vmArgs("-Xmx2G", "-XX:+UseShenandoahGC")
 
-                property("fabric.development", "true")
-                property("mixin.debug", "true")
-                property("mixin.debug.export.decompile", "false")
-                property("mixin.debug.verbose", "true")
+//                property("fabric.development", "true")
+//                property("mixin.debug", "true")
+//                property("mixin.debug.export.decompile", "false")
+//                property("mixin.debug.verbose", "true")
                 property("mixin.dumpTargetOnFailure", "true")
                 // makes silent failures into hard-failures
                 property("mixin.checks", "true")
@@ -118,7 +115,7 @@ publishMods {
     displayName = "${mod.name} ${mod.version} for $mcVersion"
     version = mod.version
     changelog = rootProject.file("CHANGELOG.md").readText()
-    type = STABLE
+//    type = STABLE
     modLoaders.add("fabric")
 
     dryRun = providers.environmentVariable("MODRINTH_TOKEN")

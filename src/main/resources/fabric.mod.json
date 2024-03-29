@@ -5,33 +5,33 @@
   "name": "${name}",
   "description": "This is an example description! Tell everyone what your mod is about!",
   "authors": [
-    "Me!"
+    "KikuGie"
   ],
   "contact": {
     "homepage": "https://fabricmc.net/",
     "sources": "https://github.com/FabricMC/fabric-example-mod"
   },
-  "license": "CC0-1.0",
+  "license": "MIT",
   "icon": "assets/template/icon.png",
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
-    "main": [
-      "com.example.TemplateMod"
-    ],
     "client": [
-      "com.example.TemplateModClient"
+      {
+        "adapter": "kotlin",
+        "value": "dev.kikugie.vcsoundboard.VoiceChatSoundboard"
+      }
+    ],
+    "voicechat": [
+      {
+        "adapter": "kotlin",
+        "value": "dev.kikugie.vcsoundboard.VoiceChatSoundboard"
+      }
     ]
   },
   "mixins": [
-    "template.mixins.json",
-    {
-      "config": "template.client.mixins.json",
-      "environment": "client"
-    }
   ],
   "depends": {
     "fabricloader": ">=0.15",
-    "minecraft": "${mcdep}",
-    "fabric-api": "*"
+    "minecraft": "${mcdep}"
   }
 }
