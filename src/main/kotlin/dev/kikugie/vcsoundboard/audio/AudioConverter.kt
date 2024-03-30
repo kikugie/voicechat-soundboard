@@ -46,12 +46,11 @@ private fun AudioInputStream.convert(params: ConvertParameters): ShortArray {
     return newData
 }
 
-private fun convertWav(path: Path, params: ConvertParameters) = path.inputStream().use {
-    AudioSystem.getAudioInputStream(it).use { s -> s.convert(params) }
-}
+private fun convertWav(path: Path, params: ConvertParameters) =
+    AudioSystem.getAudioInputStream(path.toFile()).use { s -> s.convert(params) }
 
-fun convertMp3(file: Path, params: ConvertParameters): ShortArray = try {
-    val mp3Decoder = VoiceChatSoundboard.api.createMp3Decoder(file.inputStream())
+fun convertMp3(path: Path, params: ConvertParameters): ShortArray = try {
+    val mp3Decoder = VoiceChatSoundboard.api.createMp3Decoder(path.inputStream())
         ?: throw IOException("Error creating mp3 decoder")
     val data = VoiceChatSoundboard.api.audioConverter.shortsToBytes(mp3Decoder.decode())
     val byteArrayInputStream = ByteArrayInputStream(data)
@@ -60,7 +59,5 @@ fun convertMp3(file: Path, params: ConvertParameters): ShortArray = try {
         AudioInputStream(byteArrayInputStream, audioFormat, (data.size / audioFormat.frameSize).toLong())
     source.convert(params)
 } catch (e: Exception) {
-    file.inputStream().use {
-        AudioSystem.getAudioInputStream(it).use { s -> s.convert(params) }
-    }
+    AudioSystem.getAudioInputStream(path.toFile()).use { s -> s.convert(params) }
 }

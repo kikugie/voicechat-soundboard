@@ -4,6 +4,7 @@ plugins {
     id("fabric-loom")
     id("me.modmuss50.mod-publish-plugin")
     id("me.fallenbreath.yamlang")
+    id ("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 class ModData {
@@ -29,6 +30,7 @@ repositories {
     }
     strictMaven("https://api.modrinth.com/maven", "maven.modrinth")
     strictMaven("https://maven.maxhenkel.de/releases", "de.maxhenkel.voicechat")
+    strictMaven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1", "me.djtheredstoner")
 }
 
 dependencies {
@@ -42,13 +44,14 @@ dependencies {
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.flk")}+kotlin.1.9.23")
     modImplementation("de.maxhenkel.voicechat:voicechat-api:${property("deps.vc_api")}")
     modImplementation("maven.modrinth:simple-voice-chat:${property("deps.simple_vc")}")
-    include(implementation("com.googlecode.soundlibs:mp3spi:${property("deps.mp3spi")}") {
+    shadow(implementation("com.googlecode.soundlibs:mp3spi:${property("deps.mp3spi")}") {
         exclude(group = "junit", module = "junit")
     })
-    include(modImplementation("net.silkmc:silk-commands:${property("deps.silk")}")!!)
+    modImplementation("net.silkmc:silk-commands:${property("deps.silk")}")
 
+    // Testing
     modLocalRuntime("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
-    modules("command-api-v2")
+    modLocalRuntime("me.djtheredstoner:DevAuth-fabric:${property("test.devauth")}")
 }
 
 loom {
@@ -90,10 +93,9 @@ afterEvaluate {
             configureEach {
                 vmArgs("-Xmx2G", "-XX:+UseShenandoahGC")
 
-//                property("fabric.development", "true")
-//                property("mixin.debug", "true")
-//                property("mixin.debug.export.decompile", "false")
-//                property("mixin.debug.verbose", "true")
+                property("mixin.debug", "true")
+                property("mixin.debug.export.decompile", "false")
+                property("mixin.debug.verbose", "true")
                 property("mixin.dumpTargetOnFailure", "true")
                 // makes silent failures into hard-failures
                 property("mixin.checks", "true")
