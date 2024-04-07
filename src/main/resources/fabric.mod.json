@@ -3,18 +3,24 @@
   "id": "${id}",
   "version": "${version}",
   "name": "${name}",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "description": "Adds a client-side soundboard to Simple Voice Chat",
   "authors": [
     "KikuGie"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://modrinth.com/project/voicechat-soundboard",
+    "sources": "https://github.com/kikugie/voicechat-soundboard"
   },
-  "license": "MIT",
+  "license": "LGPLv3",
   "icon": "assets/soundboard/icon.png",
   "environment": "client",
   "entrypoints": {
+    "preLaunch": [
+      {
+        "adapter": "kotlin",
+        "value": "dev.kikugie.soundboard.SoundboardPrelaunch"
+      }
+    ],
     "client": [
       {
         "adapter": "kotlin",

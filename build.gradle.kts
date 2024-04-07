@@ -18,7 +18,7 @@ val mod = ModData()
 val mcVersion = property("deps.mc").toString()
 val mcDep = property("mod.mc_dep").toString()
 
-version = "${mod.version}+$mcVersion"
+version = mod.version
 group = mod.group
 base { archivesName.set(mod.id) }
 
@@ -44,6 +44,7 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.flk")}+kotlin.1.9.23")
     modImplementation("de.maxhenkel.voicechat:voicechat-api:${property("deps.vc_api")}")
+    modImplementation("maven.modrinth:simple-voice-chat:${property("deps.simple_vc")}")
     shadow(implementation("com.googlecode.soundlibs:mp3spi:${property("deps.mp3spi")}") {
         exclude(group = "junit", module = "junit")
     })
@@ -52,7 +53,6 @@ dependencies {
     modules("key-binding-api-v1", "lifecycle-events-v1")
 
     // Testing
-    modLocalRuntime("maven.modrinth:simple-voice-chat:${property("deps.simple_vc")}")
     modLocalRuntime("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
 //    modLocalRuntime("me.djtheredstoner:DevAuth-fabric:${property("test.devauth")}")
     vineflowerDecompilerClasspath("org.vineflower:vineflower:1.10.0")
@@ -120,10 +120,10 @@ afterEvaluate {
 publishMods {
     file = tasks.remapJar.get().archiveFile
     additionalFiles.from(tasks.remapSourcesJar.get().archiveFile)
-    displayName = "${mod.name} ${mod.version} for $mcVersion"
+    displayName = "${mod.name} ${mod.version}"
     version = mod.version
     changelog = rootProject.file("CHANGELOG.md").readText()
-//    type = STABLE
+    type = STABLE
     modLoaders.add("fabric")
 
     dryRun = providers.environmentVariable("MODRINTH_TOKEN")
@@ -135,6 +135,9 @@ publishMods {
         minecraftVersions.add(mcVersion)
         requires {
             slug = "fabric-api"
+            slug = "fabric-language-kotlin"
+            slug = "simple-voice-chat"
+            slug = "owo-lib"
         }
     }
 
@@ -144,29 +147,9 @@ publishMods {
         minecraftVersions.add(mcVersion)
         requires {
             slug = "fabric-api"
+            slug = "fabric-language-kotlin"
+            slug = "simple-voice-chat"
+            slug = "owo-lib"
         }
     }
 }
-/*
-publishing {
-    repositories {
-        maven("...") {
-            name = "..."
-            credentials(PasswordCredentials::class.java)
-            authentication {
-                create<BasicAuthentication>("basic")
-            }
-        }
-    }
-
-    publications {
-        create<MavenPublication>("mavenJava") {
-            groupId = "${property("mod.group")}.${mod.id}"
-            artifactId = mod.version
-            version = mcVersion
-
-            from(components["java"])
-        }
-    }
-}
-*/

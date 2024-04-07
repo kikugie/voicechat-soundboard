@@ -44,7 +44,7 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
 
     private fun populateEntries(root: FlowLayout) {
         val container: FlowLayout = root.childById("container")!!
-        create(Soundboard.ROOT, "soundboard.title".asTranslation().string)?.apply { container.child(this) }
+        create(Soundboard.ROOT, "soundboard.title".asTranslation().string, false)?.apply { container.child(this) }
         Soundboard.ROOT.listDirectoryEntries().filter {
             it.isDirectory()
         }.forEach {
@@ -52,7 +52,7 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
         }
     }
 
-    private fun create(path: Path, name: String = path.nameWithoutExtension): FlowLayout? {
+    private fun create(path: Path, name: String = path.nameWithoutExtension, ignoreEmpty: Boolean = true): FlowLayout? {
         val files = path.listDirectoryEntries().filter {
             it.isRegularFile() && AudioType.match(it.extension) != null
         }.map {
@@ -60,10 +60,10 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
                 Soundboard.play(it, Screen.hasShiftDown()); true
             }
         }
-        if (files.isEmpty()) return null
+        if (files.isEmpty() && ignoreEmpty) return null
         val template = group()
         val label: CollapsibleContainer = template.childById("collapse") ?: return null
-        label.mouseDown { _, _, b ->
+        label.mouseDown { _, _, _ ->
             Screen.hasShiftDown().also { if (it) Util.getOperatingSystem().open(path.toFile()) }
         }
         val child = label.titleLayout().children().firstOrNull { it is LabelComponent } as? LabelComponent

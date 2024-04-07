@@ -13,4 +13,4 @@ soundboard:
     file_name:
       .:
         - index: 0
-      tooltip: Play sound
+      tooltip: Hold Shift and click to play locally
