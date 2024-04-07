@@ -32,6 +32,8 @@ repositories {
     strictMaven("https://maven.maxhenkel.de/releases", "de.maxhenkel.voicechat")
     strictMaven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1", "me.djtheredstoner")
     strictMaven("https://maven.wispforest.io", "io.wispforest")
+    maven("https://repo.plasmoverse.com/snapshots")
+    maven("https://repo.plasmoverse.com/releases")
 }
 
 dependencies {
@@ -43,14 +45,19 @@ dependencies {
     mappings("net.fabricmc:yarn:${mcVersion}+build.${property("deps.yarn_build")}:v2")
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.flk")}+kotlin.1.9.23")
-    modImplementation("de.maxhenkel.voicechat:voicechat-api:${property("deps.vc_api")}")
-    modImplementation("maven.modrinth:simple-voice-chat:${property("deps.simple_vc")}")
     shadow(implementation("com.googlecode.soundlibs:mp3spi:${property("deps.mp3spi")}") {
         exclude(group = "junit", module = "junit")
     })
     modImplementation("io.wispforest:owo-lib:${property("deps.owo_lib")}")
     include("io.wispforest:owo-sentinel:${property("deps.owo_lib")}")
     modules("key-binding-api-v1", "lifecycle-events-v1")
+
+    compileOnly("de.maxhenkel.voicechat:voicechat-api:${property("deps.vc_api")}")
+    modRuntimeOnly("maven.modrinth:simple-voice-chat:${property("deps.simple_vc")}")
+
+    compileOnly("su.plo.voice.api:client:${property("deps.plasmo_api")}")
+    compileOnly("su.plo.config:config:1.0.0")
+    modRuntimeOnly("maven.modrinth:plasmo-voice:${property("deps.plasmo_vc")}")
 
     // Testing
     modLocalRuntime("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")

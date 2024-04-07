@@ -1,6 +1,8 @@
 package dev.kikugie.soundboard.audio
 
 import dev.kikugie.soundboard.Soundboard
+import dev.kikugie.soundboard.util.bytesToShorts
+import dev.kikugie.soundboard.util.shortsToBytes
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.nio.file.Path
@@ -37,7 +39,7 @@ private fun AudioInputStream.convert(params: ConvertParameters): ShortArray {
     )
     val stream = AudioSystem.getAudioInputStream(newFormat, this)
         .let { AudioSystem.getAudioInputStream(FORMAT, this) }
-    val data = Soundboard.API.audioConverter.bytesToShorts(stream.readAllBytes())
+    val data = bytesToShorts(stream.readAllBytes())
     val newDuration = (FORMAT.sampleRate * params.duration.inWholeMilliseconds / 1000F).toInt()
     val newSize = min(data.size, newDuration)
     val newData = ShortArray(newSize)
@@ -52,7 +54,7 @@ private fun convertWav(path: Path, params: ConvertParameters) =
 fun convertMp3(path: Path, params: ConvertParameters): ShortArray = try {
     val mp3Decoder = Soundboard.API.createMp3Decoder(path.inputStream())
         ?: throw IOException("Error creating mp3 decoder")
-    val data = Soundboard.API.audioConverter.shortsToBytes(mp3Decoder.decode())
+    val data = shortsToBytes(mp3Decoder.decode())
     val byteArrayInputStream = ByteArrayInputStream(data)
     val audioFormat = mp3Decoder.audioFormat
     val source =

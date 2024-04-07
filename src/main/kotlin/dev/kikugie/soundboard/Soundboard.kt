@@ -6,6 +6,7 @@ import de.maxhenkel.voicechat.api.audiochannel.ClientAudioChannel
 import de.maxhenkel.voicechat.api.events.ClientVoicechatConnectionEvent
 import de.maxhenkel.voicechat.api.events.EventRegistration
 import de.maxhenkel.voicechat.api.events.MergeClientSoundEvent
+import dev.kikugie.soundboard.access.ApiAccess
 import dev.kikugie.soundboard.audio.AudioCache
 import dev.kikugie.soundboard.audio.AudioScheduler
 import dev.kikugie.soundboard.gui.SoundBrowser
@@ -24,19 +25,16 @@ import kotlin.io.path.createDirectory
 import kotlin.io.path.isDirectory
 import kotlin.io.path.notExists
 
-object Soundboard : VoicechatPlugin, ClientModInitializer {
+object Soundboard : ClientModInitializer {
     const val MOD_ID = "soundboard"
+    const val VERSION = "0.2.0"
     val LOGGER: Logger = LoggerFactory.getLogger(this::class.java)
     val ROOT: Path = FabricLoader.getInstance().configDir.resolve(MOD_ID)
 
     val CACHE = AudioCache()
     val SCHEDULER = AudioScheduler()
 
-    lateinit var API: VoicechatClientApi
-        private set
-    private lateinit var channel: ClientAudioChannel
-
-    override fun getPluginId() = MOD_ID
+    lateinit var API: ApiAccess
 
     override fun onInitializeClient() {
         if (ROOT.notExists() || !ROOT.isDirectory())
@@ -49,19 +47,7 @@ object Soundboard : VoicechatPlugin, ClientModInitializer {
         }
     }
 
-    override fun registerEvents(registration: EventRegistration) {
-        registration.registerEvent(ClientVoicechatConnectionEvent::class.java) {
-            API = it.voicechat
-            channel = API.createEntityAudioChannel(MinecraftClient.getInstance().player!!.uuid)
-            CACHE.clear()
-        }
-        registration.registerEvent(MergeClientSoundEvent::class.java) {
-            SCHEDULER.next()?.run {
-                channel.play(this)
-                it.mergeAudio(this)
-            }
-        }
-    }
+
 
     fun play(file: Path, local: Boolean = false) =
         CACHE[file]?.let { play(it, local) }
