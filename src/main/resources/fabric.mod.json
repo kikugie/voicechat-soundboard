@@ -11,7 +11,7 @@
     "homepage": "https://modrinth.com/project/voicechat-soundboard",
     "sources": "https://github.com/kikugie/voicechat-soundboard"
   },
-  "license": "LGPLv3",
+  "license": "GPLv3",
   "icon": "assets/soundboard/icon.png",
   "environment": "client",
   "entrypoints": {
