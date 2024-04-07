@@ -1,6 +1,6 @@
-package dev.kikugie.vcsoundboard.audio
+package dev.kikugie.soundboard.audio
 
-import dev.kikugie.vcsoundboard.VoiceChatSoundboard
+import dev.kikugie.soundboard.Soundboard
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.nio.file.Path
@@ -37,7 +37,7 @@ private fun AudioInputStream.convert(params: ConvertParameters): ShortArray {
     )
     val stream = AudioSystem.getAudioInputStream(newFormat, this)
         .let { AudioSystem.getAudioInputStream(FORMAT, this) }
-    val data = VoiceChatSoundboard.api.audioConverter.bytesToShorts(stream.readAllBytes())
+    val data = Soundboard.API.audioConverter.bytesToShorts(stream.readAllBytes())
     val newDuration = (FORMAT.sampleRate * params.duration.inWholeMilliseconds / 1000F).toInt()
     val newSize = min(data.size, newDuration)
     val newData = ShortArray(newSize)
@@ -50,9 +50,9 @@ private fun convertWav(path: Path, params: ConvertParameters) =
     AudioSystem.getAudioInputStream(path.toFile()).use { s -> s.convert(params) }
 
 fun convertMp3(path: Path, params: ConvertParameters): ShortArray = try {
-    val mp3Decoder = VoiceChatSoundboard.api.createMp3Decoder(path.inputStream())
+    val mp3Decoder = Soundboard.API.createMp3Decoder(path.inputStream())
         ?: throw IOException("Error creating mp3 decoder")
-    val data = VoiceChatSoundboard.api.audioConverter.shortsToBytes(mp3Decoder.decode())
+    val data = Soundboard.API.audioConverter.shortsToBytes(mp3Decoder.decode())
     val byteArrayInputStream = ByteArrayInputStream(data)
     val audioFormat = mp3Decoder.audioFormat
     val source =

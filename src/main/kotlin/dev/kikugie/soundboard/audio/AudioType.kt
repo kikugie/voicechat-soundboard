@@ -1,4 +1,4 @@
-package dev.kikugie.vcsoundboard.audio
+package dev.kikugie.soundboard.audio
 
 import java.nio.file.Path
 import javax.sound.sampled.AudioFormat
@@ -6,7 +6,7 @@ import javax.sound.sampled.AudioSystem
 import kotlin.io.path.extension
 import kotlin.io.path.inputStream
 
-enum class AudioType(val extension: String) {
+enum class AudioType(private val extension: String) {
     MP3("mp3"),
     WAV("wav");
 

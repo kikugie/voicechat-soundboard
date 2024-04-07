@@ -1,0 +1,92 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20.3/owo-ui.xsd">
+    <components>
+        <flow-layout direction="vertical">
+            <children>
+                <flow-layout direction="ltr-text-flow">
+                    <children>
+                        <scroll direction="vertical" id="scroll">
+                            <flow-layout direction="vertical" id="container">
+                                <children/>
+                                <sizing>
+                                    <horizontal method="fill">100</horizontal>
+                                </sizing>
+                            </flow-layout>
+                            <scrollbar>
+                                <vanilla/>
+                            </scrollbar>
+                            <scrollbar-thiccness>10</scrollbar-thiccness>
+                            <sizing>
+                                <vertical method="fill">100</vertical>
+                                <horizontal method="fill">100</horizontal>
+                            </sizing>
+                            <surface>
+                                <panel-inset/>
+                            </surface>
+                        </scroll>
+                    </children>
+                    <padding>
+                        <all>5</all>
+                    </padding>
+                    <surface>
+                        <panel/>
+                    </surface>
+                    <sizing>
+                        <horizontal method="fill">100</horizontal>
+                    </sizing>
+                </flow-layout>
+            </children>
+            <padding>
+                <horizontal>60</horizontal>
+                <vertical>30</vertical>
+            </padding>
+            <horizontal-alignment>center</horizontal-alignment>
+            <vertical-alignment>center</vertical-alignment>
+        </flow-layout>
+    </components>
+    <templates>
+        <template name="group">
+            <flow-layout direction="vertical">
+                <children>
+                    <collapsible expanded="true" id="collapse">
+                        <children>
+                            <grid-layout rows="1" columns="3" id="contents">
+                                <children/>
+                                <horizontal-alignment>center</horizontal-alignment>
+                                <vertical-alignment>center</vertical-alignment>
+                                <padding>
+                                    <all>2</all>
+                                </padding>
+                                <sizing>
+                                    <horizontal method="fill">100</horizontal>
+                                </sizing>
+                            </grid-layout>
+                        </children>
+                        <text/>
+                    </collapsible>
+                </children>
+                <margins>
+                    <vertical>2</vertical>
+                    <horizontal>4</horizontal>
+                    <right>12</right>
+                </margins>
+                <sizing>
+                    <horizontal method="fill">100</horizontal>
+                </sizing>
+                <surface>
+                    <vanilla-translucent/>
+                </surface>
+            </flow-layout>
+        </template>
+        <template name="button">
+            <button id="button">
+                <margins>
+                    <all>3</all>
+                </margins>
+                <sizing>
+                    <horizontal method="fill">33</horizontal>
+                </sizing>
+            </button>
+        </template>
+    </templates>
+</owo-ui>

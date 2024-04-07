@@ -1,5 +1,3 @@
-import dev.kikugie.stonecutter.gradle.StonecutterSettings
-
 pluginManagement {
     repositories {
         mavenCentral()
@@ -9,15 +7,4 @@ pluginManagement {
     }
 }
 
-plugins {
-    id("dev.kikugie.stonecutter") version "0.3.+"
-}
-
-extensions.configure<StonecutterSettings> {
-    kotlinController = true
-    centralScript = "build.gradle.kts"
-    shared {
-        versions("1.20.4")
-    }
-    create(rootProject)
-}
+rootProject.name = "Soundboard"

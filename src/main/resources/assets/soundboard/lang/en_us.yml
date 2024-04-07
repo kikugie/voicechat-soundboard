@@ -1,0 +1,16 @@
+soundboard:
+  title:
+    - text: Soundboard
+      color: aqua
+      bold: true
+  browser:
+    keybind: Open soundboard browser
+    directory_name:
+      .:
+        - index: 0
+          bold: true
+      tooltip: Hold Shift and click to open in your file manager
+    file_name:
+      .:
+        - index: 0
+      tooltip: Play sound

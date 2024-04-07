@@ -1,10 +1,10 @@
 plugins {
     `maven-publish`
     kotlin("jvm") version "1.9.23"
-    id("fabric-loom")
-    id("me.modmuss50.mod-publish-plugin")
-    id("me.fallenbreath.yamlang")
-    id ("com.github.johnrengelman.shadow") version "8.1.1"
+    id("dev.kikugie.yamlang") version "1.4.+"
+    id("fabric-loom") version "1.6-SNAPSHOT"
+    id("me.modmuss50.mod-publish-plugin") version "0.4.+"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 class ModData {
@@ -15,7 +15,7 @@ class ModData {
 }
 
 val mod = ModData()
-val mcVersion = stonecutter.current.version
+val mcVersion = property("deps.mc").toString()
 val mcDep = property("mod.mc_dep").toString()
 
 version = "${mod.version}+$mcVersion"
@@ -31,6 +31,7 @@ repositories {
     strictMaven("https://api.modrinth.com/maven", "maven.modrinth")
     strictMaven("https://maven.maxhenkel.de/releases", "de.maxhenkel.voicechat")
     strictMaven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1", "me.djtheredstoner")
+    strictMaven("https://maven.wispforest.io", "io.wispforest")
 }
 
 dependencies {
@@ -43,22 +44,27 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.flk")}+kotlin.1.9.23")
     modImplementation("de.maxhenkel.voicechat:voicechat-api:${property("deps.vc_api")}")
-    modImplementation("maven.modrinth:simple-voice-chat:${property("deps.simple_vc")}")
     shadow(implementation("com.googlecode.soundlibs:mp3spi:${property("deps.mp3spi")}") {
         exclude(group = "junit", module = "junit")
     })
-    modImplementation("net.silkmc:silk-commands:${property("deps.silk")}")
+    modImplementation("io.wispforest:owo-lib:${property("deps.owo_lib")}")
+    include("io.wispforest:owo-sentinel:${property("deps.owo_lib")}")
+    modules("key-binding-api-v1", "lifecycle-events-v1")
 
     // Testing
+    modLocalRuntime("maven.modrinth:simple-voice-chat:${property("deps.simple_vc")}")
     modLocalRuntime("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
-    modLocalRuntime("me.djtheredstoner:DevAuth-fabric:${property("test.devauth")}")
+//    modLocalRuntime("me.djtheredstoner:DevAuth-fabric:${property("test.devauth")}")
+    vineflowerDecompilerClasspath("org.vineflower:vineflower:1.10.0")
 }
 
 loom {
-    runConfigs.all {
-        ideConfigGenerated(stonecutter.current.isActive)
-        vmArgs("-Dmixin.debug.export=true")
-        runDir = "../../run"
+    accessWidenerPath = rootProject.file("src/main/resources/soundboard.accesswidener")
+
+    decompilers {
+        get("vineflower").apply {
+            options.put("mark-corresponding-synthetics", "1")
+        }
     }
 }
 
@@ -93,13 +99,13 @@ afterEvaluate {
             configureEach {
                 vmArgs("-Xmx2G", "-XX:+UseShenandoahGC")
 
-                property("mixin.debug", "true")
-                property("mixin.debug.export.decompile", "false")
-                property("mixin.debug.verbose", "true")
+//                property("mixin.debug", "true")
+//                property("mixin.debug.export.decompile", "false")
+//                property("mixin.debug.verbose", "true")
                 property("mixin.dumpTargetOnFailure", "true")
                 // makes silent failures into hard-failures
-                property("mixin.checks", "true")
-                property("mixin.hotSwap", "true")
+//                property("mixin.checks", "true")
+//                property("mixin.hotSwap", "true")
 
                 val mixinJarFile = configurations.compileClasspath.get().files {
                     it.group == "net.fabricmc" && it.name == "sponge-mixin"

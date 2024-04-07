@@ -12,27 +12,34 @@
     "sources": "https://github.com/FabricMC/fabric-example-mod"
   },
   "license": "MIT",
-  "icon": "assets/template/icon.png",
+  "icon": "assets/soundboard/icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [
       {
         "adapter": "kotlin",
-        "value": "dev.kikugie.vcsoundboard.VoiceChatSoundboard"
+        "value": "dev.kikugie.soundboard.Soundboard"
       }
     ],
     "voicechat": [
       {
         "adapter": "kotlin",
-        "value": "dev.kikugie.vcsoundboard.VoiceChatSoundboard"
+        "value": "dev.kikugie.soundboard.Soundboard"
       }
     ]
   },
+  "mixins": [
+    {
+      "environment": "client",
+      "config": "soundboard.mixins.json"
+    }
+  ],
   "depends": {
     "fabricloader": ">=0.15",
     "minecraft": "${mcdep}",
     "fabric-language-kotlin": ">=0.10",
-    "voicechat": "*",
-    "silk-commands": "~1.10"
+    "owo-lib": "*",
+    "fabric-api": "*",
+    "voicechat": "*"
   }
 }
