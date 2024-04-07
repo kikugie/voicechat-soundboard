@@ -42,7 +42,7 @@ object Soundboard : VoicechatPlugin, ClientModInitializer {
         if (ROOT.notExists() || !ROOT.isDirectory())
             ROOT.createDirectory()
         val keybind = KeyBindingHelper.registerKeyBinding(
-            KeyBinding("soundboard.browser.keybind", GLFW.GLFW_KEY_G, "soundboard.title")
+            KeyBinding("soundboard.browser.keybind", GLFW.GLFW_KEY_H, "soundboard.title")
         )
         ClientTickEvents.END_CLIENT_TICK.register {
             if (keybind.wasPressed()) SoundBrowser.open()

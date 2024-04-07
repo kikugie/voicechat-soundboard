@@ -12,7 +12,6 @@ object SoundboardPrelaunch : PreLaunchEntrypoint {
         val api = vc.metadata.version.friendlyString.substringAfter('-')
         val parsedRequired = SemanticVersion.parse(API_REQUIREMENT)
         val parsedPresent = SemanticVersion.parse(api)
-        println("$parsedPresent -> $parsedRequired")
         if (parsedRequired > parsedPresent as Version) throw AssertionError(
             "Expected voicechat API version of >=$API_REQUIREMENT, received ${api}. Update `simple-voice-chat` to its latest version!"
         )

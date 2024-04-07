@@ -132,21 +132,25 @@ publishMods {
     modrinth {
         projectId = property("publish.modrinth").toString()
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
-        minecraftVersions.add(mcVersion)
-            requires {slug = "fabric-api"}
-            requires {slug = "fabric-language-kotlin"}
-            requires {slug = "simple-voice-chat"}
-            requires {slug = "owo-lib"}
+        property("mod.mc_targets").toString().split(' ').forEach {
+            minecraftVersions.add(it)
+        }
+        requires { slug = "fabric-api" }
+        requires { slug = "fabric-language-kotlin" }
+        requires { slug = "simple-voice-chat" }
+        requires { slug = "owo-lib" }
     }
 
     curseforge {
         projectId = property("publish.curseforge").toString()
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
-        minecraftVersions.add(mcVersion)
-            requires {slug = "fabric-api"}
-            requires {slug = "fabric-language-kotlin"}
-            requires {slug = "simple-voice-chat"}
-            requires {slug = "owo-lib"}
+        property("mod.mc_targets").toString().split(' ').forEach {
+            minecraftVersions.add(it)
+        }
+        requires { slug = "fabric-api" }
+        requires { slug = "fabric-language-kotlin" }
+        requires { slug = "simple-voice-chat" }
+        requires { slug = "owo-lib" }
 
     }
 }
