@@ -1,4 +1,5 @@
 ## Changes
-- Default soundboard keybind is now **J**, in order to not conflict with Simple Voice Chat's group keybind.
-- Soundboard now saves directories that were collapsed last time the screen was open.
-- Soundboard screen can now be closed with the same keybind it's opened with.
+- Added a keybind to stop sound playback (default **U** (*there really are very few free keys...*)).
+
+## Fixes
+- In-browser keybinds sometimes not working.

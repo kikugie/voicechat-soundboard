@@ -3,8 +3,10 @@ soundboard:
     - text: Soundboard
       color: aqua
       bold: true
+  keybinds:
+    browser: Open soundboard browser
+    cancel: Cancel sound playback
   browser:
-    keybind: Open soundboard browser
     directory_name:
       .:
         - index: 0

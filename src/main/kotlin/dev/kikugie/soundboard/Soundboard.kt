@@ -9,12 +9,10 @@ import de.maxhenkel.voicechat.api.events.MergeClientSoundEvent
 import dev.kikugie.soundboard.audio.AudioCache
 import dev.kikugie.soundboard.audio.AudioScheduler
 import dev.kikugie.soundboard.gui.SoundBrowser
+import dev.kikugie.soundboard.util.keybind
 import net.fabricmc.api.ClientModInitializer
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.option.KeyBinding
 import net.minecraft.util.Identifier
 import org.lwjgl.glfw.GLFW
 import org.slf4j.Logger
@@ -41,12 +39,7 @@ object Soundboard : VoicechatPlugin, ClientModInitializer {
     override fun onInitializeClient() {
         if (ROOT.notExists() || !ROOT.isDirectory())
             ROOT.createDirectory()
-        SoundBrowser.KEYBIND = KeyBindingHelper.registerKeyBinding(
-            KeyBinding("soundboard.browser.keybind", GLFW.GLFW_KEY_J, "soundboard.title")
-        )
-        ClientTickEvents.END_CLIENT_TICK.register {
-            if (SoundBrowser.KEYBIND.wasPressed()) SoundBrowser.open()
-        }
+        createKeybinds()
     }
 
     override fun registerEvents(registration: EventRegistration) {
@@ -60,6 +53,24 @@ object Soundboard : VoicechatPlugin, ClientModInitializer {
                 channel.play(this)
                 it.mergeAudio(this)
             }
+        }
+    }
+
+    private fun createKeybinds() {
+        val screenKey = keybind(
+            GLFW.GLFW_KEY_J,
+            "soundboard.keybinds.browser",
+            "soundboard.title"
+        ) { SoundBrowser.open() }
+        val cancelKey = keybind(
+            GLFW.GLFW_KEY_U,
+            "soundboard.keybinds.cancel",
+            "soundboard.title"
+        ) { SCHEDULER.reset() }
+
+        SoundBrowser.keyAction(screenKey) { it.close() }
+        SoundBrowser.keyAction(cancelKey) {
+            SCHEDULER.reset()
         }
     }
 

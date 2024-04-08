@@ -48,6 +48,7 @@ fun <T : ParentComponent> T.all(): Sequence<Component> = sequence {
         if (it is GreedyInputComponent) continue
         if (it is ParentComponent) for (it1 in it.all())
             yield(it1)
+        yield(it)
     }
     yield(this@all)
 }

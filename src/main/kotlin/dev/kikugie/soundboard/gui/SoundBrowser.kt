@@ -30,7 +30,9 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
         populateEntries(root)
         scrollbar = root.childById<ScrollContainer<*>>("scroll") as? ScrollContainerAccessor
         for (it in root.all()) it.keyPress { key, scan, _ ->
-            KEYBIND.matchesKey(key, scan).also { bool -> if (bool) close() }
+            val found = keybinds.firstOrNull { it.first.matchesKey(key, scan) }
+                ?.also { it.second(this) }
+            found != null
         }
     }
 
@@ -105,7 +107,11 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
         private var savedOffset = 0.0
         private val collapsedPaths = mutableSetOf<Path>()
 
-        lateinit var KEYBIND: KeyBinding
+        private val keybinds = mutableListOf<Pair<KeyBinding, (SoundBrowser) -> Unit>>()
+
+        fun keyAction(key: KeyBinding, action: (SoundBrowser) -> Unit) {
+            keybinds += key to action
+        }
 
         fun open() = RenderSystem.recordRenderCall { MinecraftClient.getInstance().setScreen(SoundBrowser()) }
     }
