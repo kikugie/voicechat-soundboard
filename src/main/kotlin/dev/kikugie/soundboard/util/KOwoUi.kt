@@ -1,9 +1,12 @@
 package dev.kikugie.soundboard.util
 
+import io.wispforest.owo.ui.container.CollapsibleContainer
+import io.wispforest.owo.ui.container.CollapsibleContainer.OnToggled
 import io.wispforest.owo.ui.core.Component
 import io.wispforest.owo.ui.core.Component.FocusSource
 import io.wispforest.owo.ui.core.ParentComponent
 import io.wispforest.owo.ui.event.*
+import io.wispforest.owo.ui.inject.GreedyInputComponent
 
 inline fun <reified T : Component> ParentComponent.childById(id: String): T? = childById(T::class.java, id)
 
@@ -36,3 +39,15 @@ inline fun <T : Component> T.focusGained(crossinline action: (FocusSource) -> Un
 
 inline fun <T : Component> T.focusLost(crossinline action: () -> Unit) =
     this.also { focusLost().subscribe(FocusLost { action() }) }
+
+inline fun CollapsibleContainer.toggled(crossinline action: (Boolean) -> Unit) =
+    this.also { onToggled().subscribe(OnToggled { action(it) }) }
+
+fun <T : ParentComponent> T.all(): Sequence<Component> = sequence {
+    for (it in children()) {
+        if (it is GreedyInputComponent) continue
+        if (it is ParentComponent) for (it1 in it.all())
+            yield(it1)
+    }
+    yield(this@all)
+}

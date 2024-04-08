@@ -7,7 +7,7 @@ Have you ever played with [Simple Voice Chat](https://modrinth.com/plugin/simple
 Sounds are stored in `.minecraft/config/soundboard`, where you can put files and create directories to organize the files.
 Accepted formats are `mp3` and `wav`.  
 
-The soundboard screen can be opened with **G**:  
+The soundboard screen can be opened with **J**:  
 ![Soundboard screen](https://cdn.modrinth.com/data/N8s60DWW/images/3a0dc4edbe8dedd4ece49b635e2f38d097470b37.png)
 
 ## Dependencies

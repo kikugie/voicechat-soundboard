@@ -5,9 +5,7 @@ import dev.kikugie.soundboard.Soundboard
 import dev.kikugie.soundboard.audio.AudioType
 import dev.kikugie.soundboard.mixin.owo_ui.GridLayoutAccessor
 import dev.kikugie.soundboard.mixin.owo_ui.ScrollContainerAccessor
-import dev.kikugie.soundboard.util.asTranslation
-import dev.kikugie.soundboard.util.childById
-import dev.kikugie.soundboard.util.mouseDown
+import dev.kikugie.soundboard.util.*
 import io.wispforest.owo.ui.base.BaseUIModelScreen
 import io.wispforest.owo.ui.component.LabelComponent
 import io.wispforest.owo.ui.container.CollapsibleContainer
@@ -18,6 +16,7 @@ import io.wispforest.owo.ui.core.Component
 import io.wispforest.owo.ui.parsing.UIModel
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.option.KeyBinding
 import net.minecraft.text.Text
 import net.minecraft.util.Util
 import java.nio.file.Path
@@ -30,6 +29,9 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
     override fun build(root: FlowLayout) {
         populateEntries(root)
         scrollbar = root.childById<ScrollContainer<*>>("scroll") as? ScrollContainerAccessor
+        for (it in root.all()) it.keyPress { key, scan, _ ->
+            KEYBIND.matchesKey(key, scan).also { bool -> if (bool) close() }
+        }
     }
 
     override fun init() {
@@ -79,6 +81,12 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
         files.forEachIndexed { i, it ->
             contents.child(it, i / columns, i % columns)
         }
+
+        if (label.expanded() && path in collapsedPaths)
+            label.toggleExpansion()
+        label.toggled {
+            if (it) collapsedPaths.remove(path) else collapsedPaths.add(path)
+        }
         return template
     }
 
@@ -95,6 +103,9 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
         const val FILE_FORMATTER = "soundboard.browser.file_name"
 
         private var savedOffset = 0.0
+        private val collapsedPaths = mutableSetOf<Path>()
+
+        lateinit var KEYBIND: KeyBinding
 
         fun open() = RenderSystem.recordRenderCall { MinecraftClient.getInstance().setScreen(SoundBrowser()) }
     }
