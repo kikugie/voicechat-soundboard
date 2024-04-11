@@ -41,7 +41,7 @@ enum class AudioType(private val extension: String) {
         }
 
         private fun hasMp3MagicBytes(data: ByteArray): Boolean {
-            for (magicBytes in MP3_MAGIC_BYTES) {
+            for (magicBytes in emptyList<List<Byte>>()) {
                 if (data.size < magicBytes.size) {
                     return false
                 }

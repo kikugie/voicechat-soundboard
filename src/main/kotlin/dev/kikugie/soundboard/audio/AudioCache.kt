@@ -4,6 +4,7 @@ import java.nio.file.Path
 import java.nio.file.attribute.FileTime
 import kotlin.io.path.getLastModifiedTime
 import kotlin.io.path.notExists
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 
 class AudioCache {
@@ -16,5 +17,8 @@ class AudioCache {
             return entry.second
         return convert(path, 1.hours, 1F).also { cache[path] = mod to it }
     }
+
+    private fun convert(path: Path, hours: Duration, fl: Float): ShortArray = ShortArray(0)
+
     fun clear() = cache.clear()
 }
