@@ -3,6 +3,14 @@
 Have you ever played with [Simple Voice Chat](https://modrinth.com/plugin/simple-voice-chat) and thought "Damn, I miss dropping a metal pipe sound effect in my Discord calls"?  
 **Well, look no further! Since now you can do it in Minecraft!**
 
+## Downloads
+
+This mod is available on:
+- [Modrinth](https://modrinth.com/mod/voicechat-soundboard)
+- [CurseForge](https://www.curseforge.com/minecraft/mc-mods/voicechat-soundboard)
+
+Make sure to download the [dependencies](#dependencies) of the mod as well.
+
 ## How to use
 Sounds are stored in `.minecraft/config/soundboard`, where you can put files and create directories to organize the files.
 Accepted formats are `mp3` and `wav`.  
