@@ -1,4 +1,8 @@
 # Voicechat Soundboard
+<a href="https://discord.gg/TBgNUCfryS"><img alt="discord-plural" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/discord-plural_vector.svg"></a>
+<a href="https://github.com/kikugie/voicechat-soundboard"><img alt="github-plural" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/github-plural_vector.svg"></a>
+<a href="https://modrinth.com/mod/voicechat-soundboard"><img alt="modrinth" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg"></a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/voicechat-soundboard"><img alt="curseforge" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/curseforge_vector.svg"></a>
 
 Have you ever played with [Simple Voice Chat](https://modrinth.com/plugin/simple-voice-chat) and thought "Damn, I miss dropping a metal pipe sound effect in my Discord calls"?  
 **Well, look no further! Since now you can do it in Minecraft!**
