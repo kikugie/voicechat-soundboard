@@ -9,9 +9,9 @@ object SoundboardAccess {
         delegates.add(entry)
     }
 
-    val available: SoundboardEntrypoint?
-        get() = delegates.firstOrNull(SoundboardEntrypoint::connected)
-    fun play(file: Path) {
-        available?.play(file)
+    fun forEach(action: SoundboardEntrypoint.() -> Unit) {
+        delegates.forEach(action)
     }
+
+    fun play(file: Path) = forEach { play(file) }
 }

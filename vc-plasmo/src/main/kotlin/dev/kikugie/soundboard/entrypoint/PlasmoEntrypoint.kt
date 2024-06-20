@@ -28,13 +28,13 @@ object PlasmoEntrypoint : SoundboardEntrypoint, AddonInitializer, ClientModIniti
     private lateinit var channel: LoopbackSource
 
     override fun onAddonInitialize() {
+        channel = client.sourceManager.createLoopbackSource(false)
     }
 
     override fun onInitializeClient() {
         PlasmoVoiceClient.getAddonsLoader().load(this)
         SoundboardAccess.register(this)
         Soundboard.initialize()
-        channel = client.sourceManager.createLoopbackSource(false)
     }
 
     @EventSubscribe

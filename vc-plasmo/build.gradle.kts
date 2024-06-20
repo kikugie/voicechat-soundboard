@@ -1,3 +1,5 @@
+import me.modmuss50.mpp.ReleaseType
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.fabric.loom)
@@ -11,6 +13,10 @@ class ModData {
     val version: String by project
 }
 val mod = ModData()
+
+version = "${mod.version}+${libs.versions.minecraft.get()}"
+group = mod.group
+base { archivesName.set(mod.id) }
 
 dependencies {
     project(path = ":", configuration = "namedElements").also { include(implementation(it)!!) }
@@ -40,3 +46,46 @@ tasks.processResources {
 
     filesMatching("fabric.mod.json") { expand(map) }
 }
+
+tasks.register<Copy>("buildAndCollect") {
+    group = "build"
+    from(tasks.remapJar.get().archiveFile)
+    into(rootProject.layout.buildDirectory.file("libs/${mod.version}"))
+    dependsOn("build")
+}
+
+
+/*
+publishMods {
+    file = tasks.remapJar.get().archiveFile
+    additionalFiles.from(tasks.remapSourcesJar.get().archiveFile)
+    displayName = "${mod.name} ${mod.version}"
+    version = mod.version
+    changelog = rootProject.file("CHANGELOG.md").readText()
+    type = ReleaseType.of(project.property("release").toString())
+    modLoaders.add("fabric")
+
+    dryRun = providers.environmentVariable("MODRINTH_TOKEN")
+        .getOrNull() == null || providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null
+
+    modrinth {
+        projectId = property("publish.modrinth").toString()
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        minecraftVersions.add(libs.versions.minecraft)
+        requires { slug = "fabric-api" }
+        requires { slug = "fabric-language-kotlin" }
+        requires { slug = "plasmo-voice" }
+        requires { slug = "owo-lib" }
+    }
+
+    curseforge {
+        projectId = property("publish.curseforge").toString()
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        minecraftVersions.add(libs.versions.minecraft)
+        requires { slug = "fabric-api" }
+        requires { slug = "fabric-language-kotlin" }
+        requires { slug = "plasmo-voice" }
+        requires { slug = "owo-lib" }
+    }
+}
+ */

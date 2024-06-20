@@ -15,8 +15,8 @@ object Soundboard {
         ready = true
 
         keybind(GLFW.GLFW_KEY_J, "soundboard.keybinds.browser", SoundBrowser.Companion::open, SoundBrowser::close)
-        keybind(GLFW.GLFW_KEY_U, "soundboard.keybinds.cancel", { SoundboardAccess.available?.scheduler?.reset() }) {
-            SoundboardAccess.available?.scheduler?.reset()
+        keybind(GLFW.GLFW_KEY_U, "soundboard.keybinds.cancel", { SoundboardAccess.forEach { scheduler.reset() } }) {
+            SoundboardAccess.forEach { scheduler.reset() }
         }
     }
 

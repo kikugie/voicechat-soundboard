@@ -12,6 +12,6 @@ interface SoundboardEntrypoint {
     val scheduler: AudioScheduler
 
     fun play(file: Path) {
-        scheduler.schedule(file)
+        if (connected) scheduler.schedule(file)
     }
 }

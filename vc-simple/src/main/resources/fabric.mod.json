@@ -12,7 +12,7 @@
     "sources": "https://github.com/kikugie/voicechat-soundboard"
   },
   "license": "GPLv3",
-  "icon": "assets/soundboard/icon.png",
+  "icon": "assets/soundboard-svc/icon.png",
   "environment": "client",
   "entrypoints": {
     "preLaunch": [

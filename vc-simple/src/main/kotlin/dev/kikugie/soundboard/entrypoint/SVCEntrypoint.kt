@@ -13,6 +13,7 @@ import dev.kikugie.soundboard.audio.AudioScheduler
 import dev.kikugie.soundboard.audio.StreamAudioScheduler
 import net.fabricmc.api.ClientModInitializer
 import net.minecraft.client.MinecraftClient
+import java.nio.file.Path
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioFormat.Encoding.PCM_SIGNED
 

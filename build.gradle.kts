@@ -13,6 +13,10 @@ class ModData {
 }
 val mod = ModData()
 
+version = "${mod.version}+${libs.versions.minecraft.get()}"
+group = mod.group
+base { archivesName.set(mod.id) }
+
 allprojects {
     repositories {
         fun strictMaven(url: String, vararg groups: String) = exclusiveContent {
@@ -75,6 +79,11 @@ tasks.processResources {
     )
 
     filesMatching("fabric.mod.json") { expand(map) }
+}
+
+tasks.register("buildAll") {
+    group = "build"
+    dependsOn(*project.subprojects.map { it.tasks.named("buildAndCollect") }.toTypedArray())
 }
 
 yamlang {
