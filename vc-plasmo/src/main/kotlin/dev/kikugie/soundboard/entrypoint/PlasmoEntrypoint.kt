@@ -62,7 +62,7 @@ object PlasmoEntrypoint : SoundboardEntrypoint, AddonInitializer, ClientModIniti
         get() = client.serverInfo.orElseThrow().voiceInfo.createFormat(false)
     override val connected: Boolean
         get() = client.serverConnection.isPresent
-    override val scheduler: AudioScheduler = StreamAudioScheduler(this)
+    override val scheduler: AudioScheduler = Soundboard.config.schedulerType.create(this)
 
     private fun combineAudio(frameSize: Int, vararg parts: ShortArray): ShortArray = ShortArray(frameSize) { i ->
         parts

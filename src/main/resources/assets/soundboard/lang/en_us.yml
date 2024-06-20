@@ -4,8 +4,9 @@ soundboard:
       color: aqua
       bold: true
   keybinds:
-    browser: Open soundboard browser
+    browser: Open audio browser
     cancel: Cancel sound playback
+    config: Open Soundboard config
   browser:
     directory_name:
       .:

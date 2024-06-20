@@ -27,7 +27,7 @@ allprojects {
         maven("https://jitpack.io")
         strictMaven("https://api.modrinth.com/maven", "maven.modrinth")
         strictMaven("https://maven.wispforest.io", "io.wispforest", "io.wispforest.endec")
-        strictMaven("https://maven.lavalink.dev/releases", "dev.arbjerg")
+        strictMaven("https://maven.terraformersmc.com/", "com.terraformersmc")
         strictMaven("https://maven.maxhenkel.de/releases", "de.maxhenkel.voicechat")
         strictMaven("https://repo.plasmoverse.com/snapshots", "su.plo.voice", "su.plo.voice.api", "su.plo.slib")
         strictMaven("https://repo.plasmoverse.com/releases", "su.plo.config")
@@ -43,11 +43,12 @@ dependencies {
     modImplementation(libs.fabric.loader)
     modImplementation(libs.fabric.kotlin)
 
+    include(libs.owo.sentinel)
+    modApi(libs.fabric.api)
+    modApi(libs.modmenu)
     modApi(libs.owo) {
         exclude(group = "net.fabricmc")
     }
-    include(libs.owo.sentinel)
-    modApi(libs.fabric.api)
 }
 
 loom {

@@ -47,5 +47,5 @@ object SVCEntrypoint : SoundboardEntrypoint, VoicechatPlugin, ClientModInitializ
     override val format = AudioFormat(PCM_SIGNED, 48000F, 16, 1, 2, 48000F, false)
     override var connected = false
         private set
-    override val scheduler: AudioScheduler = StreamAudioScheduler(this)
+    override val scheduler: AudioScheduler = Soundboard.config.schedulerType.create(this)
 }

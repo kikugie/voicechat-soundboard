@@ -116,3 +116,12 @@ class StreamAudioScheduler(override val entry: SoundboardEntrypoint) : AudioSche
         }
     }
 }
+
+enum class SchedulerType {
+    ARRAY, STREAM;
+
+    fun create(entry: SoundboardEntrypoint) = when(this) {
+        ARRAY -> ArrayAudioScheduler(entry)
+        STREAM -> StreamAudioScheduler(entry)
+    }
+}

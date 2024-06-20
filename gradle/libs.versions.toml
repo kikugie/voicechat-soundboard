@@ -17,6 +17,7 @@ simple-vc = "fabric-1.21-2.5.17"
 plasmo-vc-api = "2.1.0-SNAPSHOT"
 plasmo-vc-config = "1.0.0"
 plasmo-vc = "fabric-1.21-2.0.10"
+modmenu = "11.0.0"
 dev-auth = "1.2.0"
 
 [plugins]
@@ -40,5 +41,6 @@ simplevc = { group = "maven.modrinth", name = "simple-voice-chat", version.ref =
 plasmovc-api = { group = "su.plo.voice.api", name = "client", version.ref = "plasmo-vc-api" }
 plasmovc-config = { group = "su.plo.config", name = "config", version.ref = "plasmo-vc-config" }
 plasmovc = { group = "maven.modrinth", name = "plasmo-voice", version.ref = "plasmo-vc" }
+modmenu = { group = "com.terraformersmc", name = "modmenu", version.ref = "modmenu"}
 devauth = { group = "me.djtheredstoner", name = "DevAuth-fabric", version.ref = "dev-auth" }
 

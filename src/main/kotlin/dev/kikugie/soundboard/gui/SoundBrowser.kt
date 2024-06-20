@@ -118,7 +118,7 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
         params: Map<String, String> = emptyMap(),
     ): T = this.expandTemplate(T::class.java, name, params)
 
-    companion object {
+    companion object : ScreenManager(SoundBrowser::class) {
         val BROWSER = modId("browser")
         const val DIRECTORY_FORMATTER = "soundboard.browser.directory_name"
         const val FILE_FORMATTER = "soundboard.browser.file_name"
@@ -130,6 +130,5 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
         fun keyAction(key: KeyBinding, action: (SoundBrowser) -> Unit) {
             keybinds += key to action
         }
-        fun open() = RenderSystem.recordRenderCall { MinecraftClient.getInstance().setScreen(SoundBrowser()) }
     }
 }

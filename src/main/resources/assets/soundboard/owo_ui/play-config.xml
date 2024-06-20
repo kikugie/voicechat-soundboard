@@ -1,0 +1,47 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20.3/owo-ui.xsd">
+    <components>
+        <flow-layout direction="vertical">
+            <children>
+                <flow-layout direction="ltr-text-flow">
+                    <children>
+                        <scroll direction="vertical" id="scroll">
+                            <flow-layout direction="vertical" id="container">
+                                <children/>
+                                <sizing>
+                                    <horizontal method="fill">100</horizontal>
+                                </sizing>
+                            </flow-layout>
+                            <scrollbar>
+                                <vanilla/>
+                            </scrollbar>
+                            <scrollbar-thiccness>10</scrollbar-thiccness>
+                            <sizing>
+                                <vertical method="fill">100</vertical>
+                                <horizontal method="fill">100</horizontal>
+                            </sizing>
+                            <surface>
+                                <panel-inset/>
+                            </surface>
+                        </scroll>
+                    </children>
+                    <padding>
+                        <all>5</all>
+                    </padding>
+                    <surface>
+                        <panel/>
+                    </surface>
+                    <sizing>
+                        <horizontal method="fill">100</horizontal>
+                    </sizing>
+                </flow-layout>
+            </children>
+            <padding>
+                <horizontal>60</horizontal>
+                <vertical>30</vertical>
+            </padding>
+            <horizontal-alignment>center</horizontal-alignment>
+            <vertical-alignment>center</vertical-alignment>
+        </flow-layout>
+    </components>
+</owo-ui>
