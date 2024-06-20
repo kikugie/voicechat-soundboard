@@ -1,14 +1,17 @@
 package dev.kikugie.soundboard.gui
 
 import com.mojang.blaze3d.systems.RenderSystem
-import dev.kikugie.soundboard.Soundboard
-import dev.kikugie.soundboard.audio.AudioType
+import dev.kikugie.soundboard.FILES
+import dev.kikugie.soundboard.entrypoint.SoundboardAccess
 import dev.kikugie.soundboard.mixin.owo_ui.GridLayoutAccessor
 import dev.kikugie.soundboard.mixin.owo_ui.ScrollContainerAccessor
 import dev.kikugie.soundboard.util.asTranslation
 import dev.kikugie.soundboard.util.childById
+import dev.kikugie.soundboard.util.identifier
 import dev.kikugie.soundboard.util.mouseDown
 import io.wispforest.owo.ui.base.BaseUIModelScreen
+import io.wispforest.owo.ui.component.ButtonComponent
+import io.wispforest.owo.ui.component.Components
 import io.wispforest.owo.ui.component.LabelComponent
 import io.wispforest.owo.ui.container.CollapsibleContainer
 import io.wispforest.owo.ui.container.FlowLayout
@@ -20,8 +23,12 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
 import net.minecraft.util.Util
+import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.*
+import kotlin.io.path.extension
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.nameWithoutExtension
 import kotlin.math.ceil
 
 class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWSER) {
@@ -44,21 +51,17 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
 
     private fun populateEntries(root: FlowLayout) {
         val container: FlowLayout = root.childById("container")!!
-        create(Soundboard.ROOT, "soundboard.title".asTranslation().string, false)?.apply { container.child(this) }
-        Soundboard.ROOT.listDirectoryEntries().filter {
-            it.isDirectory()
-        }.forEach {
+        create(FILES, "soundboard.title".asTranslation().string, false)?.apply { container.child(this) }
+        FILES.listDirectoryEntries().filter(Files::isDirectory).forEach {
             create(it)?.apply { container.child(this) }
         }
     }
 
     private fun create(path: Path, name: String = path.nameWithoutExtension, ignoreEmpty: Boolean = true): FlowLayout? {
         val files = path.listDirectoryEntries().filter {
-            it.isRegularFile() && AudioType.match(it.extension) != null
-        }.map {
-            button(FILE_FORMATTER.asTranslation(it.nameWithoutExtension)).mouseDown { _, _, _ ->
-                Soundboard.play(it, Screen.hasShiftDown()); true
-            }
+            it.isRegularFile() && it.extension == "wav"
+        }.map { file ->
+            button(FILE_FORMATTER.asTranslation(file.nameWithoutExtension)) { SoundboardAccess.play(file) }
         }
         if (files.isEmpty() && ignoreEmpty) return null
         val template = group()
@@ -77,20 +80,27 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
         contents.rows = rows
         contents.children = arrayOfNulls(rows * columns)
         files.forEachIndexed { i, it ->
-            contents.child(it, i / columns, i % columns)
+            contents.child(it as Component, i / columns, i % columns)
         }
         return template
     }
 
     private fun group(): FlowLayout = model.template("group")
-    private fun button(name: Text) = TrimmedButton.from(model.template("button"), name)
+    private fun button(name: Text, onPress: (ButtonComponent) -> Unit): ButtonComponent =
+        Components.button(name, onPress).apply {
+            val temp: ButtonComponent = model.template("button")
+            renderer(temp.renderer())
+            textShadow(temp.textShadow())
+            active(temp.active())
+        }
+
     private inline fun <reified T : Component> UIModel.template(
         name: String,
         params: Map<String, String> = emptyMap(),
     ): T = this.expandTemplate(T::class.java, name, params)
 
     companion object {
-        val BROWSER = Soundboard.id("browser")
+        val BROWSER = identifier("browser")
         const val DIRECTORY_FORMATTER = "soundboard.browser.directory_name"
         const val FILE_FORMATTER = "soundboard.browser.file_name"
 

@@ -4,7 +4,6 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "owo_ui.GridLayoutAccessor",
-    ,
     "owo_ui.ScrollContainerAccessor"
   ],
   "injectors": {

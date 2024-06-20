@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "soundboard-svc",
+  "version": "1",
+  "name": "Voice Chat Soundboard",
+  "description": "Adds a client-side soundboard to Simple Voice Chat",
+  "authors": [
+    "KikuGie"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/project/voicechat-soundboard",
+    "sources": "https://github.com/kikugie/voicechat-soundboard"
+  },
+  "license": "GPLv3",
+  "icon": "assets/soundboard/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "preLaunch": [
+      {
+        "adapter": "kotlin",
+        "value": "dev.kikugie.soundboard.entrypoint.SoundboardPrelaunch"
+      }
+    ],
+    "client": [
+      {
+        "adapter": "kotlin",
+        "value": "dev.kikugie.soundboard.entrypoint.SVCEntrypoint"
+      }
+    ],
+    "voicechat": [
+      {
+        "adapter": "kotlin",
+        "value": "dev.kikugie.soundboard.entrypoint.SVCEntrypoint"
+      }
+    ]
+  },
+  "depends": {
+    "voicechat": "*"
+  }
+}

@@ -8,3 +8,4 @@ pluginManagement {
 }
 
 rootProject.name = "Soundboard"
+include("vc-simple", "vc-plasmo")

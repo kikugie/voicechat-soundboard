@@ -1,0 +1,46 @@
+[versions]
+# Plugins
+loom = "1.7-SNAPSHOT"
+kotlin = "1.9.22"
+yamlang = "1.4.+"
+shadow = "8.1.1"
+mpp = "0.4.+"
+# MC setup
+minecraft = "1.20.4"
+fabric-loader = "0.15.10"
+fabric-yarn = "1.20.4+build.3"
+fabric-api = "0.97.0+1.20.4"
+fabric-language-kotlin = "1.10.18+kotlin.1.9.22"
+# Dependencies
+owo-lib = "0.12.5+1.20.3"
+simple-vc-api = "2.5.0"
+simple-vc = "fabric-1.20.4-2.5.10"
+plasmo-vc-api = "2.1.0-SNAPSHOT"
+plasmo-vc-config = "1.0.0"
+plasmo-vc = "fabric-1.20.3-2.0.8"
+dev-auth = "1.2.0"
+
+[plugins]
+fabric-loom = { id = "fabric-loom", version.ref = "loom" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+yamlang = { id = "dev.kikugie.yamlang", version.ref = "yamlang" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+mpp = { id = "me.modmuss50.mod-publish-plugin", version.ref = "mpp" }
+
+[libraries]
+minecraft = { group = "com.mojang", name = "minecraft", version.ref = "minecraft" }
+yarn-mappings = { group = "net.fabricmc", name = "yarn", version.ref = "fabric-yarn" }
+fabric-loader = { group = "net.fabricmc", name = "fabric-loader", version.ref = "fabric-loader" }
+fabric-api = { group = "net.fabricmc.fabric-api", name = "fabric-api", version.ref = "fabric-api" }
+fabric-kotlin = { group = "net.fabricmc", name = "fabric-language-kotlin", version.ref = "fabric-language-kotlin" }
+
+owo = { group = "io.wispforest", name = "owo-lib", version.ref = "owo-lib" }
+owo-sentinel = { group = "io.wispforest", name = "owo-sentinel", version.ref = "owo-lib" }
+simplevc-api = { group = "de.maxhenkel.voicechat", name = "voicechat-api", version.ref = "simple-vc-api" }
+simplevc = { group = "maven.modrinth", name = "simple-voice-chat", version.ref = "simple-vc" }
+plasmovc-api = { group = "su.plo.voice.api", name = "client", version.ref = "plasmo-vc-api" }
+plasmovc-config = { group = "su.plo.config", name = "config", version.ref = "plasmo-vc-config" }
+plasmovc = { group = "maven.modrinth", name = "plasmo-voice", version.ref = "plasmo-vc" }
+devauth = { group = "me.djtheredstoner", name = "DevAuth-fabric", version.ref = "dev-auth" }
+
