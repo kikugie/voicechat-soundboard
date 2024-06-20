@@ -33,11 +33,9 @@ loom {
 
 tasks.processResources {
     inputs.property("version", mod.version)
-    inputs.property("core", property("version").toString())
 
     val map = mapOf(
         "version" to mod.version,
-        "core" to property("version").toString()
     )
 
     filesMatching("fabric.mod.json") { expand(map) }

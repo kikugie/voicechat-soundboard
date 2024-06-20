@@ -5,10 +5,7 @@ import dev.kikugie.soundboard.FILES
 import dev.kikugie.soundboard.entrypoint.SoundboardAccess
 import dev.kikugie.soundboard.mixin.owo_ui.GridLayoutAccessor
 import dev.kikugie.soundboard.mixin.owo_ui.ScrollContainerAccessor
-import dev.kikugie.soundboard.util.asTranslation
-import dev.kikugie.soundboard.util.childById
-import dev.kikugie.soundboard.util.identifier
-import dev.kikugie.soundboard.util.mouseDown
+import dev.kikugie.soundboard.util.*
 import io.wispforest.owo.ui.base.BaseUIModelScreen
 import io.wispforest.owo.ui.component.ButtonComponent
 import io.wispforest.owo.ui.component.Components
@@ -21,6 +18,7 @@ import io.wispforest.owo.ui.core.Component
 import io.wispforest.owo.ui.parsing.UIModel
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.option.KeyBinding
 import net.minecraft.text.Text
 import net.minecraft.util.Util
 import java.nio.file.Files
@@ -37,6 +35,11 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
     override fun build(root: FlowLayout) {
         populateEntries(root)
         scrollbar = root.childById<ScrollContainer<*>>("scroll") as? ScrollContainerAccessor
+        for (it in root.all()) it.keyPress { key, scan, _ ->
+            val found = keybinds.firstOrNull { it.first.matchesKey(key, scan) }
+                ?.also { it.second(this) }
+            found != null
+        }
     }
 
     override fun init() {
@@ -82,6 +85,12 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
         files.forEachIndexed { i, it ->
             contents.child(it as Component, i / columns, i % columns)
         }
+
+        if (label.expanded() && path in collapsedPaths)
+            label.toggleExpansion()
+        label.toggled {
+            if (it) collapsedPaths.remove(path) else collapsedPaths.add(path)
+        }
         return template
     }
 
@@ -89,9 +98,19 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
     private fun button(name: Text, onPress: (ButtonComponent) -> Unit): ButtonComponent =
         Components.button(name, onPress).apply {
             val temp: ButtonComponent = model.template("button")
+            this as Component
+            temp as Component
+
             renderer(temp.renderer())
             textShadow(temp.textShadow())
             active(temp.active())
+            cursorStyle(temp.cursorStyle())
+            positioning(temp.positioning().get())
+            margins(temp.margins().get())
+            horizontalSizing(temp.horizontalSizing().get())
+            verticalSizing(temp.verticalSizing().get())
+            tooltip(temp.tooltip())
+            zIndex(temp.zIndex())
         }
 
     private inline fun <reified T : Component> UIModel.template(
@@ -100,12 +119,17 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
     ): T = this.expandTemplate(T::class.java, name, params)
 
     companion object {
-        val BROWSER = identifier("browser")
+        val BROWSER = modId("browser")
         const val DIRECTORY_FORMATTER = "soundboard.browser.directory_name"
         const val FILE_FORMATTER = "soundboard.browser.file_name"
 
         private var savedOffset = 0.0
+        private val collapsedPaths = mutableSetOf<Path>()
+        private val keybinds = mutableListOf<Pair<KeyBinding, (SoundBrowser) -> Unit>>()
 
+        fun keyAction(key: KeyBinding, action: (SoundBrowser) -> Unit) {
+            keybinds += key to action
+        }
         fun open() = RenderSystem.recordRenderCall { MinecraftClient.getInstance().setScreen(SoundBrowser()) }
     }
 }

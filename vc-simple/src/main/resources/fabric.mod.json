@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "soundboard-svc",
-  "version": "1",
+  "version": "${version}",
   "name": "Voice Chat Soundboard",
   "description": "Adds a client-side soundboard to Simple Voice Chat",
   "authors": [
@@ -36,6 +36,6 @@
   },
   "depends": {
     "voicechat": "*",
-    "soundboard-core": "${core}"
+    "soundboard-core": "${version}"
   }
 }

@@ -19,9 +19,10 @@ allprojects {
             forRepository { maven(url) }
             filter { groups.forEach(::includeGroup) }
         }
+        mavenCentral()
         maven("https://jitpack.io")
         strictMaven("https://api.modrinth.com/maven", "maven.modrinth")
-        strictMaven("https://maven.wispforest.io", "io.wispforest")
+        strictMaven("https://maven.wispforest.io", "io.wispforest", "io.wispforest.endec")
         strictMaven("https://maven.lavalink.dev/releases", "dev.arbjerg")
         strictMaven("https://maven.maxhenkel.de/releases", "de.maxhenkel.voicechat")
         strictMaven("https://repo.plasmoverse.com/snapshots", "su.plo.voice", "su.plo.voice.api", "su.plo.slib")
@@ -62,15 +63,15 @@ loom {
 
 tasks.processResources {
     inputs.property("version", mod.version)
-    inputs.property("minecraft", property("mcdep").toString())
-    inputs.property("flk", property("flk").toString())
-    inputs.property("owolib", property("owolib").toString())
+    inputs.property("minecraft", project.property("mcdep").toString())
+    inputs.property("flk", project.property("flk").toString())
+    inputs.property("owolib", project.property("owolib").toString())
 
     val map = mapOf(
         "version" to mod.version,
-        "minecraft" to property("mcdep").toString(),
-        "flk" to property("flk").toString(),
-        "owolib" to property("owolib").toString(),
+        "minecraft" to project.property("mcdep").toString(),
+        "flk" to project.property("flk").toString(),
+        "owolib" to project.property("owolib").toString(),
     )
 
     filesMatching("fabric.mod.json") { expand(map) }

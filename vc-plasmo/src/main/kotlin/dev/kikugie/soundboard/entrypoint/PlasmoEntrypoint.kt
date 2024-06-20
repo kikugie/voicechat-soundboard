@@ -10,6 +10,7 @@ import su.plo.voice.api.addon.AddonInitializer
 import su.plo.voice.api.addon.annotation.Addon
 import su.plo.voice.api.addon.injectPlasmoVoice
 import su.plo.voice.api.client.PlasmoVoiceClient
+import su.plo.voice.api.client.audio.source.LoopbackSource
 import su.plo.voice.api.client.event.audio.capture.AudioCaptureEvent
 import su.plo.voice.api.client.event.connection.VoicePlayerConnectedEvent
 import su.plo.voice.api.client.event.connection.VoicePlayerDisconnectedEvent
@@ -24,6 +25,7 @@ import javax.sound.sampled.AudioFormat
 )
 object PlasmoEntrypoint : SoundboardEntrypoint, AddonInitializer, ClientModInitializer {
     private val client: PlasmoVoiceClient by injectPlasmoVoice()
+    private lateinit var channel: LoopbackSource
 
     override fun onAddonInitialize() {
     }
@@ -32,16 +34,19 @@ object PlasmoEntrypoint : SoundboardEntrypoint, AddonInitializer, ClientModIniti
         PlasmoVoiceClient.getAddonsLoader().load(this)
         SoundboardAccess.register(this)
         Soundboard.initialize()
+        channel = client.sourceManager.createLoopbackSource(false)
     }
 
     @EventSubscribe
     fun onConnected(event: VoicePlayerConnectedEvent) {
         scheduler.reset()
+        channel.initialize(false)
     }
 
     @EventSubscribe
     fun onDisconnected(event: VoicePlayerDisconnectedEvent) {
         scheduler.reset()
+        channel.close()
     }
 
     @EventSubscribe
@@ -50,6 +55,7 @@ object PlasmoEntrypoint : SoundboardEntrypoint, AddonInitializer, ClientModIniti
         if (extra == null || extra.isEmpty()) return
         val modifiedSamples = combineAudio(frameSize, event.samples, extra)
         modifiedSamples.copyInto(event.samples)
+        channel.write(modifiedSamples)
     }
 
     override val format: AudioFormat
