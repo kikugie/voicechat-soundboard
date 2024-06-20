@@ -4,6 +4,7 @@ import dev.kikugie.soundboard.MOD_ID
 import dev.kikugie.soundboard.Soundboard
 import dev.kikugie.soundboard.VERSION
 import dev.kikugie.soundboard.audio.AudioScheduler
+import dev.kikugie.soundboard.audio.StreamAudioScheduler
 import net.fabricmc.api.ClientModInitializer
 import su.plo.voice.api.addon.AddonInitializer
 import su.plo.voice.api.addon.annotation.Addon
@@ -13,7 +14,6 @@ import su.plo.voice.api.client.event.audio.capture.AudioCaptureEvent
 import su.plo.voice.api.client.event.connection.VoicePlayerConnectedEvent
 import su.plo.voice.api.client.event.connection.VoicePlayerDisconnectedEvent
 import su.plo.voice.api.event.EventSubscribe
-import java.nio.file.Path
 import javax.sound.sampled.AudioFormat
 
 @Addon(
@@ -56,7 +56,7 @@ object PlasmoEntrypoint : SoundboardEntrypoint, AddonInitializer, ClientModIniti
         get() = client.serverInfo.orElseThrow().voiceInfo.createFormat(false)
     override val connected: Boolean
         get() = client.serverConnection.isPresent
-    override val scheduler: AudioScheduler = AudioScheduler(this)
+    override val scheduler: AudioScheduler = StreamAudioScheduler(this)
 
     private fun combineAudio(frameSize: Int, vararg parts: ShortArray): ShortArray = ShortArray(frameSize) { i ->
         parts

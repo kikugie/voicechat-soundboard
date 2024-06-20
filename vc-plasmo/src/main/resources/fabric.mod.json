@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "soundboard-plasmo",
+  "version": "${version}",
+  "name": "Plasmo Voice Soundboard",
+  "description": "Adds a client-side soundboard to Plasmo Voice",
+  "authors": [
+    "KikuGie"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/project/voicechat-soundboard",
+    "sources": "https://github.com/kikugie/voicechat-soundboard"
+  },
+  "license": "GPLv3",
+  "icon": "assets/soundboard/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      {
+        "adapter": "kotlin",
+        "value": "dev.kikugie.soundboard.entrypoint.PlasmoEntrypoint"
+      }
+    ]
+  },
+  "depends": {
+    "plasmo-voice": "~2.0.0",
+    "soundboard-core": "${core}"
+  }
+}

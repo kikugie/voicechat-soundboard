@@ -35,6 +35,7 @@
     ]
   },
   "depends": {
-    "voicechat": "*"
+    "voicechat": "*",
+    "soundboard-core": "${core}"
   }
 }

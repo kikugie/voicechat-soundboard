@@ -1,23 +1,22 @@
 [versions]
 # Plugins
 loom = "1.7-SNAPSHOT"
-kotlin = "1.9.22"
+kotlin = "2.0.0"
 yamlang = "1.4.+"
-shadow = "8.1.1"
 mpp = "0.4.+"
 # MC setup
-minecraft = "1.20.4"
-fabric-loader = "0.15.10"
-fabric-yarn = "1.20.4+build.3"
-fabric-api = "0.97.0+1.20.4"
-fabric-language-kotlin = "1.10.18+kotlin.1.9.22"
+minecraft = "1.21"
+fabric-loader = "0.15.11"
+fabric-yarn = "1.21+build.2"
+fabric-api = "0.100.3+1.21"
+fabric-language-kotlin = "1.11.0+kotlin.2.0.0"
 # Dependencies
-owo-lib = "0.12.5+1.20.3"
+owo-lib = "0.12.10+1.21"
 simple-vc-api = "2.5.0"
-simple-vc = "fabric-1.20.4-2.5.10"
+simple-vc = "fabric-1.21-2.5.17"
 plasmo-vc-api = "2.1.0-SNAPSHOT"
 plasmo-vc-config = "1.0.0"
-plasmo-vc = "fabric-1.20.3-2.0.8"
+plasmo-vc = "fabric-1.21-2.0.10"
 dev-auth = "1.2.0"
 
 [plugins]
@@ -25,7 +24,6 @@ fabric-loom = { id = "fabric-loom", version.ref = "loom" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 yamlang = { id = "dev.kikugie.yamlang", version.ref = "yamlang" }
-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 mpp = { id = "me.modmuss50.mod-publish-plugin", version.ref = "mpp" }
 
 [libraries]

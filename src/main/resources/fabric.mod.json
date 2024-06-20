@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "soundboard-core",
-  "version": "1",
+  "version": "${version}",
   "name": "Soundboard Core",
-  "description": "Adds a client-side soundboard to Simple Voice Chat",
+  "description": "Shared functionality for the Soundboard mod",
   "authors": [
     "KikuGie"
   ],
@@ -19,5 +19,12 @@
       "environment": "client",
       "config": "soundboard.mixins.json"
     }
-  ]
+  ],
+  "depends": {
+    "fabricloader": ">=0.15",
+    "minecraft": "${minecraft}",
+    "fabric-language-kotlin": "${flk}",
+    "owo-lib": "${owolib}",
+    "fabric-api": "*"
+  }
 }
