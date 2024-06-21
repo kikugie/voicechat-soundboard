@@ -16,3 +16,4 @@ soundboard:
     file_name:
       .:
         - index: 0
+      tooltip: Hold Shift and click to play locally

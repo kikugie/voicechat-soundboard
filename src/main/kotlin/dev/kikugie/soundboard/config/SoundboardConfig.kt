@@ -28,6 +28,7 @@ data class SoundboardConfig(
             isLenient = true
             ignoreUnknownKeys = true
             prettyPrint = true
+            encodeDefaults = true
         }
 
         fun load(): SoundboardConfig {

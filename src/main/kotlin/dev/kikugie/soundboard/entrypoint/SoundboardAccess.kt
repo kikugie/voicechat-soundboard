@@ -13,5 +13,5 @@ object SoundboardAccess {
         delegates.forEach(action)
     }
 
-    fun play(file: Path) = forEach { play(file) }
+    fun play(file: Path, local: Boolean) = forEach { play(file, local) }
 }

@@ -35,8 +35,8 @@ object SVCEntrypoint : SoundboardEntrypoint, VoicechatPlugin, ClientModInitializ
         }
         reg.event<MergeClientSoundEvent> {
             val extra = scheduler.next() ?: return@event
+            if (!scheduler.local) it.mergeAudio(extra)
             channel?.play(extra)
-            it.mergeAudio(extra)
         }
     }
 

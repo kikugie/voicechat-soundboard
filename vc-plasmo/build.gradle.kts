@@ -19,7 +19,8 @@ group = mod.group
 base { archivesName.set(mod.id) }
 
 dependencies {
-    project(path = ":", configuration = "namedElements").also { include(implementation(it)!!) }
+    include(project(":"))
+    implementation(project(path = ":", configuration = "namedElements"))
     minecraft(libs.minecraft)
     mappings(variantOf(libs.yarn.mappings) { classifier("v2") })
     modImplementation(libs.fabric.loader)
@@ -27,7 +28,7 @@ dependencies {
 
     compileOnly(libs.plasmovc.api)
     compileOnly(libs.plasmovc.config)
-    modRuntimeOnly(libs.plasmovc)
+//    modRuntimeOnly(libs.plasmovc)
 }
 
 loom {
@@ -45,6 +46,11 @@ tasks.processResources {
     )
 
     filesMatching("fabric.mod.json") { expand(map) }
+}
+
+tasks.register<Copy>("applyPlasmoMod") {
+    from(rootProject.file("mods/plasmovoice-2.1.0-SNAPSHOT.jar"))
+    into(rootProject.file("run/mods"))
 }
 
 tasks.register<Copy>("buildAndCollect") {

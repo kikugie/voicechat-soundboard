@@ -23,10 +23,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.Util
 import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.extension
-import kotlin.io.path.isRegularFile
-import kotlin.io.path.listDirectoryEntries
-import kotlin.io.path.nameWithoutExtension
+import kotlin.io.path.*
 import kotlin.math.ceil
 
 class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWSER) {
@@ -61,10 +58,11 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
     }
 
     private fun create(path: Path, name: String = path.nameWithoutExtension, ignoreEmpty: Boolean = true): FlowLayout? {
+        path.createDirectories()
         val files = path.listDirectoryEntries().filter {
             it.isRegularFile() && it.extension == "wav"
         }.map { file ->
-            button(FILE_FORMATTER.asTranslation(file.nameWithoutExtension)) { SoundboardAccess.play(file) }
+            button(FILE_FORMATTER.asTranslation(file.nameWithoutExtension)) { SoundboardAccess.play(file, Screen.hasShiftDown()) }
         }
         if (files.isEmpty() && ignoreEmpty) return null
         val template = group()

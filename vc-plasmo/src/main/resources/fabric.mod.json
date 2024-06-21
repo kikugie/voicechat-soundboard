@@ -23,7 +23,7 @@
     ]
   },
   "depends": {
-    "plasmovoice": "~2.0.0",
+    "plasmovoice": "~2.1.0",
     "soundboard-core": "${version}"
   }
 }

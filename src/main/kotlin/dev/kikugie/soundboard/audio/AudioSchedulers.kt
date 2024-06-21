@@ -20,31 +20,42 @@ abstract class AudioScheduler {
     protected var file: Path? = null
     var configuration: AudioConfiguration? = null
         protected set
+    var local: Boolean = false
+        protected set
 
     abstract fun next(): ShortArray?
-    abstract fun schedule(file: Path, configuration: AudioConfiguration = AudioConfiguration.DEFAULT)
+    abstract fun schedule(file: Path, local: Boolean, configuration: AudioConfiguration = AudioConfiguration.DEFAULT)
     abstract fun reset()
 
-    protected fun convert(stream: AudioInputStream): AudioInputStream {
-        val originalFormat = stream.format
-        val intermediateFormat = AudioFormat(
-            AudioFormat.Encoding.PCM_SIGNED,
-            originalFormat.sampleRate,
-            16,
-            originalFormat.channels,
-            originalFormat.channels * 2,
-            originalFormat.sampleRate,
-            false
-        )
-        return stream
-            .let { AudioSystem.getAudioInputStream(intermediateFormat, it) }
-            .let { AudioSystem.getAudioInputStream(entry.format, it) }
-    }
+    companion object {
+        fun loadAll(file: Path, entry: SoundboardEntrypoint): ShortArray =
+            AudioSystem.getAudioInputStream(file.toFile()).use {
+                    bytesToShorts(convert(it, entry.format).readAllBytes(), entry.frameSize)
+                }
 
-    protected fun bytesToShorts(array: ByteArray) = ShortArray(entry.frameSize) {
-        val byte0 = array.getOrElse(it * 2) { 0 }.toInt() and 255
-        val byte1 = array.getOrElse(it * 2 + 1) { 0 }.toInt() and 255
-        (byte1 shl 8 or byte0).toShort()
+        @JvmStatic
+        protected fun convert(stream: AudioInputStream, target: AudioFormat): AudioInputStream {
+            val originalFormat = stream.format
+            val intermediateFormat = AudioFormat(
+                AudioFormat.Encoding.PCM_SIGNED,
+                originalFormat.sampleRate,
+                16,
+                originalFormat.channels,
+                originalFormat.channels * 2,
+                originalFormat.sampleRate,
+                false
+            )
+            return stream
+                .let { AudioSystem.getAudioInputStream(intermediateFormat, it) }
+                .let { AudioSystem.getAudioInputStream(target, it) }
+        }
+
+        @JvmStatic
+        protected fun bytesToShorts(array: ByteArray, frameSize: Int) = ShortArray(frameSize) {
+            val byte0 = array.getOrElse(it * 2) { 0 }.toInt() and 255
+            val byte1 = array.getOrElse(it * 2 + 1) { 0 }.toInt() and 255
+            (byte1 shl 8 or byte0).toShort()
+        }
     }
 }
 
@@ -63,12 +74,13 @@ class ArrayAudioScheduler(override val entry: SoundboardEntrypoint) : AudioSched
         return slice
     }
 
-    override fun schedule(file: Path, configuration: AudioConfiguration) {
+    override fun schedule(file: Path, local: Boolean, configuration: AudioConfiguration) {
         reset()
         runBlocking {
             withContext(Dispatchers.IO) {
                 mutex.withLock {
-                    this@ArrayAudioScheduler.value = AudioSystem.getAudioInputStream(file.toFile()).use { bytesToShorts(convert(it).readAllBytes()) }
+                    this@ArrayAudioScheduler.local = local
+                    this@ArrayAudioScheduler.value = loadAll(file, entry)
                     this@ArrayAudioScheduler.file = file
                     this@ArrayAudioScheduler.configuration = configuration
                 }
@@ -77,6 +89,7 @@ class ArrayAudioScheduler(override val entry: SoundboardEntrypoint) : AudioSched
     }
 
     override fun reset() {
+        local = false
         value = null
         cursor = 0
     }
@@ -89,19 +102,21 @@ class StreamAudioScheduler(override val entry: SoundboardEntrypoint) : AudioSche
         val fullSize = entry.frameSize * 2
         val bytes = input!!.readNBytes(fullSize)
         if (bytes.size < fullSize) reset()
-        bytesToShorts(bytes)
+        if (bytes.isEmpty()) null
+        else bytesToShorts(bytes, entry.frameSize)
     } catch (e: IOException) {
         LOGGER.error("Failed to read data from $file", e)
         reset()
         null
     }
 
-    override fun schedule(file: Path, configuration: AudioConfiguration) {
+    override fun schedule(file: Path, local: Boolean, configuration: AudioConfiguration) {
         require(file.extension == "wav") { "Invalid file format $file. Only .wav files are supported" }
         reset()
+        this.local = local
         this.file = file
         this.configuration = configuration
-        this.input = convert(AudioSystem.getAudioInputStream(file.toFile()))
+        this.input = convert(AudioSystem.getAudioInputStream(file.toFile()), entry.format)
     }
 
     override fun reset() {
@@ -110,6 +125,7 @@ class StreamAudioScheduler(override val entry: SoundboardEntrypoint) : AudioSche
         } catch (e: IOException) {
             LOGGER.error("Failed to close $file", e)
         } finally {
+            local = false
             file = null
             input = null
             configuration = null
@@ -120,7 +136,7 @@ class StreamAudioScheduler(override val entry: SoundboardEntrypoint) : AudioSche
 enum class SchedulerType {
     ARRAY, STREAM;
 
-    fun create(entry: SoundboardEntrypoint) = when(this) {
+    fun create(entry: SoundboardEntrypoint) = when (this) {
         ARRAY -> ArrayAudioScheduler(entry)
         STREAM -> StreamAudioScheduler(entry)
     }

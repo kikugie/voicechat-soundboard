@@ -4,7 +4,6 @@ import dev.kikugie.soundboard.MOD_ID
 import dev.kikugie.soundboard.Soundboard
 import dev.kikugie.soundboard.VERSION
 import dev.kikugie.soundboard.audio.AudioScheduler
-import dev.kikugie.soundboard.audio.StreamAudioScheduler
 import net.fabricmc.api.ClientModInitializer
 import su.plo.voice.api.addon.AddonInitializer
 import su.plo.voice.api.addon.annotation.Addon
@@ -28,7 +27,7 @@ object PlasmoEntrypoint : SoundboardEntrypoint, AddonInitializer, ClientModIniti
     private lateinit var channel: LoopbackSource
 
     override fun onAddonInitialize() {
-        channel = client.sourceManager.createLoopbackSource(false)
+        channel = client.sourceManager.createLoopbackSource(true)
     }
 
     override fun onInitializeClient() {
@@ -51,11 +50,10 @@ object PlasmoEntrypoint : SoundboardEntrypoint, AddonInitializer, ClientModIniti
 
     @EventSubscribe
     fun onAudioCapture(event: AudioCaptureEvent) {
-        val extra = scheduler.next()
-        if (extra == null || extra.isEmpty()) return
+        val extra = scheduler.next() ?: return
         val modifiedSamples = combineAudio(frameSize, event.samples, extra)
-        modifiedSamples.copyInto(event.samples)
-        channel.write(modifiedSamples)
+        if (!scheduler.local) modifiedSamples.copyInto(event.samples)
+        channel.write(extra)
     }
 
     override val format: AudioFormat
