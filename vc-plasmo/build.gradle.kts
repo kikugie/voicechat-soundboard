@@ -60,8 +60,6 @@ tasks.register<Copy>("buildAndCollect") {
     dependsOn("build")
 }
 
-
-/*
 publishMods {
     file = tasks.remapJar.get().archiveFile
     additionalFiles.from(tasks.remapSourcesJar.get().archiveFile)
@@ -73,6 +71,7 @@ publishMods {
 
     dryRun = providers.environmentVariable("MODRINTH_TOKEN")
         .getOrNull() == null || providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null
+    dryRun = true
 
     modrinth {
         projectId = property("publish.modrinth").toString()
@@ -94,4 +93,3 @@ publishMods {
         requires { slug = "owo-lib" }
     }
 }
- */

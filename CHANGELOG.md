@@ -1,1 +1,2 @@
-# Initial release
+This update splits the mod into 2 addons - for Simple Voice Chat and Plasmo Voice, as well as a push to 1.21.  
+Not much in terms of functionality, but there has been some groundwork for future updates.

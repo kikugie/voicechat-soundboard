@@ -63,8 +63,9 @@ publishMods {
     type = ReleaseType.of(project.property("release").toString())
     modLoaders.add("fabric")
 
-    dryRun = providers.environmentVariable("MODRINTH_TOKEN")
-        .getOrNull() == null || providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null
+    dryRun = providers.environmentVariable("MODRINTH_TOKEN").getOrNull() == null ||
+            providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null
+    dryRun = true
 
     modrinth {
         projectId = property("publish.modrinth").toString()

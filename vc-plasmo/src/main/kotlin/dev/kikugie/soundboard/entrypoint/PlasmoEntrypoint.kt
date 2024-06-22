@@ -6,12 +6,11 @@ import dev.kikugie.soundboard.VERSION
 import dev.kikugie.soundboard.audio.AudioScheduler
 import net.fabricmc.api.ClientModInitializer
 import su.plo.voice.api.addon.AddonInitializer
+import su.plo.voice.api.addon.InjectPlasmoVoice
 import su.plo.voice.api.addon.annotation.Addon
-import su.plo.voice.api.addon.injectPlasmoVoice
 import su.plo.voice.api.client.PlasmoVoiceClient
 import su.plo.voice.api.client.audio.source.LoopbackSource
 import su.plo.voice.api.client.event.audio.capture.AudioCaptureEvent
-import su.plo.voice.api.client.event.connection.VoicePlayerConnectedEvent
 import su.plo.voice.api.client.event.connection.VoicePlayerDisconnectedEvent
 import su.plo.voice.api.event.EventSubscribe
 import javax.sound.sampled.AudioFormat
@@ -23,7 +22,8 @@ import javax.sound.sampled.AudioFormat
     authors = ["KikuGie"]
 )
 object PlasmoEntrypoint : SoundboardEntrypoint, AddonInitializer, ClientModInitializer {
-    private val client: PlasmoVoiceClient by injectPlasmoVoice()
+    @InjectPlasmoVoice
+    private lateinit var client: PlasmoVoiceClient
     private lateinit var channel: LoopbackSource
 
     override fun onAddonInitialize() {
@@ -37,12 +37,6 @@ object PlasmoEntrypoint : SoundboardEntrypoint, AddonInitializer, ClientModIniti
     }
 
     @EventSubscribe
-    fun onConnected(event: VoicePlayerConnectedEvent) {
-        scheduler.reset()
-        channel.initialize(false)
-    }
-
-    @EventSubscribe
     fun onDisconnected(event: VoicePlayerDisconnectedEvent) {
         scheduler.reset()
         channel.close()
@@ -53,6 +47,8 @@ object PlasmoEntrypoint : SoundboardEntrypoint, AddonInitializer, ClientModIniti
         val extra = scheduler.next() ?: return
         val modifiedSamples = combineAudio(frameSize, event.samples, extra)
         if (!scheduler.local) modifiedSamples.copyInto(event.samples)
+        if (channel.source.isEmpty || channel.source.get().isClosed())
+            channel.initialize(false)
         channel.write(extra)
     }
 

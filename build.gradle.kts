@@ -1,8 +1,11 @@
+import me.modmuss50.mpp.ReleaseType
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.fabric.loom)
     alias(libs.plugins.yamlang)
+    alias(libs.plugins.mpp)
 }
 
 class ModData {
@@ -11,6 +14,7 @@ class ModData {
     val group: String by project
     val version: String by project
 }
+
 val mod = ModData()
 
 version = "${mod.version}+${libs.versions.minecraft.get()}"
@@ -82,11 +86,6 @@ tasks.processResources {
     filesMatching("fabric.mod.json") { expand(map) }
 }
 
-tasks.register("buildAll") {
-    group = "build"
-    dependsOn(*project.subprojects.map { it.tasks.named("buildAndCollect") }.toTypedArray())
-}
-
 yamlang {
     targetSourceSets.set(mutableListOf(sourceSets["main"]))
     inputDir.set("assets/${mod.id}/lang")
@@ -95,3 +94,27 @@ yamlang {
 java {
     withSourcesJar()
 }
+
+//publishMods {
+//    val files = mutableListOf<Provider<RegularFile>>()
+//    subprojects.mapTo(files) { it.tasks.remapJar.get().archiveFile }
+//    subprojects.mapTo(files) { it.tasks.remapSourcesJar.get().archiveFile }
+//    file = files.first()
+//    additionalFiles.from(*files.drop(1).toTypedArray())
+//    displayName = "${mod.name} ${mod.version}"
+//    version = mod.version
+//    changelog = rootProject.file("CHANGELOG.md").readText()
+//    type = ReleaseType.of(project.property("release").toString())
+//    modLoaders.add("fabric")
+//
+//    dryRun = providers.environmentVariable("MODRINTH_TOKEN").getOrNull() == null ||
+//            providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null ||
+//            providers.environmentVariable("GITHUB_TOKEN").getOrNull() == null
+//    dryRun = true
+//
+//    github {
+//        repository = "kikugie/voicechat-soundboard"
+//        accessToken = providers.environmentVariable("GITHUB_TOKEN")
+//        commitish = "multiaddon"
+//    }
+//}
