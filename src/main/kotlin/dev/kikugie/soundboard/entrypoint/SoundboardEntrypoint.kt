@@ -1,7 +1,7 @@
 package dev.kikugie.soundboard.entrypoint
 
 import dev.kikugie.soundboard.audio.AudioScheduler
-import java.nio.file.Path
+import dev.kikugie.soundboard.SoundRegistry
 import javax.sound.sampled.AudioFormat
 
 interface SoundboardEntrypoint {
@@ -11,7 +11,7 @@ interface SoundboardEntrypoint {
 
     val scheduler: AudioScheduler
 
-    fun play(file: Path, local: Boolean) {
-        if (connected) scheduler.schedule(file, local)
+    fun play(local: Boolean, entry: SoundRegistry.SoundEntry) {
+        if (connected) scheduler.schedule(local, entry)
     }
 }

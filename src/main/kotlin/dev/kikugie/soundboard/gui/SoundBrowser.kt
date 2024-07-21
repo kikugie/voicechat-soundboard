@@ -1,10 +1,9 @@
 package dev.kikugie.soundboard.gui
 
-import com.mojang.blaze3d.systems.RenderSystem
-import dev.kikugie.soundboard.FILES
 import dev.kikugie.soundboard.entrypoint.SoundboardAccess
 import dev.kikugie.soundboard.mixin.owo_ui.GridLayoutAccessor
 import dev.kikugie.soundboard.mixin.owo_ui.ScrollContainerAccessor
+import dev.kikugie.soundboard.SoundRegistry
 import dev.kikugie.soundboard.util.*
 import io.wispforest.owo.ui.base.BaseUIModelScreen
 import io.wispforest.owo.ui.component.ButtonComponent
@@ -16,20 +15,17 @@ import io.wispforest.owo.ui.container.GridLayout
 import io.wispforest.owo.ui.container.ScrollContainer
 import io.wispforest.owo.ui.core.Component
 import io.wispforest.owo.ui.parsing.UIModel
-import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.text.Text
 import net.minecraft.util.Util
-import java.nio.file.Files
-import java.nio.file.Path
-import kotlin.io.path.*
 import kotlin.math.ceil
 
 class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWSER) {
     private var scrollbar: ScrollContainerAccessor? = null
 
     override fun build(root: FlowLayout) {
+        SoundRegistry.update()
         populateEntries(root)
         scrollbar = root.childById<ScrollContainer<*>>("scroll") as? ScrollContainerAccessor
         for (it in root.all()) it.keyPress { key, scan, _ ->
@@ -51,36 +47,33 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
 
     private fun populateEntries(root: FlowLayout) {
         val container: FlowLayout = root.childById("container")!!
-        create(FILES, "soundboard.title".asTranslation().string, false)?.apply { container.child(this) }
-        FILES.listDirectoryEntries().filter(Files::isDirectory).forEach {
-            create(it)?.apply { container.child(this) }
-        }
+        container.children(SoundRegistry.entries.mapNotNull(::create).toList())
     }
 
-    private fun create(path: Path, name: String = path.nameWithoutExtension, ignoreEmpty: Boolean = true): FlowLayout? {
-        path.createDirectories()
-        val files = path.listDirectoryEntries().filter {
-            it.isRegularFile() && it.extension == "wav"
-        }.map { file ->
-            button(FILE_FORMATTER.asTranslation(file.nameWithoutExtension)) { SoundboardAccess.play(file, Screen.hasShiftDown()) }
+    private fun create(group: SoundRegistry.SoundGroup): FlowLayout? {
+        if (group.entries.isEmpty()) return null
+        val path = group.path
+        val buttons = group.entries.map { entry ->
+            button(entry.title(group)) { SoundboardAccess.play(Screen.hasShiftDown(), entry) }
         }
-        if (files.isEmpty() && ignoreEmpty) return null
         val template = group()
         val label: CollapsibleContainer = template.childById("collapse") ?: return null
-        label.mouseDown { _, _, _ ->
-            Screen.hasShiftDown().also { if (it) Util.getOperatingSystem().open(path.toFile()) }
+        val location = runCatching { SoundRegistry.BASE_DIR.resolve(path).toFile() }.getOrNull()
+        val locationExists = location?.exists() == true
+        if (locationExists) label.mouseDown { _, _, _ ->
+            Screen.hasShiftDown().also { if (it) Util.getOperatingSystem().open(location) }
         }
         val child = label.titleLayout().children().firstOrNull { it is LabelComponent } as? LabelComponent
-        child?.text(DIRECTORY_FORMATTER.asTranslation(name))
-        child?.tooltip("$DIRECTORY_FORMATTER.tooltip".asTranslation())
+        if (locationExists) child?.tooltip("soundboard.browser.directory_name.tooltip".asTranslation())
+        child?.text(group.title())
 
         val contents: GridLayout = label.childById("contents") ?: return null
         contents as GridLayoutAccessor
         val columns = contents.columns
-        val rows = ceil(files.size / columns.toDouble()).toInt()
+        val rows = ceil(buttons.size / columns.toDouble()).toInt()
         contents.rows = rows
         contents.children = arrayOfNulls(rows * columns)
-        files.forEachIndexed { i, it ->
+        buttons.forEachIndexed { i, it ->
             contents.child(it as Component, i / columns, i % columns)
         }
 
@@ -97,7 +90,6 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
         Components.button(name, onPress).apply {
             val temp: ButtonComponent = model.template("button")
             this as Component
-            temp as Component
 
             renderer(temp.renderer())
             textShadow(temp.textShadow())
@@ -117,12 +109,10 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
     ): T = this.expandTemplate(T::class.java, name, params)
 
     companion object : ScreenManager(SoundBrowser::class) {
-        val BROWSER = modId("browser")
-        const val DIRECTORY_FORMATTER = "soundboard.browser.directory_name"
-        const val FILE_FORMATTER = "soundboard.browser.file_name"
+        val BROWSER = idOf("browser")
 
         private var savedOffset = 0.0
-        private val collapsedPaths = mutableSetOf<Path>()
+        private val collapsedPaths = mutableSetOf<String>()
         private val keybinds = mutableListOf<Pair<KeyBinding, (SoundBrowser) -> Unit>>()
 
         fun keyAction(key: KeyBinding, action: (SoundBrowser) -> Unit) {

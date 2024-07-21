@@ -2,6 +2,7 @@ package dev.kikugie.soundboard.audio
 
 import dev.kikugie.soundboard.LOGGER
 import dev.kikugie.soundboard.entrypoint.SoundboardEntrypoint
+import dev.kikugie.soundboard.SoundRegistry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
@@ -10,11 +11,9 @@ import kotlinx.coroutines.withContext
 import java.io.BufferedInputStream
 import java.io.IOException
 import java.io.InputStream
-import java.nio.file.Path
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioInputStream
 import javax.sound.sampled.AudioSystem
-import kotlin.io.path.inputStream
 import kotlin.math.min
 
 abstract class AudioScheduler {
@@ -36,10 +35,10 @@ abstract class AudioScheduler {
     abstract fun reset()
 
     fun schedule(
-        file: Path,
         local: Boolean,
+        entry: SoundRegistry.SoundEntry,
         configuration: AudioConfiguration = AudioConfiguration.DEFAULT,
-    ) = schedule(file.toString(), BufferedInputStream(file.inputStream()), local, configuration)
+    ) = schedule(entry.name, BufferedInputStream(entry.supplier()), local, configuration)
 
     protected fun convert(stream: AudioInputStream): AudioInputStream {
         val originalFormat = stream.format

@@ -1,6 +1,6 @@
 package dev.kikugie.soundboard.entrypoint
 
-import java.nio.file.Path
+import dev.kikugie.soundboard.SoundRegistry
 import java.util.ArrayList
 
 object SoundboardAccess {
@@ -13,5 +13,5 @@ object SoundboardAccess {
         delegates.forEach(action)
     }
 
-    fun play(file: Path, local: Boolean) = forEach { play(file, local) }
+    fun play(local: Boolean, entry: SoundRegistry.SoundEntry) = forEach { play(local, entry) }
 }

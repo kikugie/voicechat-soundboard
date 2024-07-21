@@ -1,5 +1,3 @@
-import me.modmuss50.mpp.ReleaseType
-
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
@@ -9,10 +7,10 @@ plugins {
 }
 
 class ModData {
-    val id: String by project
-    val name: String by project
-    val group: String by project
-    val version: String by project
+    val id: String = project.property("id").toString()
+    val name: String = project.property("name").toString()
+    val group: String = project.property("group").toString()
+    val version: String = project.property("version").toString()
 }
 
 val mod = ModData()

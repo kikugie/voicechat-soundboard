@@ -1,7 +1,7 @@
 package dev.kikugie.soundboard.gui
 
 import dev.kikugie.soundboard.Soundboard
-import dev.kikugie.soundboard.util.modId
+import dev.kikugie.soundboard.util.idOf
 import io.wispforest.owo.ui.base.BaseUIModelScreen
 import io.wispforest.owo.ui.container.FlowLayout
 
@@ -18,6 +18,6 @@ class InGameConfig : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
     }
 
     companion object : ScreenManager(InGameConfig::class) {
-        val BROWSER = modId("play-config")
+        val BROWSER = idOf("play-config")
     }
 }

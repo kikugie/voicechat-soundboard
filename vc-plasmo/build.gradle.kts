@@ -7,10 +7,10 @@ plugins {
 }
 
 class ModData {
-    val id: String by project
-    val name: String by project
-    val group: String by project
-    val version: String by project
+    val id: String = project.property("id").toString()
+    val name: String = project.property("name").toString()
+    val group: String = project.property("group").toString()
+    val version: String = project.property("version").toString()
 }
 val mod = ModData()
 
@@ -62,7 +62,6 @@ tasks.register<Copy>("buildAndCollect") {
 
 publishMods {
     file = tasks.remapJar.get().archiveFile
-    additionalFiles.from(tasks.remapSourcesJar.get().archiveFile)
     displayName = "${mod.name} ${mod.version}"
     version = mod.version
     changelog = rootProject.file("CHANGELOG.md").readText()
@@ -71,7 +70,6 @@ publishMods {
 
     dryRun = providers.environmentVariable("MODRINTH_TOKEN")
         .getOrNull() == null || providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null
-    dryRun = true
 
     modrinth {
         projectId = property("publish.modrinth").toString()
