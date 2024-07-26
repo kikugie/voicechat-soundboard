@@ -16,6 +16,28 @@ import javax.sound.sampled.AudioInputStream
 import javax.sound.sampled.AudioSystem
 import kotlin.math.min
 
+fun convert(stream: AudioInputStream, targetFormat: AudioFormat): AudioInputStream {
+    val originalFormat = stream.format
+    val intermediateFormat = AudioFormat(
+        AudioFormat.Encoding.PCM_SIGNED,
+        originalFormat.sampleRate,
+        16,
+        originalFormat.channels,
+        originalFormat.channels * 2,
+        originalFormat.sampleRate,
+        false
+    )
+    return stream
+        .let { AudioSystem.getAudioInputStream(intermediateFormat, it) }
+        .let { AudioSystem.getAudioInputStream(targetFormat, it) }
+}
+
+fun bytesToShorts(array: ByteArray, length: Int = array.size / 2) = ShortArray(length) {
+    val byte0 = array.getOrElse(it * 2) { 0 }.toInt() and 255
+    val byte1 = array.getOrElse(it * 2 + 1) { 0 }.toInt() and 255
+    (byte1 shl 8 or byte0).toShort()
+}
+
 abstract class AudioScheduler {
     protected abstract val entry: SoundboardEntrypoint
     protected var location: String? = null
@@ -39,28 +61,6 @@ abstract class AudioScheduler {
         entry: SoundRegistry.SoundEntry,
         configuration: AudioConfiguration = AudioConfiguration.DEFAULT,
     ) = schedule(entry.name, BufferedInputStream(entry.supplier()), local, configuration)
-
-    protected fun convert(stream: AudioInputStream): AudioInputStream {
-        val originalFormat = stream.format
-        val intermediateFormat = AudioFormat(
-            AudioFormat.Encoding.PCM_SIGNED,
-            originalFormat.sampleRate,
-            16,
-            originalFormat.channels,
-            originalFormat.channels * 2,
-            originalFormat.sampleRate,
-            false
-        )
-        return stream
-            .let { AudioSystem.getAudioInputStream(intermediateFormat, it) }
-            .let { AudioSystem.getAudioInputStream(entry.format, it) }
-    }
-
-    protected fun bytesToShorts(array: ByteArray) = ShortArray(entry.frameSize) {
-        val byte0 = array.getOrElse(it * 2) { 0 }.toInt() and 255
-        val byte1 = array.getOrElse(it * 2 + 1) { 0 }.toInt() and 255
-        (byte1 shl 8 or byte0).toShort()
-    }
 }
 
 class ArrayAudioScheduler(override val entry: SoundboardEntrypoint) : AudioScheduler() {
@@ -85,7 +85,7 @@ class ArrayAudioScheduler(override val entry: SoundboardEntrypoint) : AudioSched
                 mutex.withLock {
                     this@ArrayAudioScheduler.local = local
                     this@ArrayAudioScheduler.value = AudioSystem.getAudioInputStream(input).use {
-                        bytesToShorts(convert(it).readAllBytes())
+                        bytesToShorts(convert(it, entry.format).readAllBytes())
                     }
                     this@ArrayAudioScheduler.location = id
                     this@ArrayAudioScheduler.configuration = configuration
@@ -110,7 +110,7 @@ class StreamAudioScheduler(override val entry: SoundboardEntrypoint) : AudioSche
         val bytes = input!!.readNBytes(fullSize)
         if (bytes.size < fullSize) reset()
         if (bytes.isEmpty()) null
-        else bytesToShorts(bytes)
+        else bytesToShorts(bytes, entry.frameSize)
     } catch (e: IOException) {
         LOGGER.error("Failed to read data from $location", e)
         reset()
@@ -122,7 +122,7 @@ class StreamAudioScheduler(override val entry: SoundboardEntrypoint) : AudioSche
         this.local = local
         this.location = id
         this.configuration = configuration
-        this.input = convert(AudioSystem.getAudioInputStream(input))
+        this.input = convert(AudioSystem.getAudioInputStream(input), entry.format)
     }
 
     override fun reset() {

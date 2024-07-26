@@ -48,4 +48,6 @@ object SVCEntrypoint : SoundboardEntrypoint, VoicechatPlugin, ClientModInitializ
     override var connected = false
         private set
     override val scheduler: AudioScheduler = Soundboard.config.schedulerType.create(this)
+    override val muted: Boolean
+        get() = api?.run { isMuted || isDisabled || isDisconnected } ?: true
 }

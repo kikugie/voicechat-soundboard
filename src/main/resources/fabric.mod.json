@@ -1,6 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "soundboard-core",
+  "provides": [
+    "soundboard"
+  ],
   "version": "${version}",
   "name": "Soundboard Core",
   "description": "Shared functionality for the Soundboard mod",
@@ -26,5 +29,6 @@
     "fabric-language-kotlin": "${flk}",
     "owo-lib": "${owolib}",
     "fabric-api": "*"
-  }
+  },
+  "accessWidener": "soundboard.accesswidener"
 }

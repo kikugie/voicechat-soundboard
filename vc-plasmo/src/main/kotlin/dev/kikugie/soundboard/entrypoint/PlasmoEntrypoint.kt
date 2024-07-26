@@ -57,6 +57,8 @@ object PlasmoEntrypoint : SoundboardEntrypoint, AddonInitializer, ClientModIniti
     override val connected: Boolean
         get() = client.serverConnection.isPresent
     override val scheduler: AudioScheduler = Soundboard.config.schedulerType.create(this)
+    override val muted: Boolean
+        get() = !client.audioCapture.isActive || !connected
 
     private fun combineAudio(frameSize: Int, vararg parts: ShortArray): ShortArray = ShortArray(frameSize) { i ->
         parts

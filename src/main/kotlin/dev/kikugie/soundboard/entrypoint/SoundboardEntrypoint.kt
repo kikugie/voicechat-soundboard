@@ -10,6 +10,7 @@ interface SoundboardEntrypoint {
     val frameSize get() = format.sampleRate.toInt() / 50
 
     val scheduler: AudioScheduler
+    val muted: Boolean
 
     fun play(local: Boolean, entry: SoundRegistry.SoundEntry) {
         if (connected) scheduler.schedule(local, entry)

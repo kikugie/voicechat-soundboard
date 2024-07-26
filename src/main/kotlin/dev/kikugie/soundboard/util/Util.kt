@@ -6,6 +6,11 @@ import kotlinx.coroutines.withContext
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import kotlin.coroutines.CoroutineContext
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.*
+import kotlin.reflect.full.starProjectedType
+
+typealias Property<T> = KMutableProperty0<T>
 
 fun idOf(path: String): Identifier = Identifier.of(MOD_ID, path)
 fun idOf(namespace: String, path: String) = Identifier.of(namespace, path)

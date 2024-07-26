@@ -5,9 +5,9 @@ import kotlin.time.Duration
 
 @Serializable
 data class AudioConfiguration(
-    val start: Duration,
-    val end: Duration,
-    val volume: Float
+    var start: Duration,
+    var end: Duration,
+    var volume: Float
 ) {
     companion object {
         val DEFAULT = AudioConfiguration(Duration.ZERO, Duration.INFINITE, 1F)
