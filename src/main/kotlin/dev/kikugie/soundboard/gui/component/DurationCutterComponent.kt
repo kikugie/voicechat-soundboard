@@ -67,6 +67,7 @@ class DurationCutterComponent(
         }
     }
 
+    @Suppress("LeakingThis")
     private abstract inner class Slider(private val delegate: Property<Duration>) : BaseComponent() {
         var invalidDrag = false
         val container get() = this@DurationCutterComponent
@@ -78,8 +79,8 @@ class DurationCutterComponent(
             }
 
         init {
-            @Suppress("LeakingThis")
             sizing(Sizing.fixed(3), Sizing.fill())
+            cursorStyle(CursorStyle.MOVE)
         }
 
         abstract fun isValid(mouseX: Double): Boolean

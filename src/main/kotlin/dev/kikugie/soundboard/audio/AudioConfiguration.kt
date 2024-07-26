@@ -7,11 +7,11 @@ import kotlin.time.Duration
 data class AudioConfiguration(
     var start: Duration,
     var end: Duration,
-    var volume: Float
+    var volume: Double
 ): Cloneable {
     public override fun clone() = AudioConfiguration(start, end, volume)
 
     companion object {
-        val DEFAULT = AudioConfiguration(Duration.ZERO, Duration.INFINITE, 1F)
+        val DEFAULT = AudioConfiguration(Duration.ZERO, Duration.INFINITE, 1.0)
     }
 }

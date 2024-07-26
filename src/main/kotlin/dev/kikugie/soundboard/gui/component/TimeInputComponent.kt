@@ -1,7 +1,6 @@
 package dev.kikugie.soundboard.gui.component
 
 import dev.kikugie.soundboard.access.ValidatableField
-import dev.kikugie.soundboard.gui.component.TimeInputComponent.Companion.asDuration
 import dev.kikugie.soundboard.util.Property
 import dev.kikugie.soundboard.util.changed
 import io.wispforest.owo.ui.component.TextBoxComponent
@@ -32,7 +31,7 @@ abstract class TimeInputComponent(
 
     override fun `soundboard$isValid`(text: String): Boolean =
         text.asDuration?.let {
-            !it.isNegative() && (it - full <= 1.milliseconds) && isValid(it)
+            !it.isNegative() && (it - full <= 2.milliseconds) && isValid(it)
         } ?: false
 
     override fun renderWidget(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {

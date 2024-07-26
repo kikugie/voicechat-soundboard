@@ -9,17 +9,14 @@ import kotlin.math.absoluteValue
 
 class WaveformComponent(
     private val data: ShortArray,
-    horizontalSizing: Sizing,
-    verticalSizing: Sizing,
 ) : BaseComponent() {
     var thickness: Double = 1.0
-    var color: Color = Color.BLUE
+    var color: Color = Color.ofRgb(0x1976D2)
     private var lastHeight: Int = 0
     private var lines: IntArray = intArrayOf()
 
     init {
-        horizontalSizing(horizontalSizing)
-        verticalSizing(verticalSizing)
+        sizing(Sizing.fill())
     }
 
     override fun applySizing() {

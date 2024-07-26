@@ -1,6 +1,7 @@
 package dev.kikugie.soundboard.util
 
 import com.mojang.blaze3d.systems.RenderSystem
+import io.wispforest.owo.ui.component.SlimSliderComponent
 import io.wispforest.owo.ui.component.TextBoxComponent
 import io.wispforest.owo.ui.component.TextBoxComponent.OnChanged
 import io.wispforest.owo.ui.container.CollapsibleContainer
@@ -51,6 +52,9 @@ inline fun <T : Component> T.focusLost(crossinline action: () -> Unit) =
 
 inline fun TextBoxComponent.changed(crossinline action: (String) -> Unit) =
     this.also { onChanged().subscribe(OnChanged { action(it) }) }
+
+inline fun SlimSliderComponent.ended(crossinline action: () -> Unit) =
+    this.also { onSlideEnd().subscribe(SlimSliderComponent.OnSlideEnd { action() }) }
 
 inline fun CollapsibleContainer.toggled(crossinline action: (Boolean) -> Unit) =
     this.also { onToggled().subscribe(CollapsibleContainer.OnToggled { action(it) }) }

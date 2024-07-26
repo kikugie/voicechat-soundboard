@@ -21,6 +21,15 @@ interface SoundboardEntrypoint {
     val muted: Boolean
 
     fun scheduleArray(
+        data: ShortArray,
+        local: Boolean,
+        configuration: AudioConfiguration,
+    ) {
+        val provider = ArrayAudioProvider(data, format, configuration)
+        scheduler.schedule(provider, local)
+    }
+
+    fun scheduleArray(
         entry: SoundRegistry.SoundEntry,
         local: Boolean,
         configuration: AudioConfiguration = AudioConfig[entry] ?: AudioConfiguration.DEFAULT,

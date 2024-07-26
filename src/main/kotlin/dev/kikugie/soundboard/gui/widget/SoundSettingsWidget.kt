@@ -4,16 +4,13 @@ import dev.kikugie.soundboard.SoundRegistry
 import dev.kikugie.soundboard.audio.AudioConfiguration
 import dev.kikugie.soundboard.config.AudioConfig
 import dev.kikugie.soundboard.entrypoint.SoundboardEntrypoint
-import dev.kikugie.soundboard.gui.component.DurationCutterComponent
-import dev.kikugie.soundboard.gui.component.DynamicTextComponent
-import dev.kikugie.soundboard.gui.component.TimeInputComponent
+import dev.kikugie.soundboard.gui.component.*
 import dev.kikugie.soundboard.gui.component.TimeInputComponent.Companion.asString
-import dev.kikugie.soundboard.gui.component.WaveformComponent
-import dev.kikugie.soundboard.util.children
-import dev.kikugie.soundboard.util.duration
-import dev.kikugie.soundboard.util.read
+import dev.kikugie.soundboard.util.*
+import io.wispforest.owo.ui.component.Components
+import io.wispforest.owo.ui.component.SlimSliderComponent
 import io.wispforest.owo.ui.container.Containers
-import io.wispforest.owo.ui.container.FlowLayout
+import io.wispforest.owo.ui.container.GridLayout
 import io.wispforest.owo.ui.container.WrappingParentComponent
 import io.wispforest.owo.ui.core.*
 import kotlin.time.Duration
@@ -23,22 +20,30 @@ class SoundSettingsWidget(
     access: SoundboardEntrypoint,
     horizontalSizing: Sizing,
     verticalSizing: Sizing,
-) : WrappingParentComponent<FlowLayout>(
+) : WrappingParentComponent<GridLayout>(
     horizontalSizing,
     verticalSizing,
-    Containers.verticalFlow(Sizing.fill(), Sizing.fill())
+    FlexibleGridLayout(2, 2)
 ) {
     private val data = entry.read(access.format)
     private val duration = access.format.duration(data.size)
-    private val default = AudioConfiguration(Duration.ZERO, duration, 1F)
+    private val default = AudioConfiguration(Duration.ZERO, duration, 1.0)
     private val settings = AudioConfig[entry] ?: default.clone()
 
     init {
-        val waveform = WaveformComponent(data, Sizing.fill(), Sizing.expand())
+        val waveform = WaveformComponent(data)
         val cutter = DurationCutterComponent(duration, settings::start, settings::end)
-
-        val stack = Containers.stack(Sizing.fill(), Sizing.expand())
+        // Top left
+        val stack = Containers.stack(Sizing.expand(), Sizing.expand())
             .children(waveform, cutter)
+            .surface(Surface.PANEL_INSET)
+        // Top right
+        val volume = Components.slimSlider(SlimSliderComponent.Axis.VERTICAL).apply {
+            value(1 - settings.volume)
+            verticalSizing(Sizing.expand())
+            ended { settings.volume = 1 - value() }
+        }
+
         val label = object : DynamicTextComponent() {
             init {
                 horizontalTextAlignment(HorizontalAlignment.CENTER)
@@ -55,14 +60,26 @@ class SoundSettingsWidget(
             override fun isValid(duration: Duration): Boolean = duration >= settings.start
             override fun onChanged(duration: Duration) = cutter.update()
         }
-        val grid = Containers.grid(Sizing.fill(), Sizing.content(2), 1, 3)
+        // Bottom right
+        val times = Containers.grid(Sizing.expand(), Sizing.content(), 1, 3)
             .child(min,0, 0)
             .child(label, 0, 1)
             .child(max, 0, 2)
             .alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
-        child.gap(2)
-        child.padding(Insets.of(3))
-        child.children(stack, grid)
+        // Bottom left
+        val play = Components.button("▶".asText()) {
+            access.scheduleArray(data, true, settings)
+        }.horizontalSizing(Sizing.fixed(20))
+
+        with(child) {
+            horizontalAlignment(HorizontalAlignment.CENTER)
+            verticalAlignment(VerticalAlignment.CENTER)
+            padding(Insets.of(5))
+            child(stack, 0, 0)
+            child(volume, 0, 1)
+            child(times, 1, 0)
+            child(play, 1, 1)
+        }
     }
 
     fun update() {
