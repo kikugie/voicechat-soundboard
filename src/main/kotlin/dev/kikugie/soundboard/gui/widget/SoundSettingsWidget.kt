@@ -34,9 +34,12 @@ class SoundSettingsWidget(
         val waveform = WaveformComponent(data)
         val cutter = DurationCutterComponent(duration, settings::start, settings::end)
         // Top left
-        val stack = Containers.stack(Sizing.expand(), Sizing.expand())
-            .children(waveform, cutter)
-            .surface(Surface.PANEL_INSET)
+        val stack = Containers.stack(Sizing.expand(), Sizing.expand()).apply {
+            padding(Insets.of(1))
+            surface(Surface.PANEL_INSET)
+            children(waveform, cutter)
+        }
+
         // Top right
         val volume = Components.slimSlider(SlimSliderComponent.Axis.VERTICAL).apply {
             value(1 - settings.volume)

@@ -1,9 +1,6 @@
 package dev.kikugie.soundboard.audio
 
-import dev.kikugie.soundboard.util.bytesToShorts
-import dev.kikugie.soundboard.util.duration
-import dev.kikugie.soundboard.util.offset
-import dev.kikugie.soundboard.util.reassign
+import dev.kikugie.soundboard.util.*
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioInputStream
 import kotlin.math.min
@@ -18,6 +15,7 @@ class ArrayAudioProvider(
     format: AudioFormat,
     override val configuration: AudioConfiguration,
 ) : AudioProvider {
+    private val volume = configuration.volume.volumeScale
     private val until = format.offset(configuration.end).coerceAtMost(data.size)
     private var cursor: Int = format.offset(configuration.start)
     override fun next(samples: Int): ShortArray? {
@@ -27,7 +25,7 @@ class ArrayAudioProvider(
         if (configuration.volume > 0)
             data.copyInto(array, 0, cursor, end)
         if (configuration.volume < 1)
-            array.reassign { (it * configuration.volume).toInt().toShort() }
+            array.reassign { (it * volume).toInt().toShort() }
         cursor += samples
         return array
     }
@@ -39,6 +37,7 @@ class StreamAudioProvider(
     private val input: AudioInputStream,
     override val configuration: AudioConfiguration,
 ) : AudioProvider {
+    private val volume = configuration.volume.volumeScale
     private val format = input.format
     private val duration = input.duration
     private val until = format.offset(configuration.end).coerceAtMost(format.offset(duration))
@@ -55,7 +54,7 @@ class StreamAudioProvider(
         if (configuration.volume > 0)
             bytesToShorts(input.readNBytes((end - cursor) * format.frameSize)).copyInto(array)
         if (configuration.volume < 1)
-            array.reassign { (it * configuration.volume).toInt().toShort() }
+            array.reassign { (it * volume).toInt().toShort() }
         cursor += samples
         return array
     }
