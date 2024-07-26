@@ -10,10 +10,8 @@ import de.maxhenkel.voicechat.api.events.MergeClientSoundEvent
 import dev.kikugie.soundboard.MOD_ID
 import dev.kikugie.soundboard.Soundboard
 import dev.kikugie.soundboard.audio.AudioScheduler
-import dev.kikugie.soundboard.audio.StreamAudioScheduler
 import net.fabricmc.api.ClientModInitializer
 import net.minecraft.client.MinecraftClient
-import java.nio.file.Path
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioFormat.Encoding.PCM_SIGNED
 
@@ -47,7 +45,7 @@ object SVCEntrypoint : SoundboardEntrypoint, VoicechatPlugin, ClientModInitializ
     override val format = AudioFormat(PCM_SIGNED, 48000F, 16, 1, 2, 48000F, false)
     override var connected = false
         private set
-    override val scheduler: AudioScheduler = Soundboard.config.schedulerType.create(this)
+    override val scheduler: AudioScheduler = AudioScheduler(this)
     override val muted: Boolean
         get() = api?.run { isMuted || isDisabled || isDisconnected } ?: true
 }

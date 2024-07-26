@@ -56,7 +56,7 @@ object PlasmoEntrypoint : SoundboardEntrypoint, AddonInitializer, ClientModIniti
         get() = client.serverInfo.orElseThrow().voiceInfo.createFormat(false)
     override val connected: Boolean
         get() = client.serverConnection.isPresent
-    override val scheduler: AudioScheduler = Soundboard.config.schedulerType.create(this)
+    override val scheduler: AudioScheduler = AudioScheduler(this)
     override val muted: Boolean
         get() = !client.audioCapture.isActive || !connected
 

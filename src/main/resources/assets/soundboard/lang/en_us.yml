@@ -10,5 +10,7 @@ soundboard:
   browser:
     tooltip:
       unavailable: Proximity chat muted or disconnected
-      directory: Hold Shift and click to open in your file manager
-      file: Hold Shift and click to play locally
+      directory: Shift-click to open in your file manager
+      file: | 
+        Shift-click to play locally
+        Ctrl-click to open audio cutter

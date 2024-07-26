@@ -1,6 +1,7 @@
 package dev.kikugie.soundboard
 
 import dev.kikugie.soundboard.SoundRegistry.SoundGroup
+import dev.kikugie.soundboard.audio.AudioConfiguration
 import dev.kikugie.soundboard.util.*
 import it.unimi.dsi.fastutil.objects.Object2LongMap
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap
@@ -11,7 +12,6 @@ import net.minecraft.resource.ResourceManager
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.profiler.Profiler
-import java.io.Closeable
 import java.io.InputStream
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
@@ -74,7 +74,7 @@ object SoundRegistry : SimpleResourceReloadListener<EntryMap> {
         location = if ('/' in location) location.substringBeforeLast('/') else ""
         location = "${id.namespace}:$location"
         val name = id.path.substringAfterLast('/').removeSuffix(FORMAT)
-        return location to SoundEntry(name, resource::getInputStream)
+        return location to SoundEntry(name, location, resource::getInputStream)
     }
 
     private fun updatePath(directory: String, force: Boolean = false) {
@@ -89,7 +89,7 @@ object SoundRegistry : SimpleResourceReloadListener<EntryMap> {
             val name = it.fileName.nameWithoutExtension
             val properties = absolute.resolve("$name.properties")
             val title = properties.readTitle() ?: it.getLocal().removeSuffix(FORMAT)
-            SoundEntry(name, it::inputStream, title)
+            SoundEntry(name, directory, it::inputStream, title)
         }
         if (entries.isEmpty()) return null
         val properties = absolute.resolve(".properties")
@@ -123,32 +123,36 @@ object SoundRegistry : SimpleResourceReloadListener<EntryMap> {
         val title: String? = null,
     ) {
         fun title(): Text = title?.asTranslation() ?: run {
-            val (namespace, path) = splitPath()
+            val (namespace, path) = splitPath(path)
             buildString {
                 append("soundboard.dir")
                 append(".$namespace")
                 if (path.isNotEmpty()) append(".$path")
             }.asFallbackTranslation(this@SoundGroup.path)
         }
-
-        internal fun splitPath(): Pair<String, String> {
-            var (namespace, path) = path.split(':')
-            assert(namespace.isNotEmpty())
-            path = path.replace('/', '.')
-            return namespace to path
-        }
     }
 
     data class SoundEntry(
         val name: String,
+        val path: String,
         val supplier: () -> InputStream,
         val title: String? = null,
+        var settings: AudioConfiguration? = null
     ) {
-        fun title(group: SoundGroup) = title?.asTranslation() ?: run {
-            var (namespace, path) = group.splitPath()
+        val id get() = "$path/$name"
+
+        fun title() = title?.asTranslation() ?: run {
+            var (namespace, path) = splitPath(path)
             path += ".$name"
             if (path.startsWith('.')) path = path.drop(1)
             "soundboard.file.$namespace.$path".asFallbackTranslation(name)
         }
+    }
+
+    internal fun splitPath(path: String): Pair<String, String> {
+        var (namespace, location) = path.split(':')
+        assert(namespace.isNotEmpty())
+        location = location.replace('/', '.')
+        return namespace to location
     }
 }

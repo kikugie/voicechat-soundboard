@@ -25,7 +25,10 @@ object Soundboard {
         SoundRegistry.BASE_DIR.createDirectories()
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(SoundRegistry)
         keybind(GLFW.GLFW_KEY_J, "browser", SoundBrowser.Companion::open) {
-            SoundBrowser.keyAction(it, SoundBrowser::close)
+            SoundBrowser.keyAction(it) {
+                if (settings != null) closeSettings()
+                else close()
+            }
         }
         keybind(GLFW.GLFW_KEY_U, "cancel", { SoundboardAccess.forEach { scheduler.reset() } }) {
             SoundBrowser.keyAction(it) { SoundboardAccess.forEach { scheduler.reset() } }

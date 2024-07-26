@@ -1,13 +1,9 @@
 package dev.kikugie.soundboard.gui
 
 import dev.kikugie.soundboard.SoundRegistry
-import dev.kikugie.soundboard.audio.AudioConfiguration
-import dev.kikugie.soundboard.audio.bytesToShorts
-import dev.kikugie.soundboard.audio.convert
+import dev.kikugie.soundboard.SoundRegistry.update
 import dev.kikugie.soundboard.entrypoint.SoundboardAccess
-import dev.kikugie.soundboard.gui.component.DurationCutterComponent
 import dev.kikugie.soundboard.gui.component.ScrollingButtonComponent
-import dev.kikugie.soundboard.gui.component.WaveformComponent
 import dev.kikugie.soundboard.gui.widget.SoundSettingsWidget
 import dev.kikugie.soundboard.mixin.owo_ui.GridLayoutAccessor
 import dev.kikugie.soundboard.mixin.owo_ui.ScrollContainerAccessor
@@ -16,29 +12,35 @@ import io.wispforest.owo.ui.base.BaseUIModelScreen
 import io.wispforest.owo.ui.component.ButtonComponent
 import io.wispforest.owo.ui.component.LabelComponent
 import io.wispforest.owo.ui.container.*
-import io.wispforest.owo.ui.core.*
-import net.minecraft.client.MinecraftClient
+import io.wispforest.owo.ui.core.Component
+import io.wispforest.owo.ui.core.Positioning
+import io.wispforest.owo.ui.core.Sizing
+import io.wispforest.owo.ui.core.Surface
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.text.Text
 import net.minecraft.util.Util
-import java.io.BufferedInputStream
-import javax.sound.sampled.AudioSystem
 import kotlin.math.ceil
-import kotlin.time.Duration.Companion.seconds
 
 class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWSER) {
     private var scrollbar: ScrollContainerAccessor? = null
+    internal var settings: SoundSettingsWidget? = null
+    internal lateinit var root: FlowLayout
+
+    fun closeSettings() {
+        settings?.update()
+        settings?.parent()?.let { root.removeChild(it) }
+        settings = null
+    }
 
     override fun build(root: FlowLayout) {
-        SoundRegistry.update()
-        populateEntries(root)
+        this.root = root
+        update()
+        populateEntries()
         scrollbar = root.childById<ScrollContainer<*>>("scroll") as? ScrollContainerAccessor
         for (it in root.all()) it.keyPress { key, scan, _ ->
-            val found = keybinds
-                .firstOrNull { it.first.matchesKey(key, scan) }
-                ?.also { it.second(this) }
-            found != null
+            keybinds.firstOrNull { it.first.matchesKey(key, scan) }
+                ?.also { it.second(this) } != null
         }
     }
 
@@ -49,26 +51,28 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
 
     override fun close() {
         savedOffset = scrollbar?.scrollOffset ?: 0.0
+        settings?.update()
         super.close()
     }
 
     override fun shouldPause(): Boolean = false
 
-    private fun populateEntries(root: FlowLayout) {
+    private fun populateEntries() {
         val container: FlowLayout = root.childById("container")!!
-        container.children(SoundRegistry.entries.mapNotNull{create(root, it)}.toList())
+        container.children(SoundRegistry.entries.mapNotNull { create(it) }.toList())
     }
 
-    private fun create(root: FlowLayout, group: SoundRegistry.SoundGroup): FlowLayout? {
+    private fun create(group: SoundRegistry.SoundGroup): FlowLayout? {
         if (group.entries.isEmpty()) return null
         val buttons = group.entries.map { entry ->
-            button(entry.title(group)) {
-                if (Screen.hasControlDown()) createWaveformOverlay(root, entry)
-                else SoundboardAccess.play(Screen.hasShiftDown(), entry)
+            button(entry.title()) {
+                settings?.update()
+                if (Screen.hasControlDown()) createWaveformOverlay(entry)
+                else SoundboardAccess.play(entry, Screen.hasShiftDown())
             }
         }
         val path = group.path
-        val template = group()
+        val template: FlowLayout = model.template("group")
         val label: CollapsibleContainer = template.childById("collapse") ?: return null
         val location = runCatching { SoundRegistry.BASE_DIR.resolve(path).toFile() }.getOrNull()
         val locationExists = location?.exists() == true
@@ -97,48 +101,28 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
         return template
     }
 
-    private fun createWaveformOverlay(root: FlowLayout, entry: SoundRegistry.SoundEntry) {
-        val format = SoundboardAccess.first { format } ?: return
-        val window = MinecraftClient.getInstance().window
-//        val data = bytesToShorts(
-//            entry.supplier().use {
-//                convert(AudioSystem.getAudioInputStream(BufferedInputStream(it)), format).readAllBytes()
-//            }
-//        )
-//        val waveform = WaveformComponent(data)
-//        val obj = object {
-//            var min = 1.seconds
-//            var max = 9.seconds
-//        }
-//
-//        val cutter = DurationCutterComponent(
-//            10.seconds,
-//            obj::min,
-//            obj::max,
-//        )
-//        val stack = Containers.stack(Sizing.fill(), Sizing.fill())
-//            .child(waveform)
-//            .child(cutter)
-//            .padding(Insets.of(3))
-        val widget = SoundSettingsWidget(
+    private fun createWaveformOverlay(entry: SoundRegistry.SoundEntry) {
+        settings = SoundSettingsWidget(
             entry,
-            SoundboardAccess.delegates.first(), null,
+            SoundboardAccess.delegates.first(),
             Sizing.fill(), Sizing.fill()
         )
 
-
-        val overlay = Containers.overlay(widget)
-            .closeOnClick(false)
-            .surface(Surface.PANEL)
-            .positioning(Positioning.absolute(window.scaledWidth / 2 - 100, window.scaledHeight / 2 - 100))
-            .sizing(Sizing.fill(50), Sizing.fill(50))
-            .zIndex(100)
-            .mouseDown { _, _, _ -> true }
-
+        val overlay = Containers.overlay(settings).apply {
+            sizing(Sizing.fill(50))
+            closeOnClick(false)
+            surface(Surface.PANEL)
+            positioning(Positioning.relative(50, 50))
+            zIndex(100)
+            mouseDown { _, _, _ -> true }
+            keyPress { key, scan, _ ->
+                keybinds.firstOrNull { it.first.matchesKey(key, scan) }
+                    ?.also { it.second(this@SoundBrowser) } != null
+            }
+        }
         root.child(overlay)
     }
 
-    private fun group(): FlowLayout = model.template("group")
     private fun button(name: Text, onPress: (ButtonComponent) -> Unit): ButtonComponent =
         ScrollingButtonComponent(name, onPress).apply {
             val muted = SoundboardAccess.all { muted }

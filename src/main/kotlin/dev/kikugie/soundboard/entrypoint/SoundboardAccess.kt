@@ -14,5 +14,5 @@ object SoundboardAccess {
     inline fun all(selector: SoundboardEntrypoint.() -> Boolean) = delegates.all(selector)
     inline fun forEach(action: SoundboardEntrypoint.() -> Unit) = delegates.forEach(action)
 
-    fun play(local: Boolean, entry: SoundRegistry.SoundEntry) = forEach { play(local, entry) }
+    fun play(entry: SoundRegistry.SoundEntry, local: Boolean) = forEach { scheduleStream(entry, local) }
 }

@@ -1,7 +1,6 @@
 package dev.kikugie.soundboard.config
 
 import dev.kikugie.soundboard.LOGGER
-import dev.kikugie.soundboard.audio.SchedulerType
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -12,8 +11,7 @@ import kotlin.io.path.*
 
 @Serializable
 @OptIn(ExperimentalSerializationApi::class)
-data class SoundboardConfig(
-    var schedulerType: SchedulerType = SchedulerType.STREAM,
+class SoundboardConfig(
 ) {
     fun save() = try {
         file.createParentDirectories()

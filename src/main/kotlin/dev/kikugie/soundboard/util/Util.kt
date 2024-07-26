@@ -1,14 +1,11 @@
 package dev.kikugie.soundboard.util
 
 import dev.kikugie.soundboard.MOD_ID
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import kotlin.coroutines.CoroutineContext
-import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.*
-import kotlin.reflect.full.starProjectedType
 
 typealias Property<T> = KMutableProperty0<T>
 
@@ -20,5 +17,9 @@ fun String.asTranslation(vararg args: String): Text = Text.translatable(this, *a
 fun String.asFallbackTranslation(fallback: String, vararg args: String): Text = Text.translatableWithFallback(this, fallback, args)
 
 inline fun runOn(context: CoroutineContext, crossinline action: () -> Unit) {
-    runBlocking { withContext(context) { action() } }
+    CoroutineScope(context).launch { action() }
+}
+
+inline fun ShortArray.reassign(transform: (Short) -> Short) {
+    for (i in indices) this[i] = transform(this[i])
 }
