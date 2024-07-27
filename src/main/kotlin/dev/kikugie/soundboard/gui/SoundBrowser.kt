@@ -26,6 +26,7 @@ import kotlin.math.ceil
 
 class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWSER) {
     private lateinit var root: FlowLayout
+    private var favourites: FlowLayout? = null
     private var scrollbar: ScrollContainerAccessor? = null
     internal var settings: SoundSettingsWidget? = null
 
@@ -35,10 +36,17 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
         settings = null
     }
 
+    fun createFavourites(container: FlowLayout = root.childById<FlowLayout>("container")!!) {
+        container.removeChild(favourites)
+        favourites = group(SoundRegistry.favourites, false)
+        if (favourites != null) container.child(0, favourites)
+    }
+
     override fun build(root: FlowLayout) = with(root) {
         this@SoundBrowser.root = root
         SoundRegistry.update()
         childById<FlowLayout>("container")?.apply {
+            createFavourites(this)
             children(SoundRegistry.groups.mapNotNull { group(it, it.path.isEmpty()) }.toList())
         } ?: error("Missing browser container")
         scrollbar = childById<ScrollContainer<*>>("scroll") as? ScrollContainerAccessor
@@ -64,7 +72,7 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
     private fun group(group: SoundGroup, keepEmpty: Boolean): FlowLayout? =
         if (group.entries.isEmpty() && !keepEmpty) null
         else model.template<FlowLayout>("group").apply {
-            val path = SoundRegistry.BASE_DIR.resolve(group.path).takeIf { it.exists() }
+            val path = runCatching { SoundRegistry.BASE_DIR.resolve(group.path) }.getOrNull()?.takeIf { it.exists() }
             val container = childById<CollapsibleContainer>("collapse")?.apply {
                 if (path != null) mouseDown { _, _, _ -> shiftDown then { Util.getOperatingSystem().open(path) } }
                 if (group.path in collapsedPaths) expanded = false
@@ -72,7 +80,7 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
             } ?: error("Missing group container")
 
             val buttons = group.entries.map {
-                this@SoundBrowser.button(it.title()) { _ ->
+                this@SoundBrowser.button(it.title) { _ ->
                     settings?.update()
                     if (ctrlDown) settings(it)
                     else play(it, shiftDown)
@@ -80,7 +88,7 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
             }
 
             container.titleLayout().children.filterIsInstance<LabelComponent>().firstOrNull()?.apply {
-                text = group.title()
+                text = group.title
                 if (path != null) tooltipText = DIRECTORY_TOOLTIP.translation()
             } ?: error("Missing group header")
 

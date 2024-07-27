@@ -1,6 +1,6 @@
 package dev.kikugie.soundboard.config
 
-import com.google.gson.GsonBuilder
+import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import dev.kikugie.soundboard.audio.AudioConfiguration
 import dev.kikugie.soundboard.audio.SoundEntry
@@ -38,14 +38,14 @@ object AudioConfig {
 
     fun load() {
         if (file.exists() && file.isReadable()) file.reader().use {
-            val token: TypeToken<ConfigEntries> = TypeToken.getParameterized(Map::class.java, String::class.java, AudioConfiguration::class.java) as TypeToken<ConfigEntries>
-            val conf: ConfigEntries = json.fromJson(it, token)
+            val token: TypeToken<MutableMap<String, AudioConfiguration>> = TypeToken.getParameterized(Map::class.java, String::class.java, AudioConfiguration::class.java) as TypeToken<MutableMap<String, AudioConfiguration>>
+            val conf = json.fromJson(it, token).mapKeys { e -> SoundId(e.key) }
             configurations.clear()
             configurations.putAll(conf)
         }
     }
 
     fun save() {
-        file.writeText(json.toJson(configurations), Charsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
+        file.writeText(json.toJson(configurations.mapKeys { it.key.str }), Charsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
     }
 }

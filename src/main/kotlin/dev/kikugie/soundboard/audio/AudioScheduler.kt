@@ -3,6 +3,8 @@ package dev.kikugie.soundboard.audio
 import dev.kikugie.soundboard.entrypoint.SoundboardEntrypoint
 
 class AudioScheduler(val entry: SoundboardEntrypoint) {
+    val playing: Boolean
+        get() = provider != null
     var local: Boolean = false
         private set
     var provider: AudioProvider? = null

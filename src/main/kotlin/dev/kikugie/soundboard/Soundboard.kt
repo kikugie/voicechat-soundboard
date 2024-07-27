@@ -1,5 +1,7 @@
 package dev.kikugie.soundboard
 
+import dev.kikugie.soundboard.audio.SoundRegistry
+import dev.kikugie.soundboard.config.AudioConfig
 import dev.kikugie.soundboard.config.SoundboardConfig
 import dev.kikugie.soundboard.entrypoint.SoundboardAccess
 import dev.kikugie.soundboard.gui.SoundBrowser
@@ -23,6 +25,7 @@ object Soundboard {
         if (ready) return
         ready = true
 
+        AudioConfig // Inits the object
         SoundRegistry.BASE_DIR.createDirectories()
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(SoundRegistry)
         keybind(GLFW.GLFW_KEY_J, "browser", SoundBrowser.Companion::open) {

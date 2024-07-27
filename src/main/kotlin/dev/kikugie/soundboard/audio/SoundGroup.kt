@@ -7,14 +7,17 @@ import net.minecraft.text.Text
 data class SoundGroup(
     val path: String,
     val entries: List<SoundEntry>,
-    val title: String? = null,
+    private val name: String? = null,
 ) {
-    fun title(): Text = title?.translation() ?: run {
-        val (namespace, path) = SoundRegistry.splitPath(path)
-        buildString {
-            append("soundboard.dir")
-            append(".$namespace")
-            if (path.isNotEmpty()) append(".$path")
-        }.fallbackTranslation(this@SoundGroup.path)
+    fun isEmpty() = entries.isEmpty()
+    val title: Text by lazy {
+        name?.translation() ?: run {
+            val (namespace, path) = SoundRegistry.splitPath(path)
+            buildString {
+                append("soundboard.dir")
+                append(".$namespace")
+                if (path.isNotEmpty()) append(".$path")
+            }.fallbackTranslation(this@SoundGroup.path)
+        }
     }
 }

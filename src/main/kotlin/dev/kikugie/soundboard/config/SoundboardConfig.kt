@@ -1,6 +1,9 @@
 package dev.kikugie.soundboard.config
 
 import dev.kikugie.soundboard.LOGGER
+import dev.kikugie.soundboard.audio.SoundId
+import dev.kikugie.soundboard.util.runOn
+import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -12,12 +15,15 @@ import kotlin.io.path.*
 @Serializable
 @OptIn(ExperimentalSerializationApi::class)
 class SoundboardConfig(
+    val favourites: MutableList<SoundId> = mutableListOf(),
 ) {
-    fun save() = try {
-        file.createParentDirectories()
-        file.outputStream().use { json.encodeToStream(this, it) }
-    } catch (e: Exception) {
-        LOGGER.error("Failed to save config $file", e)
+    fun save() = runOn(Dispatchers.IO) {
+        try {
+            file.createParentDirectories()
+            file.outputStream().use { json.encodeToStream(this, it) }
+        } catch (e: Exception) {
+            LOGGER.error("Failed to save config $file", e)
+        }
     }
 
     companion object Loader {

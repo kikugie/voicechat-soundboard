@@ -64,7 +64,7 @@ tasks.register<Copy>("buildAndCollect") {
 
 publishMods {
     file = tasks.remapJar.get().archiveFile
-    displayName = "${mod.name} ${mod.version}"
+    displayName = "Plasmo Soundboard ${mod.version}"
     version = mod.version
     changelog = rootProject.file("CHANGELOG.md").readText()
     type = ReleaseType.of(project.property("release").toString())

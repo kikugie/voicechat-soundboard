@@ -109,8 +109,8 @@ class DurationCutterComponent(
             val color = if (hovered) 0xFFFFFF else 0x808080
             val u = if (hovered) 8F else 0F
             context.drawLinePrecise(x + 1.5, y + 7.0, x + 1.5, y + height - 7.0, thickness, Color.ofRgb(color))
-            context.drawTexture(POINTER_TEXTURE, x - 2, y, 8, 8, u, 0F, 8, 8, 16, 16)
-            context.drawTexture(POINTER_TEXTURE, x - 2, y + height - 8, 8, 8, u, 8F, 8, 8, 16, 16)
+            context.drawTexture(POINTER_TEXTURE, x - 2, y, 8, 8, u, 0F, 8, 8, TEXTURE_SIZE, TEXTURE_SIZE)
+            context.drawTexture(POINTER_TEXTURE, x - 2, y + height - 8, 8, 8, u, 8F, 8, 8, TEXTURE_SIZE, TEXTURE_SIZE)
         }
 
         fun move(delta: Double) = moveTo(container.width * pos + delta)
@@ -122,5 +122,6 @@ class DurationCutterComponent(
 
     companion object {
         val POINTER_TEXTURE = idOf("textures/gui/pointer.png")
+        const val TEXTURE_SIZE = 16
     }
 }

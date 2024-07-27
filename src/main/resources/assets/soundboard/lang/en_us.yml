@@ -3,6 +3,10 @@ soundboard:
     - text: Soundboard
       color: aqua
       bold: true
+  favourites:
+    - text: Favourites
+      color: yellow
+      bold: true
   keybinds:
     browser: Open audio browser
     cancel: Cancel sound playback
@@ -17,3 +21,6 @@ soundboard:
       play: |
         Play the sound locally
         Press %s to close the widget
+      close: Close audio editor
+      favourite: Add to favourites
+      unfavourite: Remove from favourites

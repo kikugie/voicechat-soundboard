@@ -21,7 +21,7 @@ fun AudioFormat.duration(length: Long): Duration =
     (length / sampleRate.toDouble()).seconds
 
 fun AudioFormat.offset(duration: Duration): Int =
-    (frameRate * (duration.inWholeMicroseconds / 1_000_000.0) / frameSize).toInt()
+    (sampleRate * (duration.inWholeMicroseconds / 1_000_000.0)).toInt()
 
 val AudioInputStream.duration: Duration
     get() = format.duration(frameLength)

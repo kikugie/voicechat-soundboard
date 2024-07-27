@@ -2,6 +2,7 @@ package dev.kikugie.soundboard.util
 
 import dev.kikugie.soundboard.MOD_ID
 import kotlinx.coroutines.*
+import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.util.Identifier
 import kotlin.coroutines.CoroutineContext
@@ -25,6 +26,12 @@ inline infix fun Boolean.then(action: () -> Unit): Boolean {
     return this
 }
 
+val client = MinecraftClient.getInstance()
+
 val shiftDown: Boolean get() = Screen.hasShiftDown()
 val ctrlDown: Boolean get() = Screen.hasControlDown()
 val altDown: Boolean get() = Screen.hasAltDown()
+
+var currentScreen
+    get() = client.currentScreen
+    set(value) { client.setScreen(value)}

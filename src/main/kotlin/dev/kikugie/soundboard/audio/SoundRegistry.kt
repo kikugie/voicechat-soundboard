@@ -1,5 +1,6 @@
 package dev.kikugie.soundboard.audio
 
+import dev.kikugie.soundboard.Soundboard
 import dev.kikugie.soundboard.util.PropertiesReader
 import dev.kikugie.soundboard.util.idOf
 import dev.kikugie.soundboard.util.memoize
@@ -37,6 +38,8 @@ object SoundRegistry : SimpleResourceReloadListener<EntryMap> {
 
     val groups get() = localEntries.values.asSequence() + resourceEntries.values.asSequence()
     val entries get() = localEntries.allEntries + resourceEntries.allEntries
+    lateinit var favourites: SoundGroup
+        private set
 
     operator fun get(id: SoundId): SoundEntry? =
         localCache(id) ?: resourceCache(id)
@@ -48,6 +51,12 @@ object SoundRegistry : SimpleResourceReloadListener<EntryMap> {
             .filter { it.isDirectory() }
             .forEach { updatePath(it.getLocal()) }
         localCache.clear()
+        updateFavourites()
+    }
+
+    fun updateFavourites() {
+        favourites = constructFavourites()
+        Soundboard.config.save()
     }
 
     override fun getFabricId(): Identifier = idOf("sound_registry")
@@ -122,6 +131,11 @@ object SoundRegistry : SimpleResourceReloadListener<EntryMap> {
         val oldModified = if (!force) fileAccessCache.getLong(directory) else 0L
         fileAccessCache.put(directory, newModified)
         return newModified != oldModified || force
+    }
+
+    private fun constructFavourites(): SoundGroup {
+        val favourites = Soundboard.config.favourites.mapNotNull(::get)
+        return SoundGroup("!favourites", favourites, "soundboard.favourites")
     }
 
     private fun Path.getLocal() = BASE_DIR.relativize(this).joinToString("/")
