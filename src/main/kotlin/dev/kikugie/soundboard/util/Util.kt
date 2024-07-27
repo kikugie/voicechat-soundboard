@@ -2,6 +2,7 @@ package dev.kikugie.soundboard.util
 
 import dev.kikugie.soundboard.MOD_ID
 import kotlinx.coroutines.*
+import net.minecraft.client.gui.screen.Screen
 import net.minecraft.util.Identifier
 import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.*
@@ -18,3 +19,12 @@ inline fun runOn(context: CoroutineContext, crossinline action: () -> Unit) {
 inline fun ShortArray.reassign(transform: (Short) -> Short) {
     for (i in indices) this[i] = transform(this[i])
 }
+
+inline infix fun Boolean.then(action: () -> Unit): Boolean {
+    if (this) action()
+    return this
+}
+
+val shiftDown: Boolean get() = Screen.hasShiftDown()
+val ctrlDown: Boolean get() = Screen.hasControlDown()
+val altDown: Boolean get() = Screen.hasAltDown()

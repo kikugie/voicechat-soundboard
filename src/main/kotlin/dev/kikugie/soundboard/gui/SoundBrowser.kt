@@ -1,9 +1,11 @@
 package dev.kikugie.soundboard.gui
 
 import dev.kikugie.kowoui.*
-import dev.kikugie.soundboard.SoundRegistry
-import dev.kikugie.soundboard.SoundRegistry.update
+import dev.kikugie.soundboard.audio.SoundEntry
+import dev.kikugie.soundboard.audio.SoundGroup
+import dev.kikugie.soundboard.audio.SoundRegistry
 import dev.kikugie.soundboard.entrypoint.SoundboardAccess
+import dev.kikugie.soundboard.entrypoint.SoundboardAccess.play
 import dev.kikugie.soundboard.gui.component.ScrollingButtonComponent
 import dev.kikugie.soundboard.gui.widget.SoundSettingsWidget
 import dev.kikugie.soundboard.mixin.owo_ui.GridLayoutAccessor
@@ -13,14 +15,13 @@ import io.wispforest.owo.ui.base.BaseUIModelScreen
 import io.wispforest.owo.ui.component.ButtonComponent
 import io.wispforest.owo.ui.component.LabelComponent
 import io.wispforest.owo.ui.container.*
-import io.wispforest.owo.ui.core.Component
 import io.wispforest.owo.ui.core.Positioning
 import io.wispforest.owo.ui.core.Sizing
 import io.wispforest.owo.ui.core.Surface
-import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.text.Text
 import net.minecraft.util.Util
+import kotlin.io.path.exists
 import kotlin.math.ceil
 
 class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWSER) {
@@ -34,14 +35,16 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
         settings = null
     }
 
-    override fun build(root: FlowLayout) {
-        this.root = root
-        update()
-        populateEntries()
-        scrollbar = root.childById<ScrollContainer<*>>("scroll") as? ScrollContainerAccessor
-        for (it in root.all()) it.keyPress { key, scan, _ ->
+    override fun build(root: FlowLayout) = with(root) {
+        this@SoundBrowser.root = root
+        SoundRegistry.update()
+        childById<FlowLayout>("container")?.apply {
+            children(SoundRegistry.groups.mapNotNull { group(it, it.path.isEmpty()) }.toList())
+        } ?: error("Missing browser container")
+        scrollbar = childById<ScrollContainer<*>>("scroll") as? ScrollContainerAccessor
+        for (it in all()) it.keyPress { key, scan, _ ->
             keybinds.firstOrNull { it.first.matchesKey(key, scan) }
-                ?.also { it.second(this) } != null
+                ?.also { it.second(this@SoundBrowser) } != null
         }
     }
 
@@ -58,51 +61,40 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
 
     override fun shouldPause(): Boolean = false
 
-    private fun populateEntries() {
-        val container: FlowLayout = root.childById("container")!!
-        container.children(SoundRegistry.entries.mapNotNull { create(it) }.toList())
-    }
+    private fun group(group: SoundGroup, keepEmpty: Boolean): FlowLayout? =
+        if (group.entries.isEmpty() && !keepEmpty) null
+        else model.template<FlowLayout>("group").apply {
+            val path = SoundRegistry.BASE_DIR.resolve(group.path).takeIf { it.exists() }
+            val container = childById<CollapsibleContainer>("collapse")?.apply {
+                if (path != null) mouseDown { _, _, _ -> shiftDown then { Util.getOperatingSystem().open(path) } }
+                if (group.path in collapsedPaths) expanded = false
+                toggled { if (it) collapsedPaths += group.path else collapsedPaths -= group.path }
+            } ?: error("Missing group container")
 
-    private fun create(group: SoundRegistry.SoundGroup): FlowLayout? {
-        if (group.entries.isEmpty()) return null
-        val buttons = group.entries.map { entry ->
-            button(entry.title()) {
-                settings?.update()
-                if (Screen.hasControlDown()) createWaveformOverlay(entry)
-                else SoundboardAccess.play(entry, Screen.hasShiftDown())
+            val buttons = group.entries.map {
+                this@SoundBrowser.button(it.title()) { _ ->
+                    settings?.update()
+                    if (ctrlDown) settings(it)
+                    else play(it, shiftDown)
+                }
             }
-        }
-        val path = group.path
-        val template: FlowLayout = model.template("group")
-        val label: CollapsibleContainer = template.childById("collapse") ?: return null
-        val location = runCatching { SoundRegistry.BASE_DIR.resolve(path).toFile() }.getOrNull()
-        val locationExists = location?.exists() == true
-        if (locationExists) label.mouseDown { _, _, _ ->
-            Screen.hasShiftDown().also { if (it) Util.getOperatingSystem().open(location) }
-        }
-        val child = label.titleLayout().children().firstOrNull { it is LabelComponent } as? LabelComponent
-        if (locationExists) child?.tooltip(DIRECTORY_TOOLTIP.translation())
-        child?.text(group.title())
 
-        val contents: GridLayout = label.childById("contents") ?: return null
-        contents as GridLayoutAccessor
-        val columns = contents.columns
-        val rows = ceil(buttons.size / columns.toDouble()).toInt()
-        contents.rows = rows
-        contents.children = arrayOfNulls(rows * columns)
-        buttons.forEachIndexed { i, it ->
-            contents.child(it as Component, i / columns, i % columns)
+            container.titleLayout().children.filterIsInstance<LabelComponent>().firstOrNull()?.apply {
+                text = group.title()
+                if (path != null) tooltipText = DIRECTORY_TOOLTIP.translation()
+            } ?: error("Missing group header")
+
+            container.childById<GridLayout>("contents")?.apply {
+                this as GridLayoutAccessor
+                rows = ceil(buttons.size / columns.toDouble()).toInt()
+                children = arrayOfNulls(rows * columns)
+                for ((i, button) in buttons.withIndex())
+                    child(button, i / columns, i % columns)
+            } ?: error("Missing group grid")
         }
 
-        if (label.expanded() && path in collapsedPaths)
-            label.toggleExpansion()
-        label.toggled {
-            if (it) collapsedPaths.remove(path) else collapsedPaths.add(path)
-        }
-        return template
-    }
 
-    private fun createWaveformOverlay(entry: SoundRegistry.SoundEntry) {
+    private fun settings(entry: SoundEntry) {
         settings = SoundSettingsWidget(entry, SoundboardAccess.delegates.first())
         root.overlay(settings!!) {
             sizing = Sizing.fill(50)
@@ -120,8 +112,6 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
 
     private fun button(name: Text, onPress: (ButtonComponent) -> Unit): ButtonComponent =
         ScrollingButtonComponent(name, onPress).apply {
-            active = !SoundboardAccess.all { muted }
-
             val temp: ButtonComponent = model.template("button")
             renderer = temp.renderer
             textShadow = temp.textShadow
@@ -132,14 +122,14 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
             verticalSizing = temp.verticalSizing
             tooltip = temp.tooltip
             zIndex = temp.zIndex
+
+            active = !SoundboardAccess.all { muted }
         }
 
     companion object : ScreenManager(SoundBrowser::class) {
         val BROWSER = idOf("browser")
 
-        private const val FILE_TOOLTIP = "soundboard.browser.tooltip.file"
         private const val DIRECTORY_TOOLTIP = "soundboard.browser.tooltip.directory"
-        private const val MUTED_TOOLTIP = "soundboard.browser.tooltip.unavailable"
 
         private var savedOffset = 0.0
         private val collapsedPaths = mutableSetOf<String>()

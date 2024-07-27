@@ -1,20 +1,16 @@
-package dev.kikugie.soundboard
+package dev.kikugie.soundboard.audio
 
-import dev.kikugie.kowoui.fallbackTranslation
-import dev.kikugie.kowoui.translation
-import dev.kikugie.soundboard.SoundRegistry.SoundGroup
-import dev.kikugie.soundboard.audio.AudioConfiguration
-import dev.kikugie.soundboard.util.*
+import dev.kikugie.soundboard.util.PropertiesReader
+import dev.kikugie.soundboard.util.idOf
+import dev.kikugie.soundboard.util.memoize
 import it.unimi.dsi.fastutil.objects.Object2LongMap
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap
 import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.resource.Resource
 import net.minecraft.resource.ResourceManager
-import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import net.minecraft.util.profiler.Profiler
-import java.io.InputStream
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.concurrent.CompletableFuture
@@ -25,12 +21,25 @@ private typealias EntryMap = Map<String, SoundGroup>
 private typealias MutableEntryMap = MutableMap<String, SoundGroup>
 
 object SoundRegistry : SimpleResourceReloadListener<EntryMap> {
-    val BASE_DIR = FabricLoader.getInstance().configDir.resolve("soundboard")
+    val BASE_DIR: Path = FabricLoader.getInstance().configDir.resolve("soundboard")
     private const val FORMAT = ".wav"
     private val fileAccessCache: Object2LongMap<String> = Object2LongOpenHashMap()
     private val localEntries: MutableEntryMap = mutableMapOf()
     private var resourceEntries: EntryMap = emptyMap()
-    val entries get() = localEntries.values.asSequence() + resourceEntries.values.asSequence()
+
+    private val EntryMap.allEntries get() = values.asSequence().flatMap(SoundGroup::entries)
+    private val localCache = memoize<SoundId, _> { lookup ->
+        localEntries.allEntries.firstOrNull { it.id == lookup }
+    }
+    private val resourceCache = memoize<SoundId, _> { lookup ->
+        resourceEntries.allEntries.firstOrNull { it.id == lookup }
+    }
+
+    val groups get() = localEntries.values.asSequence() + resourceEntries.values.asSequence()
+    val entries get() = localEntries.allEntries + resourceEntries.allEntries
+
+    operator fun get(id: SoundId): SoundEntry? =
+        localCache(id) ?: resourceCache(id)
 
     @OptIn(ExperimentalPathApi::class)
     fun update() {
@@ -38,6 +47,7 @@ object SoundRegistry : SimpleResourceReloadListener<EntryMap> {
             .walk(PathWalkOption.BREADTH_FIRST, PathWalkOption.INCLUDE_DIRECTORIES)
             .filter { it.isDirectory() }
             .forEach { updatePath(it.getLocal()) }
+        localCache.clear()
     }
 
     override fun getFabricId(): Identifier = idOf("sound_registry")
@@ -46,8 +56,7 @@ object SoundRegistry : SimpleResourceReloadListener<EntryMap> {
         manager: ResourceManager,
         profiler: Profiler,
         executor: Executor,
-    ): CompletableFuture<EntryMap> = CompletableFuture
-        .supplyAsync({ manager.findResources("soundboard") {it.path.endsWith(FORMAT)} }, executor)
+    ): CompletableFuture<EntryMap> = CompletableFuture.supplyAsync({ manager.findResources("soundboard") { it.path.endsWith(FORMAT) } }, executor)
         .thenComposeAsync(
             { resources ->
                 val futures = resources.map { (id, file) -> CompletableFuture.supplyAsync({ constructEntry(id, file) }, executor) }
@@ -68,7 +77,7 @@ object SoundRegistry : SimpleResourceReloadListener<EntryMap> {
         profiler: Profiler,
         executor: Executor,
     ): CompletableFuture<Void> = CompletableFuture.runAsync(
-        { synchronized(this@SoundRegistry) { resourceEntries = data } }, executor
+        { synchronized(this@SoundRegistry) { resourceEntries = data; resourceCache.clear() } }, executor
     )
 
     private fun constructEntry(id: Identifier, resource: Resource): Pair<String, SoundEntry> {
@@ -118,38 +127,6 @@ object SoundRegistry : SimpleResourceReloadListener<EntryMap> {
     private fun Path.getLocal() = BASE_DIR.relativize(this).joinToString("/")
 
     private fun Path.readTitle() = runCatching { PropertiesReader.decode(this)["title"] }.getOrNull()
-
-    data class SoundGroup(
-        val path: String,
-        val entries: List<SoundEntry>,
-        val title: String? = null,
-    ) {
-        fun title(): Text = title?.translation() ?: run {
-            val (namespace, path) = splitPath(path)
-            buildString {
-                append("soundboard.dir")
-                append(".$namespace")
-                if (path.isNotEmpty()) append(".$path")
-            }.fallbackTranslation(this@SoundGroup.path)
-        }
-    }
-
-    data class SoundEntry(
-        val name: String,
-        val path: String,
-        val supplier: () -> InputStream,
-        val title: String? = null,
-        var settings: AudioConfiguration? = null
-    ) {
-        val id get() = "$path/$name"
-
-        fun title() = title?.translation() ?: run {
-            var (namespace, path) = splitPath(path)
-            path += ".$name"
-            if (path.startsWith('.')) path = path.drop(1)
-            "soundboard.file.$namespace.$path".translation(name)
-        }
-    }
 
     internal fun splitPath(path: String): Pair<String, String> {
         var (namespace, location) = path.split(':')

@@ -1,6 +1,6 @@
 package dev.kikugie.soundboard.util
 
-import dev.kikugie.soundboard.SoundRegistry
+import dev.kikugie.soundboard.audio.SoundEntry
 import java.io.BufferedInputStream
 import java.io.InputStream
 import javax.sound.sampled.AudioFormat
@@ -29,7 +29,7 @@ val AudioInputStream.duration: Duration
 fun InputStream.convert(format: AudioFormat) =
     convert(AudioSystem.getAudioInputStream(BufferedInputStream(this)), format)
 
-fun SoundRegistry.SoundEntry.read(format: AudioFormat) =
+fun SoundEntry.read(format: AudioFormat) =
     supplier().use { bytesToShorts(it.convert(format).readAllBytes()) }
 
 fun convert(stream: AudioInputStream, targetFormat: AudioFormat): AudioInputStream {

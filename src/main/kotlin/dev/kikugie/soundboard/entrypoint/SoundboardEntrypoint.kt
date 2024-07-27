@@ -1,10 +1,6 @@
 package dev.kikugie.soundboard.entrypoint
 
-import dev.kikugie.soundboard.SoundRegistry
-import dev.kikugie.soundboard.audio.ArrayAudioProvider
-import dev.kikugie.soundboard.audio.AudioConfiguration
-import dev.kikugie.soundboard.audio.AudioScheduler
-import dev.kikugie.soundboard.audio.StreamAudioProvider
+import dev.kikugie.soundboard.audio.*
 import dev.kikugie.soundboard.config.AudioConfig
 import dev.kikugie.soundboard.util.convert
 import dev.kikugie.soundboard.util.read
@@ -30,7 +26,7 @@ interface SoundboardEntrypoint {
     }
 
     fun scheduleArray(
-        entry: SoundRegistry.SoundEntry,
+        entry: SoundEntry,
         local: Boolean,
         configuration: AudioConfiguration = AudioConfig[entry] ?: AudioConfiguration.DEFAULT,
     ) = runOn(Dispatchers.IO) {
@@ -39,7 +35,7 @@ interface SoundboardEntrypoint {
     }
 
     fun scheduleStream(
-        entry: SoundRegistry.SoundEntry,
+        entry: SoundEntry,
         local: Boolean,
         configuration: AudioConfiguration = AudioConfig[entry] ?: AudioConfiguration.DEFAULT,
     ) {

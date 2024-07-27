@@ -1,9 +1,9 @@
 package dev.kikugie.soundboard.gui.widget
 
 import dev.kikugie.kowoui.*
-import dev.kikugie.soundboard.SoundRegistry
 import dev.kikugie.soundboard.Soundboard
 import dev.kikugie.soundboard.audio.AudioConfiguration
+import dev.kikugie.soundboard.audio.SoundEntry
 import dev.kikugie.soundboard.config.AudioConfig
 import dev.kikugie.soundboard.entrypoint.SoundboardEntrypoint
 import dev.kikugie.soundboard.gui.component.*
@@ -17,7 +17,7 @@ import io.wispforest.owo.ui.core.*
 import kotlin.time.Duration
 
 class SoundSettingsWidget(
-    private val entry: SoundRegistry.SoundEntry,
+    private val entry: SoundEntry,
     access: SoundboardEntrypoint,
 ) : WrappingParentComponent<GridLayout>(Sizing.fill(), Sizing.fill(), FlexibleGridLayout(2, 2)) {
     private val data = entry.read(access.format)

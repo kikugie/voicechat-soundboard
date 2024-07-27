@@ -2,8 +2,9 @@ package dev.kikugie.soundboard.config
 
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import dev.kikugie.soundboard.SoundRegistry
 import dev.kikugie.soundboard.audio.AudioConfiguration
+import dev.kikugie.soundboard.audio.SoundEntry
+import dev.kikugie.soundboard.audio.SoundId
 import dev.kikugie.soundboard.util.runOn
 import kotlinx.coroutines.Dispatchers
 import net.fabricmc.loader.api.FabricLoader
@@ -14,7 +15,7 @@ import kotlin.io.path.isReadable
 import kotlin.io.path.reader
 import kotlin.io.path.writeText
 
-private typealias ConfigEntries = MutableMap<String, AudioConfiguration>
+private typealias ConfigEntries = MutableMap<SoundId, AudioConfiguration>
 
 object AudioConfig {
     private val configurations: ConfigEntries = mutableMapOf()
@@ -29,8 +30,8 @@ object AudioConfig {
         load()
     }
 
-    operator fun get(entry: SoundRegistry.SoundEntry): AudioConfiguration? = configurations[entry.id]
-    operator fun set(entry: SoundRegistry.SoundEntry, configuration: AudioConfiguration) {
+    operator fun get(entry: SoundEntry): AudioConfiguration? = configurations[entry.id]
+    operator fun set(entry: SoundEntry, configuration: AudioConfiguration) {
         configurations[entry.id] = configuration
         runOn(Dispatchers.IO) { save() }
     }

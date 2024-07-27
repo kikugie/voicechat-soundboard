@@ -4,6 +4,7 @@ package dev.kikugie.kowoui
 
 import io.wispforest.owo.ui.component.*
 import io.wispforest.owo.ui.component.ButtonComponent.Renderer
+import io.wispforest.owo.ui.container.CollapsibleContainer
 import io.wispforest.owo.ui.container.FlowLayout
 import io.wispforest.owo.ui.container.OverlayContainer
 import io.wispforest.owo.ui.container.ScrollContainer
@@ -96,7 +97,9 @@ var Component.tooltipTexts: Collection<Text>
 
 var Component.cursorStyle: CursorStyle
     get() = cursorStyle()
-    set(value) {cursorStyle(value)}
+    set(value) {
+        cursorStyle(value)
+    }
 
 var ParentComponent.horizontalAlignment: HorizontalAlignment
     get() = horizontalAlignment()
@@ -464,4 +467,10 @@ var TextureComponent.blend: Boolean
     get() = blend()
     set(value) {
         blend(value)
+    }
+
+var CollapsibleContainer.expanded: Boolean
+    get() = expanded()
+    set(value) {
+        if (expanded != value) toggleExpansion()
     }
