@@ -20,7 +20,9 @@ base { archivesName.set(mod.id) }
 
 dependencies {
     include(project(":"))
+    include(project(":kowoui"))
     implementation(project(path = ":", configuration = "namedElements"))
+    runtimeOnly(project(path = ":kowoui", configuration = "namedElements"))
     minecraft(libs.minecraft)
     mappings(variantOf(libs.yarn.mappings) { classifier("v2") })
     modImplementation(libs.fabric.loader)

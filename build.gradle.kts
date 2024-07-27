@@ -37,6 +37,7 @@ allprojects {
 }
 
 dependencies {
+    implementation(project(path = "kowoui", configuration = "namedElements"))
     fun modules(vararg modules: String) {
         modules.forEach { modApi(fabricApi.module("fabric-$it", libs.versions.fabric.api.get())) }
     }

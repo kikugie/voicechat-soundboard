@@ -9,6 +9,7 @@ class AudioScheduler(val entry: SoundboardEntrypoint) {
         private set
 
     fun schedule(provider: AudioProvider, local: Boolean) {
+        this.provider?.close()
         this.provider = provider
         this.local = local
     }

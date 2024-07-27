@@ -1,8 +1,8 @@
 package dev.kikugie.soundboard.gui.component
 
+import dev.kikugie.kowoui.changed
 import dev.kikugie.soundboard.access.ValidatableField
 import dev.kikugie.soundboard.util.Property
-import dev.kikugie.soundboard.util.changed
 import io.wispforest.owo.ui.component.TextBoxComponent
 import io.wispforest.owo.ui.core.Sizing
 import net.minecraft.client.MinecraftClient

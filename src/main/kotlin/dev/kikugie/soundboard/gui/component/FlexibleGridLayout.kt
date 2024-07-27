@@ -50,12 +50,11 @@ class FlexibleGridLayout(rows: Int, columns: Int) : GridLayout(Sizing.fill(), Si
 
     private fun extracted(expands: Set<Int>, sizes: IntArray, available: Int) {
         var available1 = available
-        if (expands.isNotEmpty()) {
-            sizes.forEach { available1 -= it }
-            val validExpands = expands.filter { sizes[it] == 0 }
-            val shared = available1 / validExpands.size
-            for (it in validExpands) sizes[it] = shared
-        }
+        sizes.forEach { available1 -= it }
+        val validExpands = expands.filter { sizes[it] == 0 }
+        if (validExpands.isEmpty()) return
+        val shared = available1 / validExpands.size
+        for (it in validExpands) sizes[it] = shared
     }
 
     private inline fun combine(w: Int, h: Int, action: (Int, Int) -> Unit) {

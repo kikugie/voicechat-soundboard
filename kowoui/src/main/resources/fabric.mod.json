@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "${id}",
+  "version": "${version}",
+  "name": "${name}",
+  "description": "Kotlin utility function for OwO UI",
+  "authors": [
+    "KikuGie"
+  ],
+  "license": "MIT",
+  "environment": "client",
+  "depends": {
+    "fabricloader": ">=0.15",
+    "minecraft": "${minecraft}",
+    "fabric-language-kotlin": "${flk}",
+    "owo-lib": "${owolib}",
+    "fabric-api": "*"
+  }
+}

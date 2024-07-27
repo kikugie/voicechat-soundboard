@@ -7,12 +7,12 @@ import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioInputStream
 import javax.sound.sampled.AudioSystem
 import kotlin.math.E
-import kotlin.math.pow
+import kotlin.math.exp
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 val Double.volumeScale get() =
-    (E.pow(this) - 1) / (E - 1)
+    (exp(this) - 1) / (E - 1)
 
 fun AudioFormat.duration(length: Int): Duration =
     duration(length.toLong())

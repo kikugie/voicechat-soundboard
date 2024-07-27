@@ -1,5 +1,7 @@
 package dev.kikugie.soundboard
 
+import dev.kikugie.kowoui.fallbackTranslation
+import dev.kikugie.kowoui.translation
 import dev.kikugie.soundboard.SoundRegistry.SoundGroup
 import dev.kikugie.soundboard.audio.AudioConfiguration
 import dev.kikugie.soundboard.util.*
@@ -122,13 +124,13 @@ object SoundRegistry : SimpleResourceReloadListener<EntryMap> {
         val entries: List<SoundEntry>,
         val title: String? = null,
     ) {
-        fun title(): Text = title?.asTranslation() ?: run {
+        fun title(): Text = title?.translation() ?: run {
             val (namespace, path) = splitPath(path)
             buildString {
                 append("soundboard.dir")
                 append(".$namespace")
                 if (path.isNotEmpty()) append(".$path")
-            }.asFallbackTranslation(this@SoundGroup.path)
+            }.fallbackTranslation(this@SoundGroup.path)
         }
     }
 
@@ -141,11 +143,11 @@ object SoundRegistry : SimpleResourceReloadListener<EntryMap> {
     ) {
         val id get() = "$path/$name"
 
-        fun title() = title?.asTranslation() ?: run {
+        fun title() = title?.translation() ?: run {
             var (namespace, path) = splitPath(path)
             path += ".$name"
             if (path.startsWith('.')) path = path.drop(1)
-            "soundboard.file.$namespace.$path".asFallbackTranslation(name)
+            "soundboard.file.$namespace.$path".translation(name)
         }
     }
 

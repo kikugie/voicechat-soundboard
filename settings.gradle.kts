@@ -9,4 +9,4 @@ pluginManagement {
 }
 
 rootProject.name = "Soundboard"
-include("vc-simple", "vc-plasmo")
+include("vc-simple", "vc-plasmo", "kowoui")

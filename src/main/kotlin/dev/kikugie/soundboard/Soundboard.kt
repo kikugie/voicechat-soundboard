@@ -17,6 +17,7 @@ import kotlin.io.path.createDirectories
 object Soundboard {
     private var ready = false
     val config = SoundboardConfig.load()
+    val keybinds: MutableMap<String, KeyBinding> = mutableMapOf()
 
     fun initialize() {
         if (ready) return
@@ -54,5 +55,6 @@ object Soundboard {
             if (binding.wasPressed()) inGame()
         }
         inGui(binding)
+        keybinds[name] = binding
     }
 }

@@ -14,3 +14,6 @@ soundboard:
       file: | 
         Shift-click to play locally
         Ctrl-click to open audio cutter
+      play: |
+        Play the sound locally
+        Press %s to close the widget

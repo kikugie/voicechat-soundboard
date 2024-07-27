@@ -1,5 +1,6 @@
 package dev.kikugie.soundboard.gui
 
+import dev.kikugie.kowoui.*
 import dev.kikugie.soundboard.SoundRegistry
 import dev.kikugie.soundboard.SoundRegistry.update
 import dev.kikugie.soundboard.entrypoint.SoundboardAccess
@@ -23,9 +24,9 @@ import net.minecraft.util.Util
 import kotlin.math.ceil
 
 class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWSER) {
+    private lateinit var root: FlowLayout
     private var scrollbar: ScrollContainerAccessor? = null
     internal var settings: SoundSettingsWidget? = null
-    internal lateinit var root: FlowLayout
 
     fun closeSettings() {
         settings?.update()
@@ -80,7 +81,7 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
             Screen.hasShiftDown().also { if (it) Util.getOperatingSystem().open(location) }
         }
         val child = label.titleLayout().children().firstOrNull { it is LabelComponent } as? LabelComponent
-        if (locationExists) child?.tooltip(DIRECTORY_TOOLTIP.asTranslation())
+        if (locationExists) child?.tooltip(DIRECTORY_TOOLTIP.translation())
         child?.text(group.title())
 
         val contents: GridLayout = label.childById("contents") ?: return null
@@ -102,42 +103,35 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
     }
 
     private fun createWaveformOverlay(entry: SoundRegistry.SoundEntry) {
-        settings = SoundSettingsWidget(
-            entry,
-            SoundboardAccess.delegates.first(),
-            Sizing.fill(), Sizing.fill()
-        )
-
-        val overlay = Containers.overlay(settings).apply {
-            sizing(Sizing.fill(50))
-            closeOnClick(false)
-            surface(Surface.PANEL)
-            positioning(Positioning.relative(50, 50))
-            zIndex(100)
+        settings = SoundSettingsWidget(entry, SoundboardAccess.delegates.first())
+        root.overlay(settings!!) {
+            sizing = Sizing.fill(50)
+            closeOnClick = false
+            surface = Surface.PANEL
+            positioning = Positioning.relative(50, 50)
+            zIndex = 100
             mouseDown { _, _, _ -> true }
             keyPress { key, scan, _ ->
                 keybinds.firstOrNull { it.first.matchesKey(key, scan) }
                     ?.also { it.second(this@SoundBrowser) } != null
             }
         }
-        root.child(overlay)
     }
 
     private fun button(name: Text, onPress: (ButtonComponent) -> Unit): ButtonComponent =
         ScrollingButtonComponent(name, onPress).apply {
-            val muted = SoundboardAccess.all { muted }
-            active(!muted)
+            active = !SoundboardAccess.all { muted }
 
             val temp: ButtonComponent = model.template("button")
-            renderer(temp.renderer())
-            textShadow(temp.textShadow())
-            cursorStyle(temp.cursorStyle())
-            positioning(temp.positioning().get())
-            margins(temp.margins().get())
-            horizontalSizing(temp.horizontalSizing().get())
-            verticalSizing(temp.verticalSizing().get())
-            tooltip(temp.tooltip())
-            zIndex(temp.zIndex())
+            renderer = temp.renderer
+            textShadow = temp.textShadow
+            cursorStyle = temp.cursorStyle
+            positioning = temp.positioning
+            margins = temp.margins
+            horizontalSizing = temp.horizontalSizing
+            verticalSizing = temp.verticalSizing
+            tooltip = temp.tooltip
+            zIndex = temp.zIndex
         }
 
     companion object : ScreenManager(SoundBrowser::class) {
