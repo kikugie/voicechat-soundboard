@@ -132,7 +132,6 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
             tooltip = temp.tooltip
             zIndex = temp.zIndex
 
-            active = !SoundboardAccess.all { muted }
             tooltipText = FILE_TOOLTIP.translation()
         }
 

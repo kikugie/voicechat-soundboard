@@ -1,6 +1,6 @@
 package dev.kikugie.soundboard.mixin;
 
-import dev.kikugie.soundboard.access.ValidatableField;
+import dev.kikugie.soundboard.access.TextFieldAccessor;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -8,10 +8,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 /**
- * Renders the text red if the {@link ValidatableField#soundboard$isValid(String)} returns false
+ * Renders the text red if the {@link TextFieldAccessor#soundboard$isValid(String)} returns false
  */
 @Mixin(TextFieldWidget.class)
-public class TextFieldWidgetMixin implements ValidatableField {
+public class TextFieldWidgetMixin implements TextFieldAccessor {
     @Shadow
     private String text;
 

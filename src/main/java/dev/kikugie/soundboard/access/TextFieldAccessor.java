@@ -1,5 +1,5 @@
 package dev.kikugie.soundboard.access;
 
-public interface ValidatableField {
+public interface TextFieldAccessor {
     boolean soundboard$isValid(String text);
 }

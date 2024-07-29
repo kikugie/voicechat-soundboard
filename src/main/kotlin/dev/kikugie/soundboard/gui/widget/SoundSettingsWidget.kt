@@ -61,14 +61,6 @@ class SoundSettingsWidget(
                 verticalSizing = Sizing.fixed(8)
                 lineHeight = 8
             }
-            at() set ValidatableTextComponent().apply {
-                setMaxLength(2)
-                setTextPredicate { it.toUByteOrNull() != null }
-                text = Soundboard.config.favourites.size.toString()
-                horizontalSizing = Sizing.fixed(10)
-                verticalSizing = Sizing.fixed(8)
-                drawBackground = false
-            }
             at() set DynamicButtonComponent().apply {
                 var favourite = entry.id in Soundboard.config.favourites
                 fun key() = if (favourite) "soundboard.browser.tooltip.unfavourite"
@@ -123,7 +115,7 @@ class SoundSettingsWidget(
                 horizontalAlignment = HorizontalAlignment.CENTER
                 verticalAlignment = VerticalAlignment.CENTER
                 at(0, 0) set TimeInputComponent(duration, settings::start).apply {
-                    validate { duration <= settings.end }
+                    validate { it <= settings.end }
                     onDurationChange { cutter.update() }
                 }
                 at(0, 1) set DynamicTextComponent().apply {
@@ -132,25 +124,22 @@ class SoundSettingsWidget(
                     string { "${(settings.end - settings.start).asString}s" }
                 }
                 at(0, 2) set TimeInputComponent(duration, settings::end).apply {
-                    validate { duration >= settings.start }
+                    validate { it >= settings.start }
                     onDurationChange { cutter.update() }
                 }
             }
             at(1, 1) set DynamicButtonComponent().apply {
                 val key = Soundboard.keybinds["browser"]!!.boundKeyLocalizedText.string
-                var playing = access.scheduler.playing
+                string { if (access.scheduler.playing) "■" else "▶" }
                 tooltipText = "soundboard.browser.tooltip.play".translation(key)
                 horizontalSizing = Sizing.fixed(20)
                 onPress {
-                    if (playing) {
+                    if (access.scheduler.playing) {
                         access.scheduler.reset()
-                        string = "▶"
                     } else {
                         AudioConfig.save()
                         access.scheduleArray(data, true, settings)
-                        string = "■"
                     }
-                    playing = !playing
                 }
             }
         }
