@@ -9,59 +9,59 @@ import io.wispforest.owo.ui.core.Component
 import io.wispforest.owo.ui.core.Component.FocusSource
 import io.wispforest.owo.ui.event.*
 
-inline fun <T : Component> T.mouseDown(crossinline action: (Double, Double, Int) -> Boolean) =
-    this.also { mouseDown().subscribe(MouseDown { x, y, b -> action(x, y, b) }) }
+fun <T : SlimSliderComponent> T.onChange(action: (Double) -> Unit) =
+    this.also { onChanged().subscribe(SlimSliderComponent.OnChanged(action)) }
 
-inline fun <T : Component> T.mouseUp(crossinline action: (Double, Double, Int) -> Boolean) =
-    this.also { mouseUp().subscribe(MouseUp { x, y, b -> action(x, y, b) }) }
+fun <T : ColorPickerComponent> T.onChange(action: (Color) -> Unit) =
+    this.also { onChanged().subscribe(ColorPickerComponent.OnChanged(action)) }
 
-inline fun <T : Component> T.mouseScroll(crossinline action: (Double, Double, Double) -> Boolean) =
-    this.also { mouseScroll().subscribe(MouseScroll { x, y, a -> action(x, y, a) }) }
+fun <T : SmallCheckboxComponent> T.onChange(action: (Boolean) -> Unit) =
+    this.also { onChanged().subscribe(SmallCheckboxComponent.OnChanged(action)) }
 
-inline fun <T : Component> T.mouseDrag(crossinline action: (Double, Double, Double, Double, Int) -> Boolean) =
-    this.also { mouseDrag().subscribe(MouseDrag { x, y, dx, dy, b -> action(x, y, dx, dy, b) }) }
+fun <T : SliderComponent> T.onChange(action: (Double) -> Unit) =
+    this.also { onChanged().subscribe(SliderComponent.OnChanged(action)) }
 
-inline fun <T : Component> T.keyPress(crossinline action: (Int, Int, Int) -> Boolean) =
-    this.also { keyPress().subscribe(KeyPress { k, c, m -> action(k, c, m) }) }
+fun <T : TextAreaComponent> T.onChange(action: (String) -> Unit) =
+    this.also { onChanged().subscribe(TextAreaComponent.OnChanged(action)) }
 
-inline fun <T : Component> T.charTyped(crossinline action: (Char, Int) -> Boolean) =
-    this.also { charTyped().subscribe(CharTyped { c, m -> action(c, m) }) }
+fun <T : TextBoxComponent> T.onChange(action: (String) -> Unit) =
+    this.also { onChanged().subscribe(TextBoxComponent.OnChanged(action)) }
 
-inline fun <T : Component> T.mouseEnter(crossinline action: () -> Unit) =
-    this.also { mouseEnter().subscribe(MouseEnter { action() }) }
+fun <T : Component> T.onCharType(action: (Char, Int) -> Boolean) =
+    this.also { charTyped().subscribe(CharTyped(action)) }
 
-inline fun <T : Component> T.mouseLeave(crossinline action: () -> Unit) =
-    this.also { mouseLeave().subscribe(MouseLeave { action() }) }
+fun <T : Component> T.onFocusGain(action: (FocusSource) -> Unit) =
+    this.also { focusGained().subscribe(FocusGained(action)) }
 
-inline fun <T : Component> T.focusGained(crossinline action: (FocusSource) -> Unit) =
-    this.also { focusGained().subscribe(FocusGained { action(it) }) }
+fun <T : Component> T.onFocusLose(action: () -> Unit) =
+    this.also { focusLost().subscribe(FocusLost(action)) }
 
-inline fun <T : Component> T.focusLost(crossinline action: () -> Unit) =
-    this.also { focusLost().subscribe(FocusLost { action() }) }
+fun <T : Component> T.onKeyPress(action: (Int, Int, Int) -> Boolean) =
+    this.also { keyPress().subscribe(KeyPress(action)) }
 
-inline fun <T : ColorPickerComponent> T.changed(crossinline action: (Color) -> Unit) =
-    this.also { onChanged().subscribe(ColorPickerComponent.OnChanged { action(it) }) }
+fun <T : Component> T.onMouseDown(action: (Double, Double, Int) -> Boolean) =
+    this.also { mouseDown().subscribe(MouseDown(action)) }
 
-inline fun <T : CollapsibleContainer> T.toggled(crossinline action: (Boolean) -> Unit) =
-    this.also { onToggled().subscribe(CollapsibleContainer.OnToggled { action(it) }) }
+fun <T : Component> T.onMouseDrag(action: (Double, Double, Double, Double, Int) -> Boolean) =
+    this.also { mouseDrag().subscribe(MouseDrag(action)) }
 
-inline fun <T : SliderComponent> T.changed(crossinline action: (Double) -> Unit) =
-    this.also { onChanged().subscribe(SliderComponent.OnChanged { action(it) }) }
+fun <T : Component> T.onMouseEnter(action: () -> Unit) =
+    this.also { mouseEnter().subscribe(MouseEnter(action)) }
 
-inline fun <T : SliderComponent> T.slideEnded(crossinline action: () -> Unit) =
-    this.also { slideEnd().subscribe(SliderComponent.OnSlideEnd { action() }) }
+fun <T : Component> T.onMouseLeave(action: () -> Unit) =
+    this.also { mouseLeave().subscribe(MouseLeave(action)) }
 
-inline fun <T : SlimSliderComponent> T.changed(crossinline action: (Double) -> Unit) =
-    this.also { onChanged().subscribe(SlimSliderComponent.OnChanged { action(it) }) }
+fun <T : Component> T.onMouseScroll(action: (Double, Double, Double) -> Boolean) =
+    this.also { mouseScroll().subscribe(MouseScroll(action)) }
 
-inline fun <T : SlimSliderComponent> T.slideEnded(crossinline action: () -> Unit) =
-    this.also { onSlideEnd().subscribe(SlimSliderComponent.OnSlideEnd { action() }) }
+fun <T : Component> T.onMouseUp(action: (Double, Double, Int) -> Boolean) =
+    this.also { mouseUp().subscribe(MouseUp(action)) }
 
-inline fun <T : SmallCheckboxComponent> T.changed(crossinline action: (Boolean) -> Unit) =
-    this.also { onChanged().subscribe(SmallCheckboxComponent.OnChanged { action(it) }) }
+fun <T : SliderComponent> T.onSlideEnd(action: () -> Unit) =
+    this.also { slideEnd().subscribe(SliderComponent.OnSlideEnd(action)) }
 
-inline fun <T : TextAreaComponent> T.changed(crossinline action: (String) -> Unit) =
-    this.also { onChanged().subscribe(TextAreaComponent.OnChanged { action(it) }) }
+fun <T : SlimSliderComponent> T.onSlideEnd(action: () -> Unit) =
+    this.also { onSlideEnd().subscribe(SlimSliderComponent.OnSlideEnd(action)) }
 
-inline fun <T : TextBoxComponent> T.changed(crossinline action: (String) -> Unit) =
-    this.also { onChanged().subscribe(TextBoxComponent.OnChanged { action(it) }) }
+fun <T : CollapsibleContainer> T.onToggle(action: (Boolean) -> Unit) =
+    this.also { onToggled().subscribe(CollapsibleContainer.OnToggled(action)) }

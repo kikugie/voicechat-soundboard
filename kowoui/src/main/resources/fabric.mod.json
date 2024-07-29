@@ -3,7 +3,7 @@
   "id": "${id}",
   "version": "${version}",
   "name": "${name}",
-  "description": "Kotlin utility function for OwO UI",
+  "description": "Kotlin utility functions for OwO UI",
   "authors": [
     "KikuGie"
   ],

@@ -1,9 +1,7 @@
 package dev.kikugie.soundboard.gui.component
 
-import dev.kikugie.kowoui.changed
-import dev.kikugie.soundboard.access.ValidatableField
+import dev.kikugie.kowoui.onChange
 import dev.kikugie.soundboard.util.Property
-import io.wispforest.owo.ui.component.TextBoxComponent
 import io.wispforest.owo.ui.core.Sizing
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
@@ -11,28 +9,34 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-@Suppress("LeakingThis")
-abstract class TimeInputComponent(
+class TimeInputComponent(
     private val full: Duration, private val time: Property<Duration>,
-) : TextBoxComponent(Sizing.fixed(full.printLength + 4)), ValidatableField {
+) : ValidatableTextComponent() {
+    private lateinit var validator: (Duration) -> Boolean
+    private var listener: (Duration) -> Unit = {}
+
     init {
+        horizontalSizing(Sizing.fixed(full.printLength + 4))
         setMaxLength(full.toString().length.coerceAtLeast(1) + 3)
-        changed { s ->
-            s.asDuration?.takeIf(::isValid)?.let {
+        setTextPredicate {
+            text.asDuration?.let { !it.isNegative() && (it - full <= 2.milliseconds) && validator(it) } ?: false
+        }
+        onChange { s ->
+            s.asDuration?.takeIf(validator::invoke)?.let {
                 val clamped = it.coerceAtMost(full)
                 time.set(clamped)
-                onChanged(clamped)
+                listener(clamped)
             }
         }
     }
 
-    abstract fun isValid(duration: Duration): Boolean
-    open fun onChanged(duration: Duration) {}
+    fun validate(action: (Duration) -> Boolean) {
+        validator = action
+    }
 
-    override fun `soundboard$isValid`(text: String): Boolean =
-        text.asDuration?.let {
-            !it.isNegative() && (it - full <= 2.milliseconds) && isValid(it)
-        } ?: false
+    fun onDurationChange(action: (Duration) -> Unit) {
+        listener = action
+    }
 
     override fun renderWidget(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
         if (!isFocused) text = time().asString

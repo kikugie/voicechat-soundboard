@@ -1,6 +1,7 @@
 package dev.kikugie.soundboard.gui.widget
 
 import dev.kikugie.kowoui.*
+import dev.kikugie.kowoui.access.*
 import dev.kikugie.soundboard.Soundboard
 import dev.kikugie.soundboard.audio.AudioConfiguration
 import dev.kikugie.soundboard.audio.SoundEntry
@@ -13,7 +14,7 @@ import dev.kikugie.soundboard.gui.component.TimeInputComponent.Companion.asStrin
 import dev.kikugie.soundboard.util.currentScreen
 import dev.kikugie.soundboard.util.duration
 import dev.kikugie.soundboard.util.read
-import io.wispforest.owo.ui.component.ButtonComponent
+import io.wispforest.owo.ui.component.ButtonComponent.Renderer
 import io.wispforest.owo.ui.component.SlimSliderComponent.Axis.VERTICAL
 import io.wispforest.owo.ui.container.FlowLayout
 import io.wispforest.owo.ui.container.WrappingParentComponent
@@ -42,99 +43,116 @@ class SoundSettingsWidget(
         child.draw(context, mouseX, mouseY, partialTicks, delta)
     }
 
+    private val Double.invert get() = 1 - this
+
     private fun create() = with(child) {
         padding = Insets.of(5)
-        horizontalFlow {
-            this.padding = Insets.bottom(2)
+        at() set horizontalFlow {
+            // Top row
+            padding = Insets.bottom(2)
             horizontalSizing = Sizing.fill()
             horizontalAlignment = HorizontalAlignment.RIGHT
             gap = 2
-            child(ScrollingLabelComponent(entry.title).apply {
+            // Sound name
+            at() set ScrollingLabelComponent().apply {
+                center { x + (width - it) / 2 }
+                text = entry.title
                 horizontalSizing = Sizing.expand()
                 verticalSizing = Sizing.fixed(8)
                 lineHeight = 8
-            })
-            child(object : DynamicButtonComponent() {
-                private var favourite = entry.id in Soundboard.config.favourites
-                private val tooltip get() = if (favourite) "soundboard.browser.tooltip.unfavourite"
+            }
+            at() set ValidatableTextComponent().apply {
+                setMaxLength(2)
+                setTextPredicate { it.toUByteOrNull() != null }
+                text = Soundboard.config.favourites.size.toString()
+                horizontalSizing = Sizing.fixed(10)
+                verticalSizing = Sizing.fixed(8)
+                drawBackground = false
+            }
+            at() set DynamicButtonComponent().apply {
+                var favourite = entry.id in Soundboard.config.favourites
+                fun key() = if (favourite) "soundboard.browser.tooltip.unfavourite"
                 else "soundboard.browser.tooltip.favourite"
-                override val string: String get() = if (favourite) "★" else "☆"
 
-                init {
-                    sizing = Sizing.fixed(8)
-                    renderer = Renderer.flat(0, 0, 0)
-                    tooltipText = tooltip.translation()
-                    onPress { toggleFavourite() }
-                }
-
-                private fun toggleFavourite() {
+                sizing = Sizing.fixed(8)
+                renderer = Renderer.flat(0, 0, 0)
+                string = if (favourite) "★" else "☆"
+                tooltipText = key().translation()
+                onPress {
                     favourite = !favourite
-                    tooltipText = tooltip.translation()
+                    string = if (favourite) "★" else "☆"
+                    tooltipText = key().translation()
+
                     if (favourite) Soundboard.config.favourites += entry.id
                     else Soundboard.config.favourites -= entry.id
                     SoundRegistry.updateFavourites()
                     (currentScreen as? SoundBrowser)?.createFavourites()
                 }
-            })
-            button("×".text()) {
+            }
+            at() set button("×".text()) {
                 sizing = Sizing.fixed(8)
-                renderer = ButtonComponent.Renderer.flat(0, 0, 0)
+                renderer = Renderer.flat(0, 0, 0)
                 tooltipText = "soundboard.browser.tooltip.close".translation()
                 onPress { (currentScreen as? SoundBrowser)?.closeSettings() }
             }
         }
-        child(FlexibleGridLayout(2, 2).apply {
+        at() set FlexibleGridLayout(2, 2).apply {
             verticalSizing = Sizing.expand()
             horizontalAlignment = HorizontalAlignment.CENTER
             verticalAlignment = VerticalAlignment.CENTER
+            val waveform = WaveformComponent(data, settings.volume)
             val cutter = DurationCutterComponent(duration, settings::start, settings::end)
-            stack(0, 0) {
+            at(0, 0) set stack {
                 sizing = Sizing.expand()
                 surface = Surface.PANEL_INSET
                 padding = Insets.of(1)
-                children(WaveformComponent(data), cutter)
+                children(waveform, cutter)
             }
-            slimSlider(0, 1, VERTICAL) {
+            at(0, 1) set slimSlider(VERTICAL) {
                 verticalSizing = Sizing.expand()
-                value = 1 - settings.volume
-                slideEnded { settings.volume = 1 - value }
-                tooltipSupplier { "${((1 - it) * 100).toInt()}%".text() }
+                value = settings.volume.coerceIn(0.0, 1.0).invert
+                onChange {
+                    val mod = it.invert
+                    settings.volume = mod
+                    waveform.mult = mod
+                }
+                tooltipSupplier { "${(settings.volume * 100).toInt()}%".text() }
             }
-            grid(1, 0, 1, 3) {
+            at(1, 0) set grid(1, 3) {
                 horizontalSizing = Sizing.expand()
                 horizontalAlignment = HorizontalAlignment.CENTER
                 verticalAlignment = VerticalAlignment.CENTER
-                setChild(0, 0, object : TimeInputComponent(duration, settings::start) {
-                    override fun isValid(duration: Duration): Boolean = duration <= settings.end
-                    override fun onChanged(duration: Duration) = cutter.update()
-                })
-                setChild(0, 1, object : DynamicTextComponent() {
-                    init {
-                        horizontalTextAlignment = HorizontalAlignment.CENTER
-                        verticalTextAlignment = VerticalAlignment.CENTER
-                    }
-
-                    override val string: String get() = "${(settings.end - settings.start).asString}s"
-                })
-                setChild(0, 2, object : TimeInputComponent(duration, settings::end) {
-                    override fun isValid(duration: Duration): Boolean = duration >= settings.start
-                    override fun onChanged(duration: Duration) = cutter.update()
-                })
-            }
-            setChild(1, 1, object : DynamicButtonComponent() {
-                private val playing get() = access.scheduler.playing
-                override val string: String get() = if (playing) "■" else "▶"
-
-                init {
-                    val key = Soundboard.keybinds["browser"]!!.boundKeyLocalizedText.string
-                    horizontalSizing(Sizing.fixed(20))
-                    tooltipText = "soundboard.browser.tooltip.play".translation(key)
-                    onPress {
-                        if (playing) access.scheduler.reset()
-                        else access.scheduleArray(data, true, settings)
-                    }
+                at(0, 0) set TimeInputComponent(duration, settings::start).apply {
+                    validate { duration <= settings.end }
+                    onDurationChange { cutter.update() }
                 }
-            })
-        })
+                at(0, 1) set DynamicTextComponent().apply {
+                    horizontalTextAlignment = HorizontalAlignment.CENTER
+                    verticalTextAlignment = VerticalAlignment.CENTER
+                    string { "${(settings.end - settings.start).asString}s" }
+                }
+                at(0, 2) set TimeInputComponent(duration, settings::end).apply {
+                    validate { duration >= settings.start }
+                    onDurationChange { cutter.update() }
+                }
+            }
+            at(1, 1) set DynamicButtonComponent().apply {
+                val key = Soundboard.keybinds["browser"]!!.boundKeyLocalizedText.string
+                var playing = access.scheduler.playing
+                tooltipText = "soundboard.browser.tooltip.play".translation(key)
+                horizontalSizing = Sizing.fixed(20)
+                onPress {
+                    if (playing) {
+                        access.scheduler.reset()
+                        string = "▶"
+                    } else {
+                        AudioConfig.save()
+                        access.scheduleArray(data, true, settings)
+                        string = "■"
+                    }
+                    playing = !playing
+                }
+            }
+        }
     }
 }

@@ -80,7 +80,6 @@
         </template>
         <template name="button">
             <button id="button">
-                <tooltip-text translate="true">soundboard.browser.tooltip.file</tooltip-text>
                 <margins>
                     <all>3</all>
                 </margins>

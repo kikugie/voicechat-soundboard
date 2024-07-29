@@ -1,6 +1,7 @@
 package dev.kikugie.soundboard.gui
 
 import dev.kikugie.kowoui.*
+import dev.kikugie.kowoui.access.*
 import dev.kikugie.soundboard.audio.SoundEntry
 import dev.kikugie.soundboard.audio.SoundGroup
 import dev.kikugie.soundboard.audio.SoundRegistry
@@ -50,7 +51,7 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
             children(SoundRegistry.groups.mapNotNull { group(it, it.path.isEmpty()) }.toList())
         } ?: error("Missing browser container")
         scrollbar = childById<ScrollContainer<*>>("scroll") as? ScrollContainerAccessor
-        for (it in all()) it.keyPress { key, scan, _ ->
+        for (it in all()) it.onKeyPress { key, scan, _ ->
             keybinds.firstOrNull { it.first.matchesKey(key, scan) }
                 ?.also { it.second(this@SoundBrowser) } != null
         }
@@ -74,9 +75,9 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
         else model.template<FlowLayout>("group").apply {
             val path = runCatching { SoundRegistry.BASE_DIR.resolve(group.path) }.getOrNull()?.takeIf { it.exists() }
             val container = childById<CollapsibleContainer>("collapse")?.apply {
-                if (path != null) mouseDown { _, _, _ -> shiftDown then { Util.getOperatingSystem().open(path) } }
+                if (path != null) onMouseDown { _, _, _ -> shiftDown then { Util.getOperatingSystem().open(path) } }
                 if (group.path in collapsedPaths) expanded = false
-                toggled { if (it) collapsedPaths += group.path else collapsedPaths -= group.path }
+                onToggle { if (it) collapsedPaths += group.path else collapsedPaths -= group.path }
             } ?: error("Missing group container")
 
             val buttons = group.entries.map {
@@ -97,21 +98,21 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
                 rows = ceil(buttons.size / columns.toDouble()).toInt()
                 children = arrayOfNulls(rows * columns)
                 for ((i, button) in buttons.withIndex())
-                    child(button, i / columns, i % columns)
+                    at(i / columns, i % columns) set button
             } ?: error("Missing group grid")
         }
 
 
     private fun settings(entry: SoundEntry) {
         settings = SoundSettingsWidget(entry, SoundboardAccess.delegates.first())
-        root.overlay(settings!!) {
+        root.at(end) set overlay(settings!!) {
             sizing = Sizing.fill(50)
             closeOnClick = false
             surface = Surface.PANEL
             positioning = Positioning.relative(50, 50)
             zIndex = 100
-            mouseDown { _, _, _ -> true }
-            keyPress { key, scan, _ ->
+            onMouseDown { _, _, _ -> true }
+            onKeyPress { key, scan, _ ->
                 keybinds.firstOrNull { it.first.matchesKey(key, scan) }
                     ?.also { it.second(this@SoundBrowser) } != null
             }
@@ -132,11 +133,13 @@ class SoundBrowser : BaseUIModelScreen<FlowLayout>(FlowLayout::class.java, BROWS
             zIndex = temp.zIndex
 
             active = !SoundboardAccess.all { muted }
+            tooltipText = FILE_TOOLTIP.translation()
         }
 
     companion object : ScreenManager(SoundBrowser::class) {
         val BROWSER = idOf("browser")
 
+        private const val FILE_TOOLTIP = "soundboard.browser.tooltip.file"
         private const val DIRECTORY_TOOLTIP = "soundboard.browser.tooltip.directory"
 
         private var savedOffset = 0.0

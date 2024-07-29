@@ -1,7 +1,5 @@
 package dev.kikugie.soundboard.util
 
-import kotlin.experimental.ExperimentalTypeInference
-
 inline fun <T, R> memoize(crossinline func: (T) -> R) = object : Memoizer<T, R>(mutableMapOf()) {
     override fun supply(t: T): R = func(t)
 }

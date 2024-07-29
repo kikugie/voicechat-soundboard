@@ -27,11 +27,6 @@ fun <T : ParentComponent> T.all(): Sequence<Component> = sequence {
     yield(this@all)
 }
 
-inline fun <reified T : Component> UIModel.template(
-    name: String,
-    params: Map<String, String> = emptyMap(),
-): T = this.expandTemplate(T::class.java, name, params)
-
 fun DrawContext.drawLinePrecise(x1: Double, y1: Double, x2: Double, y2: Double, thickness: Double, color: Color) {
     val offset: Vector2d = Vector2d(x2 - x1, y2 - y1).perpendicular().normalize().mul(thickness * .5)
 
