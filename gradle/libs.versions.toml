@@ -1,23 +1,23 @@
 [versions]
 # Plugins
 loom = "1.7-SNAPSHOT"
-kotlin = "2.0.0"
+kotlin = "2.0.10"
 yamlang = "1.4.+"
 mpp = "0.4.+"
 # MC setup
 minecraft = "1.21"
-fabric-loader = "0.15.11"
+fabric-loader = "0.16.2"
 fabric-yarn = "1.21+build.2"
-fabric-api = "0.100.3+1.21"
-fabric-language-kotlin = "1.11.0+kotlin.2.0.0"
+fabric-api = "0.102.0+1.21"
+fabric-language-kotlin = "1.12.0+kotlin.2.0.10"
 # Dependencies
-owo-lib = "0.12.10+1.21"
+owo-lib = "0.12.11+1.21"
 simple-vc-api = "2.5.0"
 simple-vc = "fabric-1.21-2.5.17"
 plasmo-vc-api = "2.1.0-SNAPSHOT"
 plasmo-vc-config = "1.0.0"
 plasmo-vc = "fabric-1.21-2.0.10"
-modmenu = "11.0.0"
+modmenu = "11.0.1"
 dev-auth = "1.2.0"
 
 [plugins]
