@@ -25,7 +25,7 @@ inline fun <reified T : Component> UIModel.template(
     params: Map<String, String> = emptyMap(),
 ): T = expandTemplate(T::class.java, name, params)
 
-operator fun Insets.plus(other: Insets) = add(other.left, other.top, other.right, other.bottom)
+operator fun Insets.plus(other: Insets): Insets = add(other.top, other.bottom, other.left, other.right)
 
 fun <T> cached(value: T, consumer: (T) -> Unit) = Cached(value, consumer)
 

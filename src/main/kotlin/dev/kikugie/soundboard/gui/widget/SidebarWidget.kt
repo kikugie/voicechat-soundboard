@@ -15,7 +15,7 @@ import io.wispforest.owo.ui.core.Sizing.fixed
 import net.minecraft.client.gui.screen.Screen
 import kotlin.reflect.full.createInstance
 
-class SidebarWidget(private val current: Screen) : FlowLayout(content(), fixed(16), Algorithm.VERTICAL) {
+class SidebarWidget(private val current: Screen) : FlowLayout(fixed(16), content(), Algorithm.VERTICAL) {
     companion object {
         val WIDGETS = idOf("textures/gui/widgets.png")
     }

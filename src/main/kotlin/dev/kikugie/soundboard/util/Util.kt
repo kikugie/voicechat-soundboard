@@ -26,6 +26,11 @@ inline infix fun Boolean.then(action: () -> Unit): Boolean {
     return this
 }
 
+fun Class<*>.accurateName(): String = simpleName.takeIf { it.isNotEmpty() } ?: run {
+    val parent = if (this == Any::class.java) "Object" else superclass.accurateName()
+    "out $parent"
+}
+
 val client = MinecraftClient.getInstance()
 
 val shiftDown: Boolean get() = Screen.hasShiftDown()
@@ -34,4 +39,6 @@ val altDown: Boolean get() = Screen.hasAltDown()
 
 var currentScreen
     get() = client.currentScreen
-    set(value) { client.setScreen(value)}
+    set(value) {
+        client.setScreen(value)
+    }

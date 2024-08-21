@@ -1,4 +1,2 @@
 accessWidener v2 named
-accessible field net/minecraft/client/gui/widget/ButtonWidget onPress Lnet/minecraft/client/gui/widget/ButtonWidget$PressAction;
 accessible field net/minecraft/client/gui/widget/TextFieldWidget text Ljava/lang/String;
-accessible field net/minecraft/client/gui/widget/TextFieldWidget textPredicate Ljava/util/function/Predicate;

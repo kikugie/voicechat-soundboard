@@ -6,6 +6,7 @@ import dev.kikugie.kowoui.unsupported
 import io.wispforest.owo.ui.component.*
 import io.wispforest.owo.ui.component.ButtonComponent.Renderer
 import io.wispforest.owo.ui.core.*
+import net.minecraft.client.gui.widget.TextFieldWidget
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.item.ItemStack
 import net.minecraft.text.Style
@@ -284,6 +285,20 @@ var TextureComponent.visibleArea: PositionedRectangle
     get() = visibleArea().get()
     set(value) {
         visibleArea(value)
+    }
+
+var TextFieldWidget.placeholder: Text?
+    @Deprecated("Getter unavailable", level = DeprecationLevel.ERROR)
+    get() = unsupported { "Getter unavailable" }
+    set(value) {
+        setPlaceholder(value)
+    }
+
+var TextFieldWidget.suggestion: String?
+    @Deprecated("Getter unavailable", level = DeprecationLevel.ERROR)
+    get() = unsupported { "Getter unavailable" }
+    set(value) {
+        setSuggestion(value)
     }
 
 val LabelComponent.animatableColor: AnimatableProperty<Color>

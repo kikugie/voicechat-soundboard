@@ -6,6 +6,7 @@ import dev.kikugie.kowoui.dynamic.dynamicButton
 import dev.kikugie.kowoui.dynamic.dynamicLabel
 import dev.kikugie.kowoui.experimental.at
 import dev.kikugie.kowoui.experimental.plusAssign
+import dev.kikugie.soundboard.CONFIG
 import dev.kikugie.soundboard.ModKeyBinds
 import dev.kikugie.soundboard.Soundboard
 import dev.kikugie.soundboard.audio.AudioConfiguration
@@ -16,6 +17,7 @@ import dev.kikugie.soundboard.entrypoint.SoundboardEntrypoint
 import dev.kikugie.soundboard.gui.screen.SoundBrowser
 import dev.kikugie.soundboard.gui.component.*
 import dev.kikugie.soundboard.gui.component.TimeInputComponent.Companion.asString
+import dev.kikugie.soundboard.util.client
 import dev.kikugie.soundboard.util.currentScreen
 import dev.kikugie.soundboard.util.duration
 import dev.kikugie.soundboard.util.read
@@ -72,18 +74,44 @@ class SoundSettingsWidget(
     private fun create() = with(child) {
         padding = Insets.of(5)
         var favourite = entry.id in Soundboard.config.favourites
+        var index = -1
         this += horizontalFlow {
             id = "info-bar"
             gap = 2
             padding = bottom(2)
             horizontalSizing = fill()
             horizontalAlignment = HorizontalAlignment.RIGHT
+            verticalAlignment = VerticalAlignment.CENTER
             this += ScrollingLabelComponent(entry.title).apply {
                 id = "title"
                 lineHeight = 8
                 horizontalSizing = expand()
                 verticalSizing = fixed(8)
                 center { x + (width - it) / 2 }
+            }
+            this += object : ValidatableTextComponent() {
+                init {
+                    id = "index"
+                    text = "-1"
+                    verticalSizing = fixed(8)
+                    horizontalSizing = fixed(client.textRenderer.getWidth("00"))
+                    drawBackground = false
+                    onChange {
+                        if (`soundboard$isValid`(it)) index = it.trim().toInt()
+                    }
+                }
+
+                override fun `soundboard$isValid`(text: String?): Boolean =
+                    text?.trim()?.toIntOrNull()?.takeIf { it in -1..<CONFIG.favourites.size } != null
+
+                override fun setText(text: String) {
+                    super.setText(text.trim().take(2).padStart(2))
+                }
+
+                override fun write(text: String) {
+                    super.write(text)
+                    setText(this.text)
+                }
             }
             this += button(STAR_LABEL(favourite)) {
                 id = "favourite"
@@ -95,8 +123,9 @@ class SoundSettingsWidget(
                     message = STAR_LABEL(favourite)
                     tooltipText = FAVOURITE_TOOLTIP(favourite)
 
-                    if (favourite) Soundboard.config.favourites += entry.id
-                    else Soundboard.config.favourites -= entry.id
+                    if (!favourite) CONFIG.favourites -= entry.id
+                    else if (index < 0) CONFIG.favourites += entry.id
+                    else CONFIG.favourites[index] = entry.id
 
                     SoundRegistry.updateFavourites()
                     (currentScreen as? SoundBrowser)?.createFavourites()

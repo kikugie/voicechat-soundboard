@@ -2,13 +2,13 @@ package dev.kikugie.soundboard.gui.screen
 
 import dev.kikugie.kowoui.*
 import dev.kikugie.kowoui.access.*
+import dev.kikugie.kowoui.dynamic.WrapperContainer
 import dev.kikugie.kowoui.dynamic.wrap
 import dev.kikugie.kowoui.experimental.at
 import dev.kikugie.kowoui.experimental.plus
 import dev.kikugie.kowoui.experimental.plusAssign
 import dev.kikugie.kowoui.util.CombinedAlignment
 import dev.kikugie.soundboard.CONFIG
-import dev.kikugie.soundboard.ModKeyBinds
 import dev.kikugie.soundboard.audio.SoundEntry
 import dev.kikugie.soundboard.audio.SoundGroup
 import dev.kikugie.soundboard.audio.SoundRegistry
@@ -34,6 +34,7 @@ import io.wispforest.owo.ui.core.Sizing.fill
 import io.wispforest.owo.ui.core.Surface
 import net.minecraft.text.Text
 import net.minecraft.util.Util
+import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.math.ceil
 
@@ -77,12 +78,6 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
 
     override fun shouldPause(): Boolean = false
 
-    override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
-        val result = super.keyPressed(keyCode, scanCode, modifiers)
-        if (!result) ModKeyBinds.invoke(this)
-        return result
-    }
-
     override fun createAdapter(): OwoUIAdapter<StackLayout> = OwoUIAdapter.create(this) { h, v ->
         stack {
             horizontalSizing = h
@@ -97,9 +92,10 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
         root = component + setup()
         root.childById<FlowLayout>("container")!!.apply {
             createFavourites(this)
-            this += SoundRegistry.groups.mapNotNull {
+            val groups = SoundRegistry.groups.mapNotNull {
                 create(it, it.path.isEmpty())
             }.toList()
+            this += groups
         }
     }
 
@@ -109,10 +105,10 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
         padding = of(5)
         this += verticalScroll(verticalFlow {
             id = "container"
-            horizontalSizing = expand()
+            horizontalSizing = fill()
         }) {
             id = "scroll"
-            sizing = fill()
+            sizing = expand()
             scrollbarThickness = 10
             scrollbar = vanilla()
             surface = Surface.PANEL_INSET
@@ -128,7 +124,7 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
             id = "contents"
             alignment = CombinedAlignment.CENTER
             padding = of(2)
-            sizing = fill()
+            horizontalSizing = fill()
         }
     }.wrap {
         margins = both(4, 2) + right(8)
@@ -151,9 +147,15 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
                 }
             }
         }
-        val group = group(path !in collapsed, entries.size, title)
-        group.childById<CollapsibleContainer>("group")!!.apply {
-            onToggle { if (it) collapsed += path else collapsed -= path }
+        container(location, buttons)
+    }
+
+    private fun SoundGroup.container(
+        location: Path?,
+        buttons: List<ScrollingButtonComponent>
+    ) = group(path !in collapsed, entries.size, title).also {
+        it.child().apply {
+            onToggle { if (it) collapsed -= path else collapsed += path }
             titleLayout().apply {
                 if (location != null) {
                     tooltipText = DIRECTORY_TOOLTIP.translation()
@@ -165,8 +167,8 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
                 for ((i, button) in buttons.withIndex()) at(i / columns, i % columns) += button
             }
         }
-        group
     }
+
 
     private fun settings(entry: SoundEntry) {
         settings = SoundSettingsWidget(entry, SoundboardAccess.delegates.first())
