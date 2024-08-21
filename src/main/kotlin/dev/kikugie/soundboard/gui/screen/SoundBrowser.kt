@@ -8,6 +8,7 @@ import dev.kikugie.kowoui.experimental.plus
 import dev.kikugie.kowoui.experimental.plusAssign
 import dev.kikugie.kowoui.util.CombinedAlignment
 import dev.kikugie.soundboard.CONFIG
+import dev.kikugie.soundboard.ModKeyBinds
 import dev.kikugie.soundboard.audio.SoundEntry
 import dev.kikugie.soundboard.audio.SoundGroup
 import dev.kikugie.soundboard.audio.SoundRegistry
@@ -76,6 +77,12 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
 
     override fun shouldPause(): Boolean = false
 
+    override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+        val result = super.keyPressed(keyCode, scanCode, modifiers)
+        if (!result) ModKeyBinds.invoke(this)
+        return result
+    }
+
     override fun createAdapter(): OwoUIAdapter<StackLayout> = OwoUIAdapter.create(this) { h, v ->
         stack {
             horizontalSizing = h
@@ -86,6 +93,7 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
     }
 
     override fun build(component: StackLayout) {
+        SoundRegistry.update()
         root = component + setup()
         root.childById<FlowLayout>("container")!!.apply {
             createFavourites(this)

@@ -6,6 +6,7 @@ import dev.kikugie.kowoui.dynamic.dynamicButton
 import dev.kikugie.kowoui.dynamic.dynamicLabel
 import dev.kikugie.kowoui.experimental.at
 import dev.kikugie.kowoui.experimental.plusAssign
+import dev.kikugie.soundboard.ModKeyBinds
 import dev.kikugie.soundboard.Soundboard
 import dev.kikugie.soundboard.audio.AudioConfiguration
 import dev.kikugie.soundboard.audio.SoundEntry
@@ -161,7 +162,7 @@ class SoundSettingsWidget(
             at(1, 1) += dynamicButton {
                 id = "play"
                 horizontalSizing = fixed(20)
-                tooltipText = PLAY_TOOLTIP.translation(Soundboard.keybinds["browser"]!!.boundKeyLocalizedText.string)
+                tooltipText = PLAY_TOOLTIP.translation(ModKeyBinds["browser"]!!.boundKeyLocalizedText.string)
                 text { PLAY_LABEL(access.scheduler.playing) }
                 onPress {
                     if (access.scheduler.playing) access.scheduler.reset()

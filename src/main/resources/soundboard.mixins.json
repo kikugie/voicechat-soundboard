@@ -3,7 +3,6 @@
   "package": "dev.kikugie.soundboard.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "owo_ui.GridLayoutAccessor",
     "owo_ui.ScrollContainerAccessor"
   ],
   "injectors": {
