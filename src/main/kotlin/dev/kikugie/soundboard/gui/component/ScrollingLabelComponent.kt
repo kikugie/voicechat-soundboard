@@ -6,7 +6,7 @@ import io.wispforest.owo.ui.component.LabelComponent
 import io.wispforest.owo.ui.core.OwoUIDrawContext
 import net.minecraft.text.Text
 
-class ScrollingLabelComponent : LabelComponent(Text.empty()) {
+class ScrollingLabelComponent(text: Text = Text.empty()) : LabelComponent(text) {
     private var center: (Int) -> Int = { x + width / 2 }
     fun center(func:  (Int) -> Int) {
         center = func

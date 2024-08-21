@@ -25,6 +25,12 @@ var ScrollContainer<*>.fixedScrollbarLength: Int
         fixedScrollbarLength(value)
     }
 
+var ScrollContainer<*>.scrollbarThickness: Int
+    get() = scrollbarThiccness()
+    set(value) {
+        scrollbarThiccness(value)
+    }
+
 var FlowLayout.gap: Int
     get() = gap()
     set(value) {

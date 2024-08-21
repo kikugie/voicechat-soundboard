@@ -4,7 +4,6 @@ import dev.kikugie.soundboard.audio.SoundRegistry
 import dev.kikugie.soundboard.config.AudioConfig
 import dev.kikugie.soundboard.config.SoundboardConfig
 import dev.kikugie.soundboard.entrypoint.SoundboardAccess
-import dev.kikugie.soundboard.gui.SoundBrowser
 import dev.kikugie.soundboard.util.idOf
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper

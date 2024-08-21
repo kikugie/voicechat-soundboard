@@ -7,6 +7,17 @@
   "authors": [
     "KikuGie"
   ],
+  "entrypoints": {
+    "client": [
+      {
+        "adapter": "kotlin",
+        "value": "dev.kikugie.kowoui.internal.KOwOUI"
+      }
+    ]
+  },
+  "mixins": [
+    "kowoui.mixins.json"
+  ],
   "license": "MIT",
   "environment": "client",
   "depends": {
@@ -15,5 +26,13 @@
     "fabric-language-kotlin": "${flk}",
     "owo-lib": "${owolib}",
     "fabric-api": "*"
+  },
+  "custom": {
+    "loom:injected_interfaces": {
+      "io/wispforest/owo/ui/container/StackLayout": [
+        "dev/kikugie/kowoui/experimental/AppendableParentComponent",
+        "dev/kikugie/kowoui/experimental/MutableParentComponent"
+      ]
+    }
   }
 }

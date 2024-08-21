@@ -1,22 +1,9 @@
-@file:Suppress("unused")
-
 package dev.kikugie.kowoui
 
 import io.wispforest.owo.ui.container.FlowLayout
 import io.wispforest.owo.ui.container.GridLayout
 import io.wispforest.owo.ui.container.StackLayout
 import io.wispforest.owo.ui.core.Component
-
-val end: Nothing? = null
-
-fun FlowLayout.at(index: Int? = end): ComponentSetter =
-    FlowComponentSetter(this, index)
-
-fun StackLayout.at(index: Int? = end): ComponentSetter =
-    StackComponentSetter(this, index)
-
-fun GridLayout.at(row: Int, column: Int): ComponentSetter =
-    GridComponentSetter(this, row, column)
 
 inline fun <T : Component> FlowLayout.child(build: () -> T): T =
     build().also { this@child.child(it) }
@@ -48,37 +35,3 @@ fun FlowLayout.children(index: Int, vararg components: Component): FlowLayout =
 
 fun StackLayout.children(index: Int, vararg components: Component): StackLayout =
     children(index, components.toList())
-
-interface ComponentSetter {
-    infix fun <T : Component> set(component: T): T
-}
-
-class FlowComponentSetter(
-    private val container: FlowLayout,
-    private val index: Int?,
-) : ComponentSetter {
-    override fun <T : Component> set(component: T): T = component.also {
-        if (index == null) container.child(component)
-        else container.child(index, component)
-    }
-}
-
-class StackComponentSetter(
-    private val container: StackLayout,
-    private val index: Int?,
-) : ComponentSetter {
-    override fun <T : Component> set(component: T): T = component.also {
-        if (index == null) container.child(component)
-        else container.child(index, component)
-    }
-}
-
-class GridComponentSetter(
-    private val container: GridLayout,
-    private val row: Int,
-    private val column: Int,
-) : ComponentSetter {
-    override fun <T : Component> set(component: T): T = component.also {
-        container.child(component, row, column)
-    }
-}

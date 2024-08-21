@@ -1,4 +1,4 @@
-package dev.kikugie.soundboard.gui
+package dev.kikugie.soundboard.gui.screen
 
 import com.mojang.blaze3d.systems.RenderSystem
 import dev.kikugie.soundboard.util.currentScreen
