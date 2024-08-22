@@ -1,7 +1,9 @@
 package dev.kikugie.soundboard
 
-import dev.kikugie.soundboard.audio.SoundEntry
-import dev.kikugie.soundboard.audio.SoundRegistry
+import dev.kikugie.soundboard.audio.BASE_DIR
+import dev.kikugie.soundboard.audio.data.SoundEntry
+import dev.kikugie.soundboard.audio.registry.ResourceAudioHolder
+import dev.kikugie.soundboard.audio.registry.SoundRegistry
 import dev.kikugie.soundboard.config.AudioConfig
 import dev.kikugie.soundboard.config.SoundboardConfig
 import dev.kikugie.soundboard.entrypoint.SoundboardAccess
@@ -9,7 +11,6 @@ import dev.kikugie.soundboard.gui.screen.SoundBrowser
 import dev.kikugie.soundboard.util.client
 import dev.kikugie.soundboard.util.idOf
 import dev.kikugie.soundboard.util.shiftDown
-import dev.kikugie.soundboard.util.then
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType
@@ -28,8 +29,8 @@ object Soundboard {
         ready = true
 
         AudioConfig // Inits the object
-        SoundRegistry.BASE_DIR.createDirectories()
-        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(SoundRegistry)
+        BASE_DIR.createDirectories()
+        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(ResourceAudioHolder)
 
         ModKeyBinds.keybind(GLFW.GLFW_KEY_J, "browser") {
             inGame { SoundBrowser.open() }
@@ -59,7 +60,7 @@ object Soundboard {
                 }
                 if (index >= favourites.size) return null
                 SoundRegistry.update()
-                return SoundRegistry[favourites[index]]
+                return SoundRegistry.favourites[favourites[index]]
             }
             ClientTickEvents.END_CLIENT_TICK.register {
                 if (keybind.isPressed && favourites.isNotEmpty()) get()?.run {

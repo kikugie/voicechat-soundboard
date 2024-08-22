@@ -2,9 +2,9 @@ package dev.kikugie.soundboard.config
 
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
-import dev.kikugie.soundboard.audio.AudioConfiguration
-import dev.kikugie.soundboard.audio.SoundEntry
-import dev.kikugie.soundboard.audio.SoundId
+import dev.kikugie.soundboard.audio.data.AudioConfiguration
+import dev.kikugie.soundboard.audio.data.SoundEntry
+import dev.kikugie.soundboard.audio.data.SoundId
 import dev.kikugie.soundboard.util.runOn
 import kotlinx.coroutines.Dispatchers
 import net.fabricmc.loader.api.FabricLoader
@@ -30,7 +30,8 @@ object AudioConfig {
         load()
     }
 
-    operator fun get(entry: SoundEntry): AudioConfiguration? = configurations[entry.id]
+    operator fun get(entry: SoundEntry): AudioConfiguration? = get(entry.id)
+    operator fun get(id: SoundId): AudioConfiguration? = configurations[id]
     operator fun set(entry: SoundEntry, configuration: AudioConfiguration) {
         configurations[entry.id] = configuration
         runOn(Dispatchers.IO) { save() }

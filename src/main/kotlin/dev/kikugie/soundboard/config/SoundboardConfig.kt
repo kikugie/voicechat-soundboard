@@ -1,7 +1,7 @@
 package dev.kikugie.soundboard.config
 
 import dev.kikugie.soundboard.LOGGER
-import dev.kikugie.soundboard.audio.SoundId
+import dev.kikugie.soundboard.audio.data.SoundId
 import dev.kikugie.soundboard.util.runOn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.ExperimentalSerializationApi

@@ -1,6 +1,6 @@
 package dev.kikugie.soundboard.entrypoint
 
-import dev.kikugie.soundboard.audio.SoundEntry
+import dev.kikugie.soundboard.audio.data.SoundEntry
 
 object SoundboardAccess {
     private val _delegates = mutableListOf<SoundboardEntrypoint>()

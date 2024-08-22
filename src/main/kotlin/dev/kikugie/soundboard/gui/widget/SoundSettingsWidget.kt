@@ -9,9 +9,9 @@ import dev.kikugie.kowoui.experimental.plusAssign
 import dev.kikugie.soundboard.CONFIG
 import dev.kikugie.soundboard.ModKeyBinds
 import dev.kikugie.soundboard.Soundboard
-import dev.kikugie.soundboard.audio.AudioConfiguration
-import dev.kikugie.soundboard.audio.SoundEntry
-import dev.kikugie.soundboard.audio.SoundRegistry
+import dev.kikugie.soundboard.audio.data.AudioConfiguration
+import dev.kikugie.soundboard.audio.data.SoundEntry
+import dev.kikugie.soundboard.audio.registry.SoundRegistry
 import dev.kikugie.soundboard.config.AudioConfig
 import dev.kikugie.soundboard.entrypoint.SoundboardEntrypoint
 import dev.kikugie.soundboard.gui.screen.SoundBrowser
@@ -127,7 +127,7 @@ class SoundSettingsWidget(
                     else if (index < 0) CONFIG.favourites += entry.id
                     else CONFIG.favourites[index] = entry.id
 
-                    SoundRegistry.updateFavourites()
+                    SoundRegistry.update()
                     (currentScreen as? SoundBrowser)?.createFavourites()
                 }
             }

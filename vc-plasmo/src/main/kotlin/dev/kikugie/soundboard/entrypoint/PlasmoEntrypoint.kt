@@ -3,7 +3,7 @@ package dev.kikugie.soundboard.entrypoint
 import dev.kikugie.soundboard.MOD_ID
 import dev.kikugie.soundboard.Soundboard
 import dev.kikugie.soundboard.VERSION
-import dev.kikugie.soundboard.audio.AudioScheduler
+import dev.kikugie.soundboard.audio.play.AudioScheduler
 import net.fabricmc.api.ClientModInitializer
 import su.plo.voice.api.addon.AddonInitializer
 import su.plo.voice.api.addon.InjectPlasmoVoice

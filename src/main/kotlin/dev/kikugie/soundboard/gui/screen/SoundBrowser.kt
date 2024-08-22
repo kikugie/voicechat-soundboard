@@ -2,16 +2,16 @@ package dev.kikugie.soundboard.gui.screen
 
 import dev.kikugie.kowoui.*
 import dev.kikugie.kowoui.access.*
-import dev.kikugie.kowoui.dynamic.WrapperContainer
 import dev.kikugie.kowoui.dynamic.wrap
 import dev.kikugie.kowoui.experimental.at
 import dev.kikugie.kowoui.experimental.plus
 import dev.kikugie.kowoui.experimental.plusAssign
 import dev.kikugie.kowoui.util.CombinedAlignment
 import dev.kikugie.soundboard.CONFIG
-import dev.kikugie.soundboard.audio.SoundEntry
-import dev.kikugie.soundboard.audio.SoundGroup
-import dev.kikugie.soundboard.audio.SoundRegistry
+import dev.kikugie.soundboard.audio.data.SoundEntry
+import dev.kikugie.soundboard.audio.data.SoundGroup
+import dev.kikugie.soundboard.audio.data.SoundId
+import dev.kikugie.soundboard.audio.registry.SoundRegistry
 import dev.kikugie.soundboard.entrypoint.SoundboardAccess
 import dev.kikugie.soundboard.gui.component.ScrollingButtonComponent
 import dev.kikugie.soundboard.gui.widget.SidebarWidget
@@ -21,7 +21,6 @@ import dev.kikugie.soundboard.util.ctrlDown
 import dev.kikugie.soundboard.util.shiftDown
 import dev.kikugie.soundboard.util.then
 import io.wispforest.owo.ui.base.BaseOwoScreen
-import io.wispforest.owo.ui.container.CollapsibleContainer
 import io.wispforest.owo.ui.container.FlowLayout
 import io.wispforest.owo.ui.container.GridLayout
 import io.wispforest.owo.ui.container.ScrollContainer.Scrollbar.vanilla
@@ -35,7 +34,6 @@ import io.wispforest.owo.ui.core.Surface
 import net.minecraft.text.Text
 import net.minecraft.util.Util
 import java.nio.file.Path
-import kotlin.io.path.exists
 import kotlin.math.ceil
 
 class SoundBrowser : BaseOwoScreen<StackLayout>() {
@@ -44,7 +42,7 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
         private const val DIRECTORY_TOOLTIP = "soundboard.browser.tooltip.directory"
 
         private var offset = 0.0
-        private var collapsed: MutableSet<String> = mutableSetOf()
+        private var collapsed: MutableSet<SoundId> = mutableSetOf()
     }
 
     private lateinit var root: StackLayout
@@ -93,7 +91,7 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
         root.childById<FlowLayout>("container")!!.apply {
             createFavourites(this)
             val groups = SoundRegistry.groups.mapNotNull {
-                create(it, it.path.isEmpty())
+                create(it, it.id.directory.isEmpty())
             }.toList()
             this += groups
         }
@@ -134,8 +132,8 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
 
     private fun create(category: SoundGroup, keepEmpty: Boolean) = with(category) {
         if (entries.isEmpty() && !keepEmpty) return@with null
-        val location = runCatching { SoundRegistry.BASE_DIR.resolve(path).takeIf { it.exists() } }.getOrNull()
-        val buttons = entries.map {
+        val location = category.id.path(false)
+        val buttons = entries.values.map {
             ScrollingButtonComponent(it.title) {}.apply {
                 margins = of(3)
                 horizontalSizing = fill(33)
@@ -153,13 +151,14 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
     private fun SoundGroup.container(
         location: Path?,
         buttons: List<ScrollingButtonComponent>
-    ) = group(path !in collapsed, entries.size, title).also {
-        it.child().apply {
-            onToggle { if (it) collapsed -= path else collapsed += path }
+    ) = group(id !in collapsed, entries.size, title).apply {
+        val soundId = this@container.id
+        child().apply {
+            onToggle { if (it) collapsed -= soundId else collapsed += soundId }
             titleLayout().apply {
                 if (location != null) {
                     tooltipText = DIRECTORY_TOOLTIP.translation()
-                    onMouseDown { _, _, _ -> shiftDown then { Util.getOperatingSystem().open(path) } }
+                    onMouseDown { _, _, _ -> shiftDown then { Util.getOperatingSystem().open(location) } }
                 }
             }
             childById<GridLayout>("contents")!!.apply {

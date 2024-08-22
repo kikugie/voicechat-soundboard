@@ -9,7 +9,7 @@ import de.maxhenkel.voicechat.api.events.EventRegistration
 import de.maxhenkel.voicechat.api.events.MergeClientSoundEvent
 import dev.kikugie.soundboard.MOD_ID
 import dev.kikugie.soundboard.Soundboard
-import dev.kikugie.soundboard.audio.AudioScheduler
+import dev.kikugie.soundboard.audio.play.AudioScheduler
 import net.fabricmc.api.ClientModInitializer
 import net.minecraft.client.MinecraftClient
 import javax.sound.sampled.AudioFormat

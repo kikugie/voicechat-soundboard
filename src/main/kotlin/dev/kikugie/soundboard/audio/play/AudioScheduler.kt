@@ -1,4 +1,4 @@
-package dev.kikugie.soundboard.audio
+package dev.kikugie.soundboard.audio.play
 
 import dev.kikugie.soundboard.entrypoint.SoundboardEntrypoint
 

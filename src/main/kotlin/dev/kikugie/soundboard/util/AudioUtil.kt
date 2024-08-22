@@ -1,6 +1,6 @@
 package dev.kikugie.soundboard.util
 
-import dev.kikugie.soundboard.audio.SoundEntry
+import dev.kikugie.soundboard.audio.data.SoundEntry
 import java.io.BufferedInputStream
 import java.io.InputStream
 import javax.sound.sampled.AudioFormat
