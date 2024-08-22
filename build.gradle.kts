@@ -46,7 +46,9 @@ dependencies {
     modImplementation(libs.fabric.loader)
     modImplementation(libs.fabric.kotlin)
 
+    include(libs.okhttp)
     include(libs.owo.sentinel)
+    api(libs.okhttp)
     modApi(libs.fabric.api)
     modApi(libs.modmenu)
     modApi(libs.owo) {

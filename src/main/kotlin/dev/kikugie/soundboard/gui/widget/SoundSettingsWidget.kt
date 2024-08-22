@@ -2,6 +2,7 @@ package dev.kikugie.soundboard.gui.widget
 
 import dev.kikugie.kowoui.*
 import dev.kikugie.kowoui.access.*
+import dev.kikugie.kowoui.dynamic.ColoredTextComponent
 import dev.kikugie.kowoui.dynamic.dynamicButton
 import dev.kikugie.kowoui.dynamic.dynamicLabel
 import dev.kikugie.kowoui.experimental.at
@@ -89,7 +90,7 @@ class SoundSettingsWidget(
                 verticalSizing = fixed(8)
                 center { x + (width - it) / 2 }
             }
-            this += object : ValidatableTextComponent() {
+            this += object : ColoredTextComponent() {
                 init {
                     id = "index"
                     text = "-1"
@@ -97,12 +98,12 @@ class SoundSettingsWidget(
                     horizontalSizing = fixed(client.textRenderer.getWidth("00"))
                     drawBackground = false
                     onChange {
-                        if (`soundboard$isValid`(it)) index = it.trim().toInt()
+                        if (isValid(text)) index = it.trim().toInt()
+                    }
+                    color {
+                        if (!isValid(text)) Color.RED else null
                     }
                 }
-
-                override fun `soundboard$isValid`(text: String?): Boolean =
-                    text?.trim()?.toIntOrNull()?.takeIf { it in -1..<CONFIG.favourites.size } != null
 
                 override fun setText(text: String) {
                     super.setText(text.trim().take(2).padStart(2))
@@ -112,6 +113,9 @@ class SoundSettingsWidget(
                     super.write(text)
                     setText(this.text)
                 }
+
+                private fun isValid(text: String) =
+                    text.trim().toIntOrNull()?.takeIf { it in -1..<CONFIG.favourites.size } != null
             }
             this += button(STAR_LABEL(favourite)) {
                 id = "favourite"
@@ -125,7 +129,7 @@ class SoundSettingsWidget(
 
                     if (!favourite) CONFIG.favourites -= entry.id
                     else if (index < 0) CONFIG.favourites += entry.id
-                    else CONFIG.favourites[index] = entry.id
+                    else CONFIG.favourites.add(index, entry.id)
 
                     SoundRegistry.update()
                     (currentScreen as? SoundBrowser)?.createFavourites()

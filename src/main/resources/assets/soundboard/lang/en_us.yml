@@ -15,12 +15,38 @@ soundboard:
     tooltip:
       unavailable: Proximity chat muted or disconnected
       directory: Shift-click to open in your file manager
-      file: | 
+      file: |-
         Shift-click to play locally
         Ctrl-click to open audio cutter
-      play: |
+      play: |-
         Play the sound locally
         Press %s to close the widget
       close: Close audio editor
       favourite: Add to favourites
       unfavourite: Remove from favourites
+  downloader:
+    path: Save location
+    url: Source URL
+    footer:
+      - text: ⓘ
+        color: gold
+        bold: true
+      - text: " Audio downloads are provided by "
+        color: dark_gray
+        bold: false
+      - text: cobalt
+        color: blue
+        italic: true
+        underline: true
+        bold: false
+      - text: >-
+          . Check out their website for supported sources.
+          You're responsible for what you download, so be mindful when using the service.
+        color: dark_gray
+        bold: false
+    tooltip:
+      overwrite_path: File already exists and will be overwritten
+      downloading_path: File is already being downloaded and will be overwritten
+      invalid_path: Provided path is invalid
+      invalid_url: Invalid URL
+      download: Download audio

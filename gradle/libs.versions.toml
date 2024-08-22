@@ -19,6 +19,7 @@ plasmo-vc-config = "1.0.0"
 plasmo-vc = "fabric-1.21-2.0.10"
 modmenu = "11.0.1"
 dev-auth = "1.2.0"
+okhttp = "4.12.0"
 
 [plugins]
 fabric-loom = { id = "fabric-loom", version.ref = "loom" }
@@ -43,4 +44,5 @@ plasmovc-config = { group = "su.plo.config", name = "config", version.ref = "pla
 plasmovc = { group = "maven.modrinth", name = "plasmo-voice", version.ref = "plasmo-vc" }
 modmenu = { group = "com.terraformersmc", name = "modmenu", version.ref = "modmenu"}
 devauth = { group = "me.djtheredstoner", name = "DevAuth-fabric", version.ref = "dev-auth" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 

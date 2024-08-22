@@ -3,7 +3,6 @@
   "package": "dev.kikugie.soundboard.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "TextFieldWidgetMixin",
     "owo_ui.ScrollContainerAccessor",
     "owo_ui.OwODrawContextMixin"
   ],

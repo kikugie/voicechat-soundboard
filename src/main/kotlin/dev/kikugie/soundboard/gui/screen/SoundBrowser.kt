@@ -98,6 +98,7 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
     }
 
     private fun setup() = horizontalFlow {
+        gap = 2
         horizontalSizing = fill()
         surface = Surface.PANEL
         padding = of(5)

@@ -301,6 +301,13 @@ var TextFieldWidget.suggestion: String?
         setSuggestion(value)
     }
 
+var TextFieldWidget.maxLength: Int
+    @Deprecated("Getter unavailable", level = DeprecationLevel.ERROR)
+    get() = unsupported { "Getter unavailable" }
+    set(value) {
+        setMaxLength(value)
+    }
+
 val LabelComponent.animatableColor: AnimatableProperty<Color>
     get() = color()
 val BoxComponent.animatableEndColor: AnimatableProperty<Color>

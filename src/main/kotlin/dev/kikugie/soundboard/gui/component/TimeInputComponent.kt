@@ -1,5 +1,6 @@
 package dev.kikugie.soundboard.gui.component
 
+import dev.kikugie.kowoui.dynamic.ColoredTextComponent
 import dev.kikugie.kowoui.onChange
 import dev.kikugie.soundboard.util.Property
 import io.wispforest.owo.ui.core.Sizing
@@ -11,7 +12,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class TimeInputComponent(
     private val full: Duration, private val time: Property<Duration>,
-) : ValidatableTextComponent() {
+) : ColoredTextComponent() {
     private lateinit var validator: (Duration) -> Boolean
     private var listener: (Duration) -> Unit = {}
 
