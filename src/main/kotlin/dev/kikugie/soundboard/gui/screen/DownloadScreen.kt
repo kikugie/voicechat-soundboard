@@ -12,6 +12,7 @@ import dev.kikugie.soundboard.LOGGER
 import dev.kikugie.soundboard.audio.BASE_DIR
 import dev.kikugie.soundboard.audio.FORMAT
 import dev.kikugie.soundboard.audio.download.Downloader
+import dev.kikugie.soundboard.gui.CONFIG_PANEL
 import dev.kikugie.soundboard.gui.widget.SidebarWidget
 import dev.kikugie.soundboard.util.resolveOrNull
 import io.wispforest.owo.ui.base.BaseOwoScreen
@@ -140,7 +141,7 @@ class DownloadScreen : BaseOwoScreen<StackLayout>() {
     private fun setup() = horizontalFlow {
         gap = 2
         horizontalSizing = fill()
-        surface = Surface.PANEL
+        surface = CONFIG_PANEL
         padding = of(5)
         this += verticalFlow {
             id = "container"

@@ -66,6 +66,7 @@ object Soundboard {
                 if (keybind.isPressed && favourites.isNotEmpty()) get()?.run {
                     println("Playing ${id.str}")
                     SoundboardAccess.play(this, shiftDown)
+                    keybind.isPressed = false
                 }
             }
         }

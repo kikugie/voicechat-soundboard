@@ -13,6 +13,7 @@ import dev.kikugie.soundboard.audio.data.SoundGroup
 import dev.kikugie.soundboard.audio.data.SoundId
 import dev.kikugie.soundboard.audio.registry.SoundRegistry
 import dev.kikugie.soundboard.entrypoint.SoundboardAccess
+import dev.kikugie.soundboard.gui.CONFIG_PANEL
 import dev.kikugie.soundboard.gui.component.ScrollingButtonComponent
 import dev.kikugie.soundboard.gui.widget.SidebarWidget
 import dev.kikugie.soundboard.gui.widget.SoundSettingsWidget
@@ -100,7 +101,7 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
     private fun setup() = horizontalFlow {
         gap = 2
         horizontalSizing = fill()
-        surface = Surface.PANEL
+        surface = CONFIG_PANEL
         padding = of(5)
         this += verticalScroll(verticalFlow {
             id = "container"
@@ -175,7 +176,7 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
         root + overlay(settings!!) {
             sizing = fill(50)
             closeOnClick = false
-            surface = Surface.PANEL
+            surface = CONFIG_PANEL
             positioning = io.wispforest.owo.ui.core.Positioning.relative(50, 50)
             zIndex = 100
             onMouseDown { _, _, _ -> true }

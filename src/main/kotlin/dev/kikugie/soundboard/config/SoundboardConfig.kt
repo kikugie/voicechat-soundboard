@@ -15,6 +15,7 @@ import kotlin.io.path.*
 @Serializable
 @OptIn(ExperimentalSerializationApi::class)
 class SoundboardConfig(
+    var darkMode: Boolean = false,
     var columns: Int = 3,
     val favourites: MutableList<SoundId> = mutableListOf(),
 ) {
