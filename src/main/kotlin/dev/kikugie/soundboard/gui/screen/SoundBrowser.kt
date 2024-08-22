@@ -161,7 +161,7 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
                     onMouseDown { _, _, _ -> shiftDown then { Util.getOperatingSystem().open(location) } }
                 }
             }
-            childById<GridLayout>("contents")!!.apply {
+            (collapsibleChildren().first { it.id == "contents" } as GridLayout).apply {
                 val columns = CONFIG.columns
                 for ((i, button) in buttons.withIndex()) at(i / columns, i % columns) += button
             }
