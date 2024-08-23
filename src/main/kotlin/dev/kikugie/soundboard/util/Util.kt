@@ -5,6 +5,7 @@ import kotlinx.coroutines.*
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.util.Identifier
+import net.minecraft.util.math.Vec3d
 import java.nio.file.Path
 import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.*
@@ -45,3 +46,5 @@ var currentScreen
     set(value) {
         client.setScreen(value)
     }
+
+operator fun Vec3d.plus(other: Vec3d) = add(other)

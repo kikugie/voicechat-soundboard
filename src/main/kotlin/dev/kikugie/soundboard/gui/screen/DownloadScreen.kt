@@ -8,13 +8,13 @@ import dev.kikugie.kowoui.experimental.plus
 import dev.kikugie.kowoui.experimental.plusAssign
 import dev.kikugie.kowoui.util.CombinedAlignment
 import dev.kikugie.kowoui.dynamic.coloredTextBox
-import dev.kikugie.soundboard.LOGGER
 import dev.kikugie.soundboard.audio.BASE_DIR
 import dev.kikugie.soundboard.audio.FORMAT
 import dev.kikugie.soundboard.audio.download.Downloader
 import dev.kikugie.soundboard.gui.CONFIG_PANEL
 import dev.kikugie.soundboard.gui.widget.SidebarWidget
 import dev.kikugie.soundboard.util.resolveOrNull
+import dev.kikugie.soundboard.util.then
 import io.wispforest.owo.ui.base.BaseOwoScreen
 import io.wispforest.owo.ui.component.ButtonComponent
 import io.wispforest.owo.ui.component.TextBoxComponent
@@ -25,6 +25,8 @@ import io.wispforest.owo.ui.core.Insets.*
 import io.wispforest.owo.ui.core.Sizing.*
 import net.minecraft.client.gui.screen.ConfirmLinkScreen
 import net.minecraft.util.DyeColor
+import org.lwjgl.glfw.GLFW
+import java.lang.ref.WeakReference
 import java.net.URI
 import kotlin.io.path.exists
 
@@ -43,6 +45,7 @@ class DownloadScreen : BaseOwoScreen<StackLayout>() {
 
     private lateinit var root: StackLayout
 
+    override fun shouldPause(): Boolean = false
     override fun createAdapter(): OwoUIAdapter<StackLayout> = OwoUIAdapter.create(this) { h, v ->
         stack {
             horizontalSizing = h
@@ -53,6 +56,7 @@ class DownloadScreen : BaseOwoScreen<StackLayout>() {
     }
 
     override fun build(component: StackLayout) {
+        component.allowOverflow = true
         root = component + setup()
         root.childById<FlowLayout>("container")!!.apply {
             gap = 2
@@ -87,9 +91,8 @@ class DownloadScreen : BaseOwoScreen<StackLayout>() {
                 }
             }.wrap {
                 surface = Surface.PANEL_INSET
-                padding = of(2)
+                padding = of(1)
                 verticalSizing = fixed(12)
-                verticalAlignment = VerticalAlignment.CENTER
             }
 
             this += fixedSpacer(4)
@@ -107,15 +110,14 @@ class DownloadScreen : BaseOwoScreen<StackLayout>() {
                             Color.RED
                         } else {
                             tooltip = null
-                            null
+                            Color.ofDye(DyeColor.LIGHT_BLUE)
                         }
                     }
                 }.wrap {
                     surface = Surface.PANEL_INSET
-                    padding = of(2)
+                    padding = of(1)
                     horizontalSizing = expand()
                     verticalSizing = fixed(12)
-                    verticalAlignment = VerticalAlignment.CENTER
                 }
                 this += button(">>".text()) {
                     id = "download"
@@ -153,13 +155,22 @@ class DownloadScreen : BaseOwoScreen<StackLayout>() {
     private fun configure(layout: FlowLayout) = with(layout) {
         val path = childById<TextBoxComponent>("path")!!
         val url = childById<TextBoxComponent>("url")!!
-        val button = childById<ButtonComponent>("download")!!
 
-        button.onPress {
-            val dest = path.text.resolvePath() ?: return@onPress
-            val uri = runCatching { URI.create(url.text) }.getOrNull() ?: return@onPress
-            Downloader.download(uri, dest)
+        url.onKeyPress { key, _, _ ->
+            (key == GLFW.GLFW_KEY_ENTER) then { download(path, url) }
         }
+        childById<ButtonComponent>("download")!!.onPress {
+            download(path, url)
+        }
+    }
+
+    private fun download(
+        path: TextBoxComponent,
+        url: TextBoxComponent
+    ) {
+        val dest = path.text.resolvePath() ?: return
+        val uri = runCatching { URI.create(url.text) }.getOrNull() ?: return
+        Downloader.download(uri, dest, WeakReference(this@DownloadScreen.root))
     }
 
     private fun String.resolvePath() = BASE_DIR.resolveOrNull("${removePrefix(".$FORMAT")}.wav")

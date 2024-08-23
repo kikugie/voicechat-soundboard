@@ -8,6 +8,7 @@ import io.wispforest.owo.ui.component.ButtonComponent.Renderer
 import io.wispforest.owo.ui.core.*
 import net.minecraft.client.gui.widget.TextFieldWidget
 import net.minecraft.client.util.math.MatrixStack
+import net.minecraft.entity.Entity
 import net.minecraft.item.ItemStack
 import net.minecraft.text.Style
 import net.minecraft.text.Text
@@ -330,3 +331,9 @@ val LabelComponent.textClickHandler: Function<Style, Boolean>
     get() = textClickHandler()
 val EntityComponent<*>.transform: Consumer<MatrixStack>
     get() = transform()
+val <T : Entity> EntityComponent<T>.entity
+    get() = entity()
+
+fun EntityComponent<*>.transformWith(action: MatrixStack.() -> Unit) {
+    transform(action)
+}

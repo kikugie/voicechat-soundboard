@@ -3,11 +3,10 @@
   "package": "dev.kikugie.kowoui.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "owo.BaseParentComponentMixin",
+    "TextFieldWidgetMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "client": [
-    "TextFieldWidgetMixin"
-  ]
+  }
 }

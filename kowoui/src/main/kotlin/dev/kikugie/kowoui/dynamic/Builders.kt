@@ -3,7 +3,7 @@ package dev.kikugie.kowoui.dynamic
 import io.wispforest.owo.ui.core.Component
 import net.minecraft.text.Text
 
-@JvmOverloads inline fun <T : Component> T.wrap(build: WrapperContainer<T>.() -> Unit = {}) =
+inline infix fun <T : Component> T.wrap(build: WrapperContainer<T>.() -> Unit) =
     WrapperContainer(this).apply(build)
 
 @JvmOverloads inline fun fixedSpacer(pixels: Int, build: FixedSpacerComponent.() -> Unit = {}) =
