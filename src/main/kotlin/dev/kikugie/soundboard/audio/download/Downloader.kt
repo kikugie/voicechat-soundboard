@@ -22,8 +22,8 @@ import java.nio.file.Path
 import kotlin.io.path.invariantSeparatorsPathString
 
 object Downloader {
-    private const val FAILURE = "soundboard.download.failure"
-    private const val SUCCESS = "soundboard.download.success"
+    private const val FAILURE = "soundboard.downloader.failure"
+    private const val SUCCESS = "soundboard.downloader.success"
     private val downloads: MutableMap<Path, Pair<URI, Job>> = mutableMapOf()
 
     fun isDownloading(path: Path) = path in downloads

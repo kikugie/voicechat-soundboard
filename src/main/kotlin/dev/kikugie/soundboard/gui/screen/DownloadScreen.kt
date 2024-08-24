@@ -36,6 +36,9 @@ class DownloadScreen : BaseOwoScreen<StackLayout>() {
         const val URL = "soundboard.downloader.url"
         const val FOOTER = "soundboard.downloader.footer"
 
+        const val FILE_TOOLTIP = "soundboard.downloader.tooltip.path"
+        const val URL_TOOLTIP = "soundboard.downloader.tooltip.url"
+
         const val DOWNLOAD = "soundboard.downloader.tooltip.download"
         const val OVERWRITE_PATH = "soundboard.downloader.tooltip.overwrite_path"
         const val DOWNLOADING_PATH = "soundboard.downloader.tooltip.downloading_path"
@@ -60,7 +63,9 @@ class DownloadScreen : BaseOwoScreen<StackLayout>() {
         root = component + setup()
         root.childById<FlowLayout>("container")!!.apply {
             gap = 2
-            this += label(FILE_PATH.translation())
+            this += label(FILE_PATH.translation()) {
+                tooltipText = FILE_TOOLTIP.translation()
+            }
             this += coloredTextBox {
                 id = "path"
                 maxLength = Short.MAX_VALUE.toInt()
@@ -96,7 +101,9 @@ class DownloadScreen : BaseOwoScreen<StackLayout>() {
             }
 
             this += fixedSpacer(4)
-            this += label(URL.translation())
+            this += label(URL.translation()) {
+                tooltipText = URL_TOOLTIP.translation()
+            }
             this += horizontalFlow {
                 gap = 2
                 verticalAlignment = VerticalAlignment.CENTER

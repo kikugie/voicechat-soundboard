@@ -13,6 +13,7 @@ soundboard:
     config: Open Soundboard config
     play: Play favourite sound (use with number keys)
   browser:
+    .: Sound browser
     tooltip:
       unavailable: Proximity chat muted or disconnected
       directory: Shift-click to open in your file manager
@@ -26,11 +27,9 @@ soundboard:
       favourite: Add to favourites
       unfavourite: Remove from favourites
   downloader:
-    path: |-
-      Save location starting at '.minecraft/config/soundboard/'.
-      Files are saved as .wav - you don't need to type the extension.
-    url: |- 
-      Source URL - check supported sources on the cobalt website.
+    .: Audio downloader
+    path: Save location
+    url: Source URL
     footer:
       - text: ⓘ
         color: gold
@@ -48,13 +47,14 @@ soundboard:
           You're responsible for what you download, so be mindful when using the service.
         color: dark_gray
         bold: false
-    failure:
-      - text: Failed to save %s. Check the game log
-        color: red
-    success:
-      - text: Downloaded %s
-        color: green
+    failure: §4[Soundboard] Failed to save %s. Check the game log for more details
+    success: §a[Soundboard] Downloaded %s
     tooltip:
+      path: |-
+        Save location starting at '.minecraft/config/soundboard/'.
+        Files are saved as .wav - you don't need to type the extension.
+      url: |-
+        Video or audio link - check supported sources on the cobalt website.
       overwrite_path: File already exists and will be overwritten
       downloading_path: File is already being downloaded and will be overwritten
       invalid_path: Provided path is invalid
