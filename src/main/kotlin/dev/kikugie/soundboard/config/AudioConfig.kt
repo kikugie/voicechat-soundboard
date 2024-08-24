@@ -32,8 +32,14 @@ object AudioConfig {
 
     operator fun get(entry: SoundEntry): AudioConfiguration? = get(entry.id)
     operator fun get(id: SoundId): AudioConfiguration? = configurations[id]
-    operator fun set(entry: SoundEntry, configuration: AudioConfiguration) {
-        configurations[entry.id] = configuration
+    operator fun set(entry: SoundEntry, configuration: AudioConfiguration) = set(entry.id, configuration)
+    operator fun set(id: SoundId, configuration: AudioConfiguration) {
+        configurations[id] = configuration
+        runOn(Dispatchers.IO) { save() }
+    }
+    operator fun minusAssign(entry: SoundEntry) = minusAssign(entry.id)
+    operator fun minusAssign(id: SoundId) {
+        configurations.remove(id)
         runOn(Dispatchers.IO) { save() }
     }
 

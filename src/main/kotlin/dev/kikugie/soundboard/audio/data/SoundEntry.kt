@@ -9,7 +9,7 @@ import java.io.InputStream
 data class SoundEntry(
     val id: SoundId,
     val supplier: () -> InputStream,
-    var settings: AudioConfiguration? = null,
+    val settings: AudioConfiguration? = null,
     private val text: Text? = null,
 ) {
     val group: SoundId by lazy { id.parent() }

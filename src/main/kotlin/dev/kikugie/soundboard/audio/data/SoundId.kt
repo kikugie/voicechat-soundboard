@@ -17,12 +17,12 @@ import kotlin.io.path.exists
 @JvmInline
 @Serializable
 value class SoundId(val str: String) {
-    val namespace get() = str.substringBefore(':')
+    val namespace get() = str.substringBefore(':', "")
     val directory get() = str.substringAfter(':').substringBeforeLast('/')
     val path get() = str.substringAfter(':')
-    val file get() = str.substringAfterLast('/')
+    val file get() = str.substringAfterLast('/', "")
 
-    constructor(namespace: String, path: String) : this("$namespace:$path")
+    constructor(namespace: String, path: String) : this("${ if (namespace.isEmpty() || namespace == MOD_ID) "" else "$namespace:" }$path")
     constructor(id: Identifier) : this(id.toString())
 
     fun parent() = SoundId(namespace, directory.ifEmpty { "/" })

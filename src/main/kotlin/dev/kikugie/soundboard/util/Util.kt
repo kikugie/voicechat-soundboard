@@ -28,7 +28,7 @@ inline infix fun Boolean.then(action: () -> Unit): Boolean {
     return this
 }
 
-fun Class<*>.accurateName(): String = simpleName.takeIf { it.isNotEmpty() } ?: run {
+fun Class<*>.accurateName(): String = simpleName.ifEmpty {
     val parent = if (this == Any::class.java) "Object" else superclass.accurateName()
     "out $parent"
 }

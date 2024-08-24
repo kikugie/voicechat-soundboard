@@ -7,7 +7,6 @@ import dev.kikugie.soundboard.audio.*
 import dev.kikugie.soundboard.audio.data.SoundEntry
 import dev.kikugie.soundboard.audio.data.SoundGroup
 import dev.kikugie.soundboard.audio.data.SoundId
-import dev.kikugie.soundboard.config.AudioConfig
 import it.unimi.dsi.fastutil.objects.Object2LongMap
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap
 import net.minecraft.text.Text
@@ -27,8 +26,9 @@ object FileAudioHolder {
     operator fun get(id: SoundId): SoundEntry? {
         val path = runCatching { BASE_DIR.resolve(id.path.removePrefix("/") + ".$FORMAT") }
             .getOrNull() ?: return null
-        if (cache(path)) return sounds[id.parent()][id]
-        update()
+        val props = path.withExtension("properties")
+        val cached = cache(path) && (props.notExists() || cache(props))
+        if (!cached) update()
         return sounds[id.parent()][id]
     }
 
@@ -62,7 +62,7 @@ object FileAudioHolder {
 
     private fun entry(id: SoundId, path: Path, props: Path): SoundEntry {
         val title = runCatching { PropertiesReader.read(props)["title"]?.text() }.getOrNull()
-        return SoundEntry(id, path::inputStream, AudioConfig[id], title)
+        return SoundEntry(id, path::inputStream, null, title)
     }
 
     private fun cache(path: Path) =

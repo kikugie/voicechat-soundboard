@@ -8,6 +8,7 @@ import net.minecraft.client.option.KeyBinding
 object ModKeyBinds {
     private val keybinds = mutableMapOf<String, KeyBuilder>()
 
+    @JvmStatic
     operator fun get(name: String): KeyBinding? = keybinds[name]?.keybind
     fun keybind(key: Int, name: String, action: KeyBuilder.() -> Unit) {
         val bind = KeyBindingHelper.registerKeyBinding(KeyBinding("soundboard.keybinds.$name", key, "soundboard.title"))

@@ -5,19 +5,20 @@ import dev.kikugie.kowoui.access.*
 import dev.kikugie.kowoui.dynamic.ColoredTextComponent
 import dev.kikugie.kowoui.dynamic.dynamicButton
 import dev.kikugie.kowoui.dynamic.dynamicLabel
+import dev.kikugie.kowoui.dynamic.fixedSpacer
 import dev.kikugie.kowoui.experimental.at
 import dev.kikugie.kowoui.experimental.plusAssign
 import dev.kikugie.soundboard.CONFIG
 import dev.kikugie.soundboard.ModKeyBinds
 import dev.kikugie.soundboard.Soundboard
-import dev.kikugie.soundboard.audio.data.AudioConfiguration
+import dev.kikugie.soundboard.audio.data.AudioConfiguration.Companion.DEFAULT
 import dev.kikugie.soundboard.audio.data.SoundEntry
 import dev.kikugie.soundboard.audio.registry.SoundRegistry
 import dev.kikugie.soundboard.config.AudioConfig
 import dev.kikugie.soundboard.entrypoint.SoundboardEntrypoint
-import dev.kikugie.soundboard.gui.screen.SoundBrowser
 import dev.kikugie.soundboard.gui.component.*
 import dev.kikugie.soundboard.gui.component.TimeInputComponent.Companion.asString
+import dev.kikugie.soundboard.gui.screen.SoundBrowser
 import dev.kikugie.soundboard.util.client
 import dev.kikugie.soundboard.util.currentScreen
 import dev.kikugie.soundboard.util.duration
@@ -25,7 +26,6 @@ import dev.kikugie.soundboard.util.read
 import io.wispforest.owo.ui.component.ButtonComponent.Renderer
 import io.wispforest.owo.ui.component.SlimSliderComponent.Axis.VERTICAL
 import io.wispforest.owo.ui.container.FlowLayout
-import io.wispforest.owo.ui.container.WrappingParentComponent
 import io.wispforest.owo.ui.core.*
 import io.wispforest.owo.ui.core.Insets.bottom
 import io.wispforest.owo.ui.core.Sizing.*
@@ -35,7 +35,7 @@ import kotlin.time.Duration
 class SoundSettingsWidget(
     private val entry: SoundEntry,
     private val access: SoundboardEntrypoint,
-) : WrappingParentComponent<FlowLayout>(fill(), fill(), verticalFlow { sizing = fill() }) {
+) : FlowLayout(content(), content(), Algorithm.VERTICAL) {
     companion object {
         private const val CLOSE = "×"
         private const val CLOSE_TOOLTIP = "soundboard.browser.tooltip.close"
@@ -54,25 +54,22 @@ class SoundSettingsWidget(
 
     private val data = entry.read(access.format)
     private val duration = access.format.duration(data.size)
-    private val default = AudioConfiguration(Duration.ZERO, duration, 1.0)
-    private val settings = AudioConfig[entry] ?: default.clone()
+    private val settings = AudioConfig[entry] ?: entry.settings ?: DEFAULT.clone()
 
     init {
+        if (settings.end == Duration.INFINITE) settings.end = duration
         create()
     }
 
     fun update() {
-        if (settings != default) AudioConfig[entry] = settings
-    }
-
-    override fun draw(context: OwoUIDrawContext, mouseX: Int, mouseY: Int, partialTicks: Float, delta: Float) {
-        super.draw(context, mouseX, mouseY, partialTicks, delta)
-        child.draw(context, mouseX, mouseY, partialTicks, delta)
+        if (settings.isDefault(duration) || settings == entry.settings) AudioConfig -= entry
+        else AudioConfig[entry] = settings
     }
 
     private val Double.invert get() = 1 - this
 
-    private fun create() = with(child) {
+    private fun create() = with(this as FlowLayout) {
+        id = "settings-container"
         padding = Insets.of(5)
         var favourite = entry.id in Soundboard.config.favourites
         var index = -1
@@ -131,6 +128,7 @@ class SoundSettingsWidget(
                     else if (index < 0) CONFIG.favourites += entry.id
                     else CONFIG.favourites.add(index, entry.id)
 
+                    CONFIG.save()
                     SoundRegistry.update()
                     (currentScreen as? SoundBrowser)?.createFavourites()
                 }
@@ -170,7 +168,7 @@ class SoundSettingsWidget(
                     "${(settings.volume * 100).toInt()}%".text()
                 }
             }
-            at(1, 0) += grid(1, 3) {
+            at(1, 0) += grid(1, 5) {
                 id = "duration-controls"
                 horizontalSizing = expand()
                 horizontalAlignment = HorizontalAlignment.CENTER
@@ -180,13 +178,15 @@ class SoundSettingsWidget(
                     validate { it <= settings.end }
                     onDurationChange { cutter.update() }
                 }
-                at(0, 1) += dynamicLabel{
+                at(0, 1) += fixedSpacer(5)
+                at(0, 2) += dynamicLabel{
                     id = "duration"
                     horizontalTextAlignment = HorizontalAlignment.CENTER
                     verticalTextAlignment = VerticalAlignment.CENTER
                     text { "${(settings.end - settings.start).asString}s".text() }
                 }
-                at(0, 2) += TimeInputComponent(duration, settings::end).apply {
+                at(0, 3) += fixedSpacer(5)
+                at(0, 4) += TimeInputComponent(duration, settings::end).apply {
                     id = "end"
                     validate { it >= settings.start }
                     onDurationChange { cutter.update() }

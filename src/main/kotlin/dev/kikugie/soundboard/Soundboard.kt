@@ -34,7 +34,12 @@ object Soundboard {
 
         ModKeyBinds.keybind(GLFW.GLFW_KEY_J, "browser") {
             inGame { SoundBrowser.open() }
-            inGui { if (this is SoundBrowser) close() }
+            inGui {
+                if (this is SoundBrowser) {
+                    if (settings != null) closeSettings()
+                    else close()
+                }
+            }
         }
         ModKeyBinds.keybind(GLFW.GLFW_KEY_U, "cancel") {
             val reset = { SoundboardAccess.forEach { scheduler.reset() } }
@@ -52,6 +57,7 @@ object Soundboard {
                     // 0 converts to 9 because it's the last on the number row
                     InputUtil.isKeyPressed(handle, GLFW.GLFW_KEY_0) ||
                     InputUtil.isKeyPressed(handle, GLFW.GLFW_KEY_KP_0) -> 9
+
                     else -> numrow.firstNotNullOfOrNull {
                         if (InputUtil.isKeyPressed(handle, it)) it - GLFW.GLFW_KEY_1 else null
                     } ?: numpad.firstNotNullOfOrNull {

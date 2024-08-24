@@ -29,6 +29,7 @@ import io.wispforest.owo.ui.container.StackLayout
 import io.wispforest.owo.ui.core.Insets.*
 import io.wispforest.owo.ui.core.OwoUIAdapter
 import io.wispforest.owo.ui.core.ParentComponent
+import io.wispforest.owo.ui.core.Positioning.relative
 import io.wispforest.owo.ui.core.Sizing.expand
 import io.wispforest.owo.ui.core.Sizing.fill
 import io.wispforest.owo.ui.core.Surface
@@ -112,6 +113,7 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
             scrollbarThickness = 10
             scrollbar = vanilla()
             surface = Surface.PANEL_INSET
+            padding = bottom(1)
         }
         this += SidebarWidget(this@SoundBrowser)
     }
@@ -174,10 +176,10 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
     private fun settings(entry: SoundEntry) {
         settings = SoundSettingsWidget(entry, SoundboardAccess.delegates.first())
         root + overlay(settings!!) {
-            sizing = fill(50)
             closeOnClick = false
             surface = CONFIG_PANEL
-            positioning = io.wispforest.owo.ui.core.Positioning.relative(50, 50)
+            sizing = fill(65)
+            positioning = relative(50, 50)
             zIndex = 100
             onMouseDown { _, _, _ -> true }
         }

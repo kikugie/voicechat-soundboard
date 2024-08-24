@@ -44,6 +44,12 @@ soundboard:
           You're responsible for what you download, so be mindful when using the service.
         color: dark_gray
         bold: false
+    failure:
+      - text: Failed to save %s. Check the game log
+        color: red
+    success:
+      - text: Downloaded %s
+        color: green
     tooltip:
       overwrite_path: File already exists and will be overwritten
       downloading_path: File is already being downloaded and will be overwritten
