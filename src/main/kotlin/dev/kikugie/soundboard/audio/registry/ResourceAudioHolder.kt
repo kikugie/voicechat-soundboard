@@ -63,7 +63,7 @@ object ResourceAudioHolder : SimpleResourceReloadListener<GroupMap> {
                 DEFAULT.cloneOrNull {
                     map["start"]?.toDoubleOrNull()?.coerceAtLeast(0.0)?.seconds?.let { start = it }
                     map["end"]?.toDoubleOrNull()?.coerceAtLeast(0.0)?.seconds?.let { end = it }
-                    map["volume"]?.toDoubleOrNull()?.coerceIn(0.0, 1.0)?.let { volume = it }
+                    map["volume"]?.toIntOrNull()?.coerceIn(0, 100)?.let { volume = it / 100.0 }
                 }
             }
         // example:soundboard/sound.wav -> example:/sound

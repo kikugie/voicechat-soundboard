@@ -11,6 +11,7 @@ soundboard:
     browser: Open audio browser
     cancel: Cancel sound playback
     config: Open Soundboard config
+    play: Play favourite sound (use with number keys)
   browser:
     tooltip:
       unavailable: Proximity chat muted or disconnected
@@ -25,8 +26,11 @@ soundboard:
       favourite: Add to favourites
       unfavourite: Remove from favourites
   downloader:
-    path: Save location
-    url: Source URL
+    path: |-
+      Save location starting at '.minecraft/config/soundboard/'.
+      Files are saved as .wav - you don't need to type the extension.
+    url: |- 
+      Source URL - check supported sources on the cobalt website.
     footer:
       - text: ⓘ
         color: gold
