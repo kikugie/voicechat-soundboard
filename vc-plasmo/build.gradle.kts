@@ -63,6 +63,10 @@ tasks.register<Copy>("buildAndCollect") {
 }
 
 publishMods {
+    val modrinthToken = findProperty("modrinthToken")
+    val curseforgeToken = findProperty("curseforgeToken")
+    dryRun = modrinthToken == null || curseforgeToken == null
+
     file = tasks.remapJar.get().archiveFile
     displayName = "Plasmo Soundboard ${mod.version}"
     version = mod.version
@@ -70,12 +74,9 @@ publishMods {
     type = ReleaseType.of(project.property("release").toString())
     modLoaders.add("fabric")
 
-    dryRun = providers.environmentVariable("MODRINTH_TOKEN")
-        .getOrNull() == null || providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null
-
     modrinth {
         projectId = property("publish.modrinth").toString()
-        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        accessToken = modrinthToken as String?
         minecraftVersions.add(libs.versions.minecraft)
         requires { slug = "fabric-api" }
         requires { slug = "fabric-language-kotlin" }
@@ -85,7 +86,7 @@ publishMods {
 
     curseforge {
         projectId = property("publish.curseforge").toString()
-        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        accessToken = curseforgeToken as String?
         minecraftVersions.add(libs.versions.minecraft)
         requires { slug = "fabric-api" }
         requires { slug = "fabric-language-kotlin" }
