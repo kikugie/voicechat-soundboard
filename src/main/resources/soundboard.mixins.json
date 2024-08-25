@@ -3,6 +3,7 @@
   "package": "dev.kikugie.soundboard.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "TitleScreenMixin",
     "KeyboardMixin",
     "owo_ui.OwODrawContextMixin",
     "owo_ui.ScrollContainerAccessor"

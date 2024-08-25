@@ -49,6 +49,13 @@ soundboard:
         bold: false
     failure: §4[Soundboard] Failed to save %s. Check the game log for more details
     success: §a[Soundboard] Downloaded %s
+    quit:
+      - text: [Soundboard] Downloads are still running!
+        color: red
+    confirm: |-
+      If you quit, the following downloads will be cancelled. Do you want to quit?
+      
+      %s
     tooltip:
       path: |-
         Save location starting at '.minecraft/config/soundboard/'.

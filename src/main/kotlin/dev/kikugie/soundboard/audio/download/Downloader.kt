@@ -16,6 +16,8 @@ import io.wispforest.owo.ui.core.Surface
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import net.minecraft.client.gui.screen.ConfirmScreen
+import net.minecraft.client.gui.screen.Screen
 import java.lang.ref.WeakReference
 import java.net.URI
 import java.nio.file.Path
@@ -24,7 +26,23 @@ import kotlin.io.path.invariantSeparatorsPathString
 object Downloader {
     private const val FAILURE = "soundboard.downloader.failure"
     private const val SUCCESS = "soundboard.downloader.success"
+    private const val QUIT = "soundboard.downloader.quit"
+    private const val CONFIRM = "soundboard.downloader.confirm"
     private val downloads: MutableMap<Path, Pair<URI, Job>> = mutableMapOf()
+
+    @JvmStatic fun downloads(): Map<Path, Pair<URI, Job>> = downloads
+    @JvmStatic fun confirmation(parent: Screen, action: () -> Any?): ConfirmScreen {
+        val title = QUIT.translation()
+        val paths = downloads.keys.joinToString("\n") {
+            GAME_DIR.relativize(it).invariantSeparatorsPathString
+        }.let {
+            CONFIRM.translation(it)
+        }
+        val callback: (Boolean) -> Unit = {
+            if (it) action() else client.setScreen(parent)
+        }
+        return ConfirmScreen(callback, title, paths)
+    }
 
     fun isDownloading(path: Path) = path in downloads
 
