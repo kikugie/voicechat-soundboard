@@ -47,10 +47,10 @@ soundboard:
           You're responsible for what you download, so be mindful when using the service.
         color: dark_gray
         bold: false
-    failure: §4[Soundboard] Failed to save %s. Check the game log for more details
-    success: §a[Soundboard] Downloaded %s
+    failure: "§4[Soundboard] Failed to save %s. Check the game log for more details"
+    success: "§a[Soundboard] Downloaded %s"
     quit:
-      - text: [Soundboard] Downloads are still running!
+      - text: "[Soundboard] Downloads are still running!"
         color: red
     confirm: |-
       If you quit, the following downloads will be cancelled. Do you want to quit?

@@ -46,6 +46,7 @@ dependencies {
     modImplementation(libs.fabric.loader)
     modImplementation(libs.fabric.kotlin)
 
+    include(libs.okio)
     include(libs.okhttp)
     include(libs.owo.sentinel)
     api(libs.okhttp)
@@ -90,6 +91,7 @@ tasks.processResources {
 yamlang {
     targetSourceSets.set(mutableListOf(sourceSets["main"]))
     inputDir.set("assets/${mod.id}/lang")
+    owolibRichTranslations = true
 }
 
 java {

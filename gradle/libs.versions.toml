@@ -2,7 +2,7 @@
 # Plugins
 loom = "1.7-SNAPSHOT"
 kotlin = "2.0.10"
-yamlang = "1.4.+"
+yamlang = "1.4.0"
 mpp = "0.4.+"
 # MC setup
 minecraft = "1.21"
@@ -20,12 +20,13 @@ plasmo-vc = "fabric-1.21-2.0.10"
 modmenu = "11.0.1"
 dev-auth = "1.2.0"
 okhttp = "4.12.0"
+okio = "3.9.1"
 
 [plugins]
 fabric-loom = { id = "fabric-loom", version.ref = "loom" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-yamlang = { id = "dev.kikugie.yamlang", version.ref = "yamlang" }
+yamlang = { id = "me.fallenbreath.yamlang", version.ref = "yamlang" }
 mpp = { id = "me.modmuss50.mod-publish-plugin", version.ref = "mpp" }
 
 [libraries]
@@ -45,4 +46,5 @@ plasmovc = { group = "maven.modrinth", name = "plasmo-voice", version.ref = "pla
 modmenu = { group = "com.terraformersmc", name = "modmenu", version.ref = "modmenu"}
 devauth = { group = "me.djtheredstoner", name = "DevAuth-fabric", version.ref = "dev-auth" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
 

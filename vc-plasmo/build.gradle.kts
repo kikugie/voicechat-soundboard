@@ -63,6 +63,7 @@ tasks.register<Copy>("buildAndCollect") {
 }
 
 publishMods {
+    val minecraft = property("mcversions").toString().split(' ')
     val modrinthToken = findProperty("modrinthToken")
     val curseforgeToken = findProperty("curseforgeToken")
     dryRun = modrinthToken == null || curseforgeToken == null
@@ -77,7 +78,7 @@ publishMods {
     modrinth {
         projectId = property("publish.modrinth").toString()
         accessToken = modrinthToken as String?
-        minecraftVersions.add(libs.versions.minecraft)
+        minecraftVersions.addAll(minecraft)
         requires { slug = "fabric-api" }
         requires { slug = "fabric-language-kotlin" }
         requires { slug = "plasmo-voice" }
@@ -87,7 +88,7 @@ publishMods {
     curseforge {
         projectId = property("publish.curseforge").toString()
         accessToken = curseforgeToken as String?
-        minecraftVersions.add(libs.versions.minecraft)
+        minecraftVersions.addAll(minecraft)
         requires { slug = "fabric-api" }
         requires { slug = "fabric-language-kotlin" }
         requires { slug = "plasmo-voice" }
