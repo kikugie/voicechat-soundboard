@@ -1,0 +1,69 @@
+soundboard:
+  title:
+    - text: 音板
+      color: aqua
+      bold: true
+  favourites:
+    - text: 收藏
+      color: yellow
+      bold: true
+  keybinds:
+    browser: 打开音频浏览器
+    cancel: 取消声音播放
+    config: 打开音板配置
+    play: 播放最喜欢的声音 (与数字键一起使用)
+  browser:
+    .: 声音浏览器
+    tooltip:
+      unavailable: 近距离聊天静音或断开连接
+      directory: 按 Shift 打开文件管理器
+      file: |-
+        按 Shift 本地播放
+        按 Ctrl 打开音频剪切器
+      play: |-
+        在本地播放声音
+        按 %s 关闭小组件
+      close: 关闭音频编辑器
+      favourite: 添加到收藏夹
+      unfavourite: 从收藏夹中删除
+  downloader:
+    .: 音频下载器
+    path: 保存位置
+    url: 源 URL
+    footer:
+      - text: ⓘ
+        color: gold
+        bold: true
+      - text: " 音频下载由 "
+        color: dark_gray
+        bold: false
+      - text: cobalt
+        color: blue
+        italic: true
+        underline: true
+        bold: false
+      - text: >-
+          。请在其网站上查看支持的资源。
+          您要对自己下载的内容负责，因此在使用该服务时一定要小心。
+        color: dark_gray
+        bold: false
+    failure: "§4[音板] 保存 %s 失败。详情请查看游戏日志"
+    success: "§a[音板] 已下载 %s"
+    quit:
+      - text: "[音板] 下载仍在进行中!"
+        color: red
+    confirm: |-
+      如果您退出，下列下载将被取消。要退出吗?
+      
+      %s
+    tooltip:
+      path: |-
+        保存位置从 '.minecraft/config/soundboard/' 开始。
+        文件保存为 .wav - 你无需输入扩展名。
+      url: |-
+        视频或音频链接 - 请查看 cobalt 网站上的支持来源。
+      overwrite_path: 文件已经存在，将被覆盖
+      downloading_path: 文件已被下载，将被覆盖
+      invalid_path: 提供的路径无效
+      invalid_url: 无效 URL
+      download: 下载音频
