@@ -2,9 +2,7 @@
 
 package dev.kikugie.kowoui.access
 
-import dev.kikugie.kowoui.unsupported
 import dev.kikugie.kowoui.util.CombinedAlignment
-import dev.kikugie.kowoui.util.CombinedAlignment.*
 import io.wispforest.owo.ui.core.*
 
 var ParentComponent.allowOverflow: Boolean
