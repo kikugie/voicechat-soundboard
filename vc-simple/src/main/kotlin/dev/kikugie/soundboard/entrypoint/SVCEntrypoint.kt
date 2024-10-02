@@ -24,14 +24,14 @@ object SVCEntrypoint : SoundboardEntrypoint, VoicechatPlugin, ClientModInitializ
         Soundboard.initialize()
     }
 
-    override fun registerEvents(reg: EventRegistration) {
-        reg.event<ClientVoicechatConnectionEvent> {
+    override fun registerEvents(reg: EventRegistration) = with(reg) {
+        event<ClientVoicechatConnectionEvent> {
             api = it.voicechat
             connected = it.isConnected
             channel = api?.createStaticAudioChannel(MinecraftClient.getInstance().player!!.uuid)
             scheduler.reset()
         }
-        reg.event<MergeClientSoundEvent> {
+        event<MergeClientSoundEvent> {
             val extra = scheduler.next() ?: return@event
             if (!scheduler.local) it.mergeAudio(extra)
             channel?.play(extra)

@@ -30,7 +30,7 @@ dependencies {
 
     compileOnly(libs.plasmovc.api)
     compileOnly(libs.plasmovc.config)
-//    modRuntimeOnly(libs.plasmovc)
+    modLocalRuntime(rootProject.files("mods/plasmovoice-2.1.0-SNAPSHOT.jar"))
 }
 
 loom {
@@ -48,11 +48,6 @@ tasks.processResources {
     )
 
     filesMatching("fabric.mod.json") { expand(map) }
-}
-
-tasks.register<Copy>("applyPlasmoMod") {
-    from(rootProject.file("mods/plasmovoice-2.1.0-SNAPSHOT.jar"))
-    into(rootProject.file("run/mods"))
 }
 
 tasks.register<Copy>("buildAndCollect") {
