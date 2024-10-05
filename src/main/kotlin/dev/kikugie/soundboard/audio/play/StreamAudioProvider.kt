@@ -1,5 +1,6 @@
 package dev.kikugie.soundboard.audio.play
 
+import dev.kikugie.soundboard.Soundboard
 import dev.kikugie.soundboard.audio.data.AudioConfiguration
 import dev.kikugie.soundboard.util.*
 import javax.sound.sampled.AudioFormat
@@ -11,11 +12,11 @@ class StreamAudioProvider(
     override val configuration: AudioConfiguration,
 ) : AudioProvider() {
     override val format: AudioFormat = input.format
-    override val until = configuration.end.let {
+    override val until: Int = configuration.end.let {
         if (it == Duration.INFINITE) Int.MAX_VALUE
         else format.offset(it)
     }
-    override val volume: Double = configuration.volume.coerceIn(0.0, 1.0).volumeScale
+    override val volume: Double = configuration.volume.coerceIn(0.0, Soundboard.config.volume).volumeScale
     override var cursor: Int = format.offset(configuration.start)
 
     init {

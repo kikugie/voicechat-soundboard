@@ -19,6 +19,7 @@ class SoundboardConfig(
     var dark: Boolean = false,
     var columns: Int = 3,
     var provider: AudioProviderType = STREAM,
+    var volume: Double = 1.0,
     val favourites: MutableList<SoundId> = mutableListOf(),
 ) {
     fun save() = runOn(Dispatchers.IO) {
