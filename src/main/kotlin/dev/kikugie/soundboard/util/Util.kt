@@ -5,6 +5,7 @@ import kotlinx.coroutines.*
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.util.Identifier
+import net.minecraft.util.Util
 import net.minecraft.util.math.Vec3d
 import java.nio.file.Path
 import kotlin.coroutines.CoroutineContext
@@ -34,6 +35,10 @@ fun Class<*>.accurateName(): String = simpleName.ifEmpty {
 }
 
 fun Path.resolveOrNull(string: String) = runCatching { resolve(string) }.getOrNull()
+
+fun Path.navigate() {
+    Util.getOperatingSystem().open(this)
+}
 
 val client = MinecraftClient.getInstance()
 

@@ -2,6 +2,7 @@ package dev.kikugie.soundboard.config
 
 import dev.kikugie.soundboard.LOGGER
 import dev.kikugie.soundboard.audio.data.SoundId
+import dev.kikugie.soundboard.config.AudioProviderType.STREAM
 import dev.kikugie.soundboard.util.runOn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -15,8 +16,9 @@ import kotlin.io.path.*
 @Serializable
 @OptIn(ExperimentalSerializationApi::class)
 class SoundboardConfig(
-    var darkMode: Boolean = false,
+    var dark: Boolean = false,
     var columns: Int = 3,
+    var provider: AudioProviderType = STREAM,
     val favourites: MutableList<SoundId> = mutableListOf(),
 ) {
     fun save() = runOn(Dispatchers.IO) {

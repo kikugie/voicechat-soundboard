@@ -1,18 +1,14 @@
 package dev.kikugie.soundboard.entrypoint
 
-import dev.kikugie.soundboard.audio.data.SoundEntry
-
 object SoundboardAccess {
     private val _delegates = mutableListOf<SoundboardEntrypoint>()
     val delegates: List<SoundboardEntrypoint> get() = _delegates
+    val active: SoundboardEntrypoint? get() = delegates.firstOrNull { it.connected }
+
     fun register(entry: SoundboardEntrypoint) {
         _delegates.add(entry)
     }
 
     inline fun <T> first(selector: SoundboardEntrypoint.() -> T): T? = delegates.firstOrNull { it.connected }?.selector()
-    inline fun any(selector: SoundboardEntrypoint.() -> Boolean) = delegates.any(selector)
-    inline fun all(selector: SoundboardEntrypoint.() -> Boolean) = delegates.all(selector)
     inline fun forEach(action: SoundboardEntrypoint.() -> Unit) = delegates.forEach(action)
-
-    fun play(entry: SoundEntry, local: Boolean) = forEach { scheduleStream(entry, local) }
 }

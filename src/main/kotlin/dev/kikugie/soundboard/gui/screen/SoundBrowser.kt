@@ -19,6 +19,7 @@ import dev.kikugie.soundboard.gui.widget.SidebarWidget
 import dev.kikugie.soundboard.gui.widget.SoundSettingsWidget
 import dev.kikugie.soundboard.mixin.owo_ui.ScrollContainerAccessor
 import dev.kikugie.soundboard.util.ctrlDown
+import dev.kikugie.soundboard.util.navigate
 import dev.kikugie.soundboard.util.shiftDown
 import dev.kikugie.soundboard.util.then
 import io.wispforest.owo.ui.base.BaseOwoScreen
@@ -145,7 +146,7 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
                 onPress { _ ->
                     settings?.update()
                     if (ctrlDown) settings(it)
-                    else SoundboardAccess.play(it, shiftDown)
+                    else SoundboardAccess.active?.schedule(it, shiftDown)
                 }
             }
         }
@@ -162,7 +163,7 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
             titleLayout().apply {
                 if (location != null) {
                     tooltipText = DIRECTORY_TOOLTIP.translation()
-                    onMouseDown { _, _, _ -> shiftDown then { Util.getOperatingSystem().open(location) } }
+                    onMouseDown { _, _, _ -> shiftDown then location::navigate }
                 }
             }
             (collapsibleChildren().first { it.id == "contents" } as GridLayout).apply {
@@ -171,7 +172,6 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
             }
         }
     }
-
 
     private fun settings(entry: SoundEntry) {
         settings = SoundSettingsWidget(entry, SoundboardAccess.delegates.first())

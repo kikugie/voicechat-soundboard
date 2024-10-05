@@ -1,8 +1,10 @@
 package dev.kikugie.soundboard.entrypoint
 
+import dev.kikugie.soundboard.Soundboard
 import dev.kikugie.soundboard.audio.data.AudioConfiguration
 import dev.kikugie.soundboard.audio.data.SoundEntry
 import dev.kikugie.soundboard.audio.play.ArrayAudioProvider
+import dev.kikugie.soundboard.audio.play.AudioProvider
 import dev.kikugie.soundboard.audio.play.AudioScheduler
 import dev.kikugie.soundboard.audio.play.StreamAudioProvider
 import dev.kikugie.soundboard.config.AudioConfig
@@ -20,30 +22,17 @@ interface SoundboardEntrypoint {
     val scheduler: AudioScheduler
     val muted: Boolean
 
+    fun schedule(entry: SoundEntry, local: Boolean) =
+        schedule(Soundboard.config.provider.create(entry, format), local)
+    fun schedule(provider: AudioProvider, local: Boolean) =
+        scheduler.schedule(provider, local)
+
     fun scheduleArray(
         data: ShortArray,
         local: Boolean,
         configuration: AudioConfiguration,
     ) {
         val provider = ArrayAudioProvider(data, format, configuration)
-        scheduler.schedule(provider, local)
-    }
-
-    fun scheduleArray(
-        entry: SoundEntry,
-        local: Boolean,
-        configuration: AudioConfiguration = AudioConfig[entry] ?: AudioConfiguration.DEFAULT,
-    ) = runOn(Dispatchers.IO) {
-        val provider = ArrayAudioProvider(entry.read(format), format, configuration)
-        scheduler.schedule(provider, local)
-    }
-
-    fun scheduleStream(
-        entry: SoundEntry,
-        local: Boolean,
-        configuration: AudioConfiguration = AudioConfig[entry] ?: AudioConfiguration.DEFAULT,
-    ) {
-        val provider = StreamAudioProvider(entry.supplier().convert(format), configuration)
         scheduler.schedule(provider, local)
     }
 }
