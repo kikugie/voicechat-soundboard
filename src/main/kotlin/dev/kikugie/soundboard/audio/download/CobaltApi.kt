@@ -2,6 +2,7 @@ package dev.kikugie.soundboard.audio.download
 
 import dev.kikugie.soundboard.GAME_DIR
 import dev.kikugie.soundboard.LOGGER
+import dev.kikugie.soundboard.Soundboard
 import dev.kikugie.soundboard.audio.BASE_DIR
 import kotlinx.coroutines.*
 import kotlinx.serialization.Serializable
@@ -17,7 +18,7 @@ import kotlin.io.path.outputStream
 
 @OptIn(DelicateCoroutinesApi::class)
 object CobaltApi {
-    const val ENDPOINT = "https://api.cobalt.tools"
+    private val ENDPOINT get() = Soundboard.config.cobalt
     private val CLIENT = OkHttpClient.Builder()
         .addNetworkInterceptor { chain ->
             chain.proceed(

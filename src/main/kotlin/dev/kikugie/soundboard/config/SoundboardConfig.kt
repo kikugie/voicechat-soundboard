@@ -20,6 +20,7 @@ class SoundboardConfig(
     var columns: Int = 3,
     var provider: AudioProviderType = STREAM,
     var volume: Double = 1.0,
+    val cobalt: String = "https://api.cobalt.tools",
     val favourites: MutableList<SoundId> = mutableListOf(),
 ) {
     fun save() = runOn(Dispatchers.IO) {
