@@ -35,7 +35,89 @@ soundboard:
       cobalt:
         picker: Picker type is not supported. Please use a direct media link.
         unknown: "Unknown response type '%s'"
+        missing: Missing error context
+        # --- https://github.com/imputnet/cobalt/blob/main/web/i18n/en/error.json
+        # --- < > are replaced with translated contents!
+        import.no_data: There's nothing to load from the file. Are you sure it's the right one?
+        import.invalid: Your file doesn't have valid cobalt settings to import. Are you sure it's the right one?
+        import.unknown: |-
+          Couldn't load data from the file. It may be corrupted or of wrong format. Here's the error I got:
+          §3<url>
 
+        tunnel.probe: Couldn't verify whether you can download this file. Try again in a few seconds!
+        
+        captcha_ongoing: >-
+          Still checking if you're not a bot. If it takes too long, please let cobalt devs know! 
+          We use cloudflare turnstile for bot protection and sometimes it blocks people for no reason.
+
+        api.auth.jwt.missing: >-
+          Couldn't confirm whether you're not a robot because the processing server didn't receive the human access token.
+        api.auth.jwt.invalid: >-
+          Couldn't confirm whether you're not a robot because your human access token expired and wasn't renewed.
+        api.auth.turnstile.missing: >-
+          Couldn't confirm whether you're not a robot because the processing server didn't receive the human access token.
+        api.auth.turnstile.invalid: >-
+          Couldn't confirm whether you're not a robot because your human access token expired and wasn't renewed.
+
+        api.unreachable: Couldn't connect to the processing server. Check your internet connection and try again.
+        api.timed_out: The processing server took way too long to respond. It may be overwhelmed at the moment, try again in a few seconds!
+        api.rate_exceeded: You're making way too many requests. Try again in <limit> seconds!
+        api.capacity: >-
+          Cobalt is at capacity and can't process your request at the moment. 
+          Try again in a few seconds. If it still doesn't work, let cobalt devs know!
+
+        api.generic: >-
+          Something went wrong and I couldn't get anything for you. 
+          Try again in a few seconds, but if issue sticks, let cobalt devs know!
+        api.unknown_response: >-
+          Couldn't parse the response from the server. 
+          This could be caused by a version mismatch. 
+          Are you sure you're on the latest version of cobalt?
+
+        api.service.unsupported: This service is not supported yet. hHve you pasted the right link?
+        api.service.disabled: This service is supported by cobalt, but it's disabled on this instance. Try a link from another service!
+
+        api.link.invalid: Your link is invalid or this service is not supported yet. Have you pasted the right link?
+        api.link.unsupported: <service> is supported, but I couldn't recognize your link. Have you pasted the right one?
+
+        api.fetch.fail: >- 
+          Something went wrong when fetching info from <service> and I couldn't find anything for you. 
+          Are you sure your link works? If it does and you still see this error, let cobalt devs know!
+        api.fetch.critical: >- 
+          The <service> module returned an error that I don't recognize. 
+          Try again in a few seconds, but if issue sticks, let cobalt devs know!
+        api.fetch.empty: Couldn't find any media that I could download for you. Are you sure you pasted the right link?
+        api.fetch.rate: The cobalt processing server got rate limited by the <service> API. Try again in a few seconds!
+        api.fetch.short_link: >-
+          Couldn't get link info from the short link. Are you sure it works? 
+          If it does and you still get this error, let cobalt devs know!
+
+        api.content.too_long: >-
+          The media you requested is too long. 
+          Current duration limit is <limit> minutes. Try something shorter instead!
+
+        api.content.video.unavailable: I can't access this video. It may be restricted on <service>'s side. Have you pasted the right link?
+        api.content.video.live: This video is currently live, so I can't download it yet. Wait for the live stream to finish, and then try again!
+        api.content.video.private: This video is private, so I cannot access it. Change its visibility or try another one!
+        api.content.video.age: This video is age-restricted, so I can't access it anonymously. Try another one!
+        api.content.video.region: This video is region locked, and the processing server is in a different location. Try another one!
+        api.content.post.unavailable: >- 
+          Couldn't find anything about this post. 
+          Its visibility may be limited or it may not exist at all. 
+          Make sure your link works and try again in a few seconds!
+        api.content.post.private: This post is from a private account, so I can't access it. Have you pasted the right link?
+        api.content.post.age: This post is age-restricted, so I can't access it anonymously. Have you pasted the right link?
+        api.youtube.codec: YouTube didn't return anything with your preferred video codec. Try another one in settings!
+        api.youtube.decipher: >- 
+          YouTube updated its decipher algorithm, and I couldn't extract the info about the video. 
+          Try again in a few seconds, but if the issue sticks, contact cobalt deva for support.
+        api.youtube.login: >- 
+          Couldn't get this video because YouTube labeled me as a bot. 
+          This is potentially caused by the processing instance not having any active account tokens. 
+          Try again in a few seconds, but if it still doesn't work, tell the instance owner about this error!
+        api.youtube.token_expired: >- 
+          Couldn't get this video because the YouTube token expired and I couldn't refresh it. 
+          Try again in a few seconds, but if it still doesn't work, tell the instance owner about this error!
     footer:
       - text: ⓘ
         color: gold

@@ -24,9 +24,11 @@ import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 import kotlin.io.path.outputStream
 
+private const val COBALT_ROOT = "soundboard.downloader.error.cobalt"
 private const val REQUEST_FAIL = "soundboard.downloader.error.request_fail"
 private const val COBALT_PICKER = "soundboard.downloader.error.cobalt.picker"
 private const val COBALT_UNKNOWN = "soundboard.downloader.error.cobalt.unknown"
+private const val COBALT_MISSING = "soundboard.downloader.error.cobalt.missing"
 
 abstract class CobaltAPI {
     protected abstract val ENDPOINT: String
@@ -100,7 +102,7 @@ object CobaltAPIV10 : CobaltAPI() {
     @Serializable
     private data class JsonResponse(
         val status: String,
-        val url: String = "",
+        val url: String? = null,
         val error: CobaltError? = null,
     )
 
@@ -112,8 +114,8 @@ object CobaltAPIV10 : CobaltAPI() {
 
     @Serializable
     private data class ErrorContext(
-        val service: String,
-        val limit: Int,
+        val service: String? = null,
+        val limit: Int? = null,
     )
 
     override val ENDPOINT: String
@@ -129,11 +131,21 @@ object CobaltAPIV10 : CobaltAPI() {
     override fun decodeResponse(contents: String): CobaltResponse {
         val result = JSON.decodeFromString<JsonResponse>(contents)
         return when (result.status) {
-            "tunnel", "redirect" -> StreamResponse(result.url)
-            "error" -> ErrorResponse(result.error.toString().text()) // FIXME: Should apply translation with context
+            "tunnel", "redirect" -> StreamResponse(result.url!!)
             "picker" ->  ErrorResponse(COBALT_PICKER.translation())
+            "error" -> result.let {
+                val error = result.error ?: return@let ErrorResponse(COBALT_MISSING.translation())
+                val text = parseError(error.code, "url" to result.url, "limit" to error.context?.limit?.toString(), "service" to error.context?.service)
+                ErrorResponse(text)
+            }
             else -> ErrorResponse(COBALT_UNKNOWN.translation(result.status))
         }
+    }
+
+    private fun parseError(code: String, vararg params: Pair<String, String?>): Text {
+        var translated = "$COBALT_ROOT.${code.removePrefix("error.")}".translation().string
+        for ((k, v) in params) if (v != null) translated = translated.replace("<$k>", v)
+        return translated.text()
     }
 }
 
