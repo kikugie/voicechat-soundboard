@@ -71,7 +71,7 @@ object Soundboard {
             ClientTickEvents.END_CLIENT_TICK.register {
                 if (keybind.isPressed && favourites.isNotEmpty()) get()?.run {
                     println("Playing ${id.str}")
-                    SoundboardAccess.play(this, shiftDown)
+                    SoundboardAccess.active?.schedule(this, shiftDown)
                     keybind.isPressed = false
                 }
             }

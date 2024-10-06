@@ -30,6 +30,12 @@ soundboard:
     .: Audio downloader
     path: Save location
     url: Source URL
+    error:
+      request_fail: "Failed to request media. Cause: '%s'"
+      cobalt:
+        picker: Picker type is not supported. Please use a direct media link.
+        unknown: "Unknown response type '%s'"
+
     footer:
       - text: ⓘ
         color: gold

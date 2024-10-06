@@ -3,10 +3,12 @@ package dev.kikugie.soundboard.audio.download
 import dev.kikugie.kowoui.access.*
 import dev.kikugie.kowoui.experimental.plusAssign
 import dev.kikugie.kowoui.overlay
+import dev.kikugie.kowoui.text
 import dev.kikugie.kowoui.translation
 import dev.kikugie.kowoui.util.CombinedAlignment
 import dev.kikugie.soundboard.GAME_DIR
 import dev.kikugie.soundboard.LOGGER
+import dev.kikugie.soundboard.Soundboard
 import dev.kikugie.soundboard.gui.widget.DownloadErrorWidget
 import dev.kikugie.soundboard.util.client
 import io.wispforest.owo.ui.container.StackLayout
@@ -48,7 +50,7 @@ object Downloader {
 
     fun download(url: URI, dest: Path, ref: WeakReference<StackLayout>) {
         if (downloads[dest]?.first == url) return // Don't repeat downloads
-        val job = CobaltApi.download(url, dest).apply {
+        val job = Soundboard.config.version.download(url, dest).apply {
             invokeOnCompletion {
                 val file = GAME_DIR.relativize(dest)
                 if (it !is CancellationException) downloads.remove(dest)
@@ -72,7 +74,7 @@ object Downloader {
     }
 
     private fun StackLayout.createWidget(error: Throwable) {
-        val message = Html2Text.convert(error.message!!)
+        val message = if (error is TranslatedException) error.text else error.message?.text() ?: "UNKNOWN ERROR".text()
         this += overlay(DownloadErrorWidget(message)) {
             sizing = Sizing.fill(80)
             positioning = Positioning.relative(50, 50)

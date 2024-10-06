@@ -16,7 +16,8 @@ enum class AudioProviderType {
             format: AudioFormat,
             configuration: AudioConfiguration
         ) = StreamAudioProvider(entry.supplier().convert(format), configuration)
-    }, ARRAY {
+    },
+    ARRAY {
         override fun create(
             entry: SoundEntry,
             format: AudioFormat,
