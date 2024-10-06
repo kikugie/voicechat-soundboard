@@ -3,7 +3,7 @@ package dev.kikugie.soundboard.config
 import dev.kikugie.soundboard.LOGGER
 import dev.kikugie.soundboard.audio.data.SoundId
 import dev.kikugie.soundboard.config.AudioProviderType.STREAM
-import dev.kikugie.soundboard.config.CobaltAPIVersion.V10
+import dev.kikugie.soundboard.config.CobaltAPIVersion.V7
 import dev.kikugie.soundboard.util.runOn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -27,9 +27,11 @@ class SoundboardConfig(
     @SerialName("audio_volume")
     var volume: Double = 1.0,
     @SerialName("cobalt_api_endpoint")
-    val cobalt: String = "https://api.cobalt.tools",
+    var cobaltEndpoint: String = "https://api.cobalt.tools",
     @SerialName("cobalt_api_version")
-    val version: CobaltAPIVersion = V10,
+    var cobaltVersion: CobaltAPIVersion = V7,
+    @SerialName("cobalt_api_token")
+    var cobaltToken: String = "", // TODO: Store it somewhere instead
     @SerialName("favourites")
     val favourites: MutableList<SoundId> = mutableListOf(),
 ) {

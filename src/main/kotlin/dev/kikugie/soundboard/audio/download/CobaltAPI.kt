@@ -84,6 +84,7 @@ abstract class CobaltAPI {
             .header("Content-Type", "application/json")
             .header("Accept", "application/json")
             .post(body.toRequestBody())
+        buildHeader(request)
         try {
             CLIENT.newCall(request.build()).execute().use {
                 if (it.body == null) throw Exception("${it.code} - '${it.message}'")
@@ -94,6 +95,7 @@ abstract class CobaltAPI {
         }
     }
 
+    protected abstract fun buildHeader(builder: Request.Builder)
     protected abstract fun createMetadata(url: URI): List<Pair<String, Any>>
     protected abstract fun decodeResponse(contents: String): CobaltResponse
 }
@@ -119,7 +121,11 @@ object CobaltAPIV10 : CobaltAPI() {
     )
 
     override val ENDPOINT: String
-        get() = "${Soundboard.config.cobalt}/"
+        get() = "${Soundboard.config.cobaltEndpoint}/"
+
+    override fun buildHeader(builder: Request.Builder) {
+        builder.header("Authorization", "Api-Key ${Soundboard.config.cobaltToken}")
+    }
 
     override fun createMetadata(url: URI) = listOf(
         "url" to url,
@@ -161,7 +167,11 @@ object CobaltAPIV7 : CobaltAPI() {
     private val HREF = Regex("href\\s*=\\s*\"(.*?)\"")
     private val TEXT = Regex(">([^<]+)<")
     override val ENDPOINT: String
-        get() = "${Soundboard.config.cobalt}/api/json"
+        get() = "${Soundboard.config.cobaltEndpoint}/api/json"
+
+    override fun buildHeader(builder: Request.Builder) {
+        // Nothing to do in V7
+    }
 
     override fun createMetadata(url: URI) = listOf(
         "url" to url,

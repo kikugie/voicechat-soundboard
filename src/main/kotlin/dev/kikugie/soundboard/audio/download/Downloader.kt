@@ -50,7 +50,7 @@ object Downloader {
 
     fun download(url: URI, dest: Path, ref: WeakReference<StackLayout>) {
         if (downloads[dest]?.first == url) return // Don't repeat downloads
-        val job = Soundboard.config.version.download(url, dest).apply {
+        val job = Soundboard.config.cobaltVersion.download(url, dest).apply {
             invokeOnCompletion {
                 val file = GAME_DIR.relativize(dest)
                 if (it !is CancellationException) downloads.remove(dest)
