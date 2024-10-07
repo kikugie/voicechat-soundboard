@@ -1,0 +1,157 @@
+soundboard:
+  title:
+    - text: 音板
+      color: aqua
+      bold: true
+  favourites:
+    - text: 收藏
+      color: yellow
+      bold: true
+  keybinds:
+    browser: 打开音频浏览器
+    cancel: 取消声音播放
+    config: 打开音板配置
+    play: 播放最喜欢的声音 (与数字键一起使用)
+  browser:
+    .: 声音浏览器
+    tooltip:
+      unavailable: 近距离聊天静音或断开连接
+      directory: 按 Shift 打开文件管理器
+      file: |-
+        按 Shift 本地播放
+        按 Ctrl 打开音频剪切器
+      play: |-
+        在本地播放声音
+        按 %s 关闭小组件
+      close: 关闭音频编辑器
+      favourite: 添加到收藏夹
+      unfavourite: 从收藏夹中删除
+  downloader:
+    .: 音频下载器
+    path: 保存位置
+    url: 源 URL
+    error:
+      request_fail: "请求媒体失败。原因: '%s'"
+      cobalt:
+        picker: 不支持选择器类型。请使用媒体直链
+        unknown: "未知响应类型 '%s'"
+        missing: 缺少错误内容
+        # --- https://github.com/imputnet/cobalt/blob/main/web/i18n/en/error.json
+        # --- < > are replaced with translated contents!
+        import.no_data: 文件中没有要加载的内容。你确定这是正确的吗？
+        import.invalid: 你的文件没有要导入的有效 cobalt 设置。你确定这是正确的吗？
+        import.unknown: |-
+          无法从文件中加载数据。它可能已损坏或格式错误。这是我得到的错误:
+          §3<url>
+
+        tunnel.probe: 无法验证是否可以下载此文件。几秒钟后再试一次！
+        
+        captcha_ongoing: >-
+          还在检查你是否不是机器人。如果时间太长，请让 cobalt 的开发者知道！
+          我们使用 cloudflare turnstile 进行人机保护，有时它会无缘无故地屏蔽别人
+
+        api.auth.jwt.missing: >-
+          无法确认你是否不是机器人，因为处理服务器没有收到人工访问令牌
+        api.auth.jwt.invalid: >-
+          无法确认你是否不是机器人，因为你的人工访问令牌已过期且未续期
+        api.auth.turnstile.missing: >-
+          无法确认你是否不是机器人，因为处理服务器没有收到人工访问令牌
+        api.auth.turnstile.invalid: >-
+          无法确认你是否不是机器人，因为你的人工访问令牌已过期且未续期
+
+        api.unreachable: 无法连接处理服务器。请检查网络连接并重试
+        api.timed_out: 处理服务器响应时间过长。它现在可能不堪重负，几秒钟后再试！
+        api.rate_exceeded: 你的请求太多。请在 <limit> 秒后再试！
+        api.capacity: >-
+          Cobalt 的容量已满，暂时无法处理你的请求 
+          几秒钟后再试一次。如果还是不行，请通知 cobalt 的开发人员！
+
+        api.generic: >-
+          出了点问题，我无法为你提供任何信息
+          几秒钟后再试一次，如果还是不行，请通知 cobalt 的开发人员！
+        api.unknown_response: >-
+          无法解析来自服务器的响应
+          这可能是版本不匹配造成的
+          你确定你使用的是最新版本的 cobalt 吗？
+
+        api.service.unsupported: 你是否粘贴了正确的链接？
+        api.service.disabled: 此服务受 cobalt 支持，但在此实例中已禁用。请尝试其他服务的链接！
+
+        api.link.invalid: 你的链接无效或该服务暂不支持。你是否粘贴了正确的链接？
+        api.link.unsupported: <service> 受支持，但我无法识别你的链接。你是否粘贴了正确的链接？
+
+        api.fetch.fail: >- 
+          从 <service> 抓取信息时出了问题，我无法为你找到任何信息
+          你确定你的链接有效吗？如果能，但仍出现此错误，请通知 cobalt 的开发人员！
+        api.fetch.critical: >- 
+          <service> 模块返回了一个我无法识别的错误
+          几秒钟后再试一次，如果问题仍然存在，请通知钴开发人员！
+        api.fetch.empty: 找不到可以下载的媒体。你确定粘贴的链接是正确的吗？
+        api.fetch.rate: 钴处理服务器受到 <service> API 的速率限制。几秒钟后再试！
+        api.fetch.short_link: >-
+          无法从短链接获取链接信息。你确定它能正常工作吗？
+          如果能，但还是出现这个错误，请告知 cobalt 的开发人员！
+
+        api.content.too_long: >-
+          你请求的媒体太长
+          当前的持续时间限制为 <limit> 分钟。请尝试更短的内容！
+
+        api.content.video.unavailable: 我无法访问此视频。可能是 <service> 方面的限制。你是否粘贴了正确的链接？
+        api.content.video.live: 此视频目前正在直播，所以我还不能下载。请等待直播结束后再试！
+        api.content.video.private: 此视频为私人视频，因此我无法访问。更改其可见性或尝试其他视频！
+        api.content.video.age: 此视频有年龄限制，因此我无法匿名访问。换一个试试！
+        api.content.video.region: 此视频已锁定区域，且处理服务器位于不同位置。换一个试试！
+        api.content.post.unavailable: >- 
+          找不到关于此帖子的任何信息
+          其可见性可能有限，或者根本不存在
+          请确保你的链接有效，并在几秒钟后再试一次！
+        api.content.post.private: 该帖子来自私人账户，因此我无法访问。你是否粘贴了正确的链接？
+        api.content.post.age: 这篇文章有年龄限制，因此我无法匿名访问。你是否粘贴了正确的链接？
+        api.youtube.codec: YouTube 没有返回你首选视频编解码器的内容。请在设置中尝试另一种！
+        api.youtube.decipher: >- 
+          YouTube 更新了解密算法，我无法提取视频信息
+          几秒钟后再试一次，如果问题仍然存在，请联系 cobalt 的开发者寻求支持
+        api.youtube.login: >- 
+          无法获取此视频，因为 YouTube 将我标记为机器人
+          这可能是由于处理实例没有任何有效的账户令牌
+          过几秒钟再试一次，如果还是不行，请将此错误告知实例所有者！
+        api.youtube.token_expired: >- 
+          无法获取此视频，因为 YouTube 令牌已过期，我无法刷新它
+          几秒钟后再试一次，如果还是不行，请将此错误告知实例所有者！
+    footer:
+      - text: ⓘ
+        color: gold
+        bold: true
+      - text: " 音频下载由 "
+        color: dark_gray
+        bold: false
+      - text: cobalt
+        color: blue
+        italic: true
+        underline: true
+        bold: false
+      - text: >-
+          。请在其网站上查看支持的资源。
+          你要对自己下载的内容负责，因此在使用该服务时一定要小心。
+        color: dark_gray
+        bold: false
+    failure: "§4[音板] 保存 %s 失败。详情请查看游戏日志"
+    success: "§a[音板] 已下载 %s"
+    quit:
+      - text: "[音板] 下载仍在进行中!"
+        color: red
+    confirm: |-
+      如果你退出，下列下载将被取消。要退出吗?
+      
+      %s
+    tooltip:
+      path: |-
+        保存位置从 '.minecraft/config/soundboard/' 开始。
+        文件保存为 .wav - 你无需输入扩展名。
+      url: |-
+        视频或音频链接 - 请查看 cobalt 网站上的支持来源。
+      overwrite_path: 文件已经存在，将被覆盖
+      downloading_path: 文件已被下载，将被覆盖
+      invalid_path: 提供的路径无效
+      invalid_url: 无效 URL
+      download: 下载音频
