@@ -110,7 +110,7 @@ soundboard:
         api.youtube.codec: YouTube didn't return anything with your preferred video codec. Try another one in settings!
         api.youtube.decipher: >- 
           YouTube updated its decipher algorithm, and I couldn't extract the info about the video. 
-          Try again in a few seconds, but if the issue sticks, contact cobalt deva for support.
+          Try again in a few seconds, but if the issue sticks, contact cobalt devs for support.
         api.youtube.login: >- 
           Couldn't get this video because YouTube labeled me as a bot. 
           This is potentially caused by the processing instance not having any active account tokens. 
