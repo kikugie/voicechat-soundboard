@@ -18,21 +18,21 @@ import kotlin.io.path.*
 @Serializable
 @OptIn(ExperimentalSerializationApi::class)
 class SoundboardConfig(
-    @SerialName("dark_mode")
+    @JvmField @SerialName("dark_mode")
     var dark: Boolean = false,
-    @SerialName("board_columns")
+    @JvmField @SerialName("board_columns")
     var columns: Int = 3,
-    @SerialName("audio_provider")
+    @JvmField @SerialName("audio_provider")
     var provider: AudioProviderType = STREAM,
-    @SerialName("audio_volume")
+    @JvmField @SerialName("audio_volume")
     var volume: Double = 1.0,
-    @SerialName("cobalt_api_endpoint")
+    @JvmField @SerialName("cobalt_api_endpoint")
     var cobaltEndpoint: String = "https://api.cobalt.tools",
-    @SerialName("cobalt_api_version")
+    @JvmField @SerialName("cobalt_api_version")
     var cobaltVersion: CobaltAPIVersion = V7,
-    @SerialName("cobalt_api_token")
-    var cobaltToken: String = "", // TODO: Store it somewhere instead
-    @SerialName("favourites")
+    @JvmField @SerialName("cobalt_api_token")
+    var cobaltToken: String = "",
+    @JvmField @SerialName("favourites")
     val favourites: MutableList<SoundId> = mutableListOf(),
 ) {
     fun save() = runOn(Dispatchers.IO) {
@@ -45,8 +45,8 @@ class SoundboardConfig(
     }
 
     companion object Loader {
-        val file = FabricLoader.getInstance().configDir.resolve("soundboard.json")
-        val json = Json {
+        @JvmStatic val file = FabricLoader.getInstance().configDir.resolve("soundboard.json")
+        @JvmStatic val json = Json {
             isLenient = true
             ignoreUnknownKeys = true
             prettyPrint = true

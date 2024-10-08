@@ -8,6 +8,9 @@ import io.wispforest.owo.ui.util.FocusHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
+/**
+ * Idr what causes this
+ */
 @Mixin(value = BaseParentComponent.class, remap = false)
 public class BaseParentComponentMixin {
 	@WrapOperation(method = "drawChildren", at = @At(value = "INVOKE", target = "Lio/wispforest/owo/ui/util/FocusHandler;lastFocusSource()Lio/wispforest/owo/ui/core/Component$FocusSource;"))

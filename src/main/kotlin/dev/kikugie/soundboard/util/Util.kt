@@ -16,8 +16,9 @@ typealias Property<T> = KMutableProperty0<T>
 fun idOf(path: String): Identifier = Identifier.of(MOD_ID, path)
 fun idOf(namespace: String, path: String) = Identifier.of(namespace, path)
 
-inline fun runOn(context: CoroutineContext, crossinline action: () -> Unit) {
-    CoroutineScope(context).launch { action() }
+@OptIn(DelicateCoroutinesApi::class)
+fun runOn(context: CoroutineContext, action: suspend CoroutineScope.() -> Unit) {
+    GlobalScope.launch(context, block = action)
 }
 
 inline fun ShortArray.reassign(transform: (Short) -> Short) {
