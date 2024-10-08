@@ -6,7 +6,7 @@ import io.wispforest.owo.ui.core.OwoUIDrawContext
 import net.minecraft.text.Text
 
 class DynamicButtonComponent(initial: Text) : ButtonComponent(initial, {}) {
-    private var provider: () -> Text = { initial }
+    private var provider: (() -> Text)? = null
     private var cache: Text by cached(initial) {
         message = it
     }
@@ -16,7 +16,7 @@ class DynamicButtonComponent(initial: Text) : ButtonComponent(initial, {}) {
     }
 
     override fun getMessage(): Text {
-        cache = provider()
+        provider?.invoke()?.let { cache = it }
         return super.getMessage()
     }
 }

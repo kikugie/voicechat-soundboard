@@ -14,7 +14,7 @@ abstract class AudioProvider : AutoCloseable {
 
     abstract fun next(samples: Int): ShortArray?
 
-    protected inline fun AudioProvider.advance(samples: Int, consumer: (ShortArray, Int) -> Unit): ShortArray? {
+    protected inline fun advance(samples: Int, consumer: (ShortArray, Int) -> Unit): ShortArray? {
         if (cursor >= until) return null
         val end = min((cursor + samples), until)
         val array = ShortArray(samples) { 0 }
