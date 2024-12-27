@@ -23,7 +23,9 @@
     ]
   },
   "depends": {
-    "plasmovoice": "~2.1.0",
-    "soundboard-core": "${version}"
+    "plasmovoice": "~2.1.0"
+  },
+  "breaks": {
+    "soundboard-svc": "<${version} >${version}"
   }
 }

@@ -35,7 +35,9 @@
     ]
   },
   "depends": {
-    "voicechat": "*",
-    "soundboard-core": "${version}"
+    "voicechat": "*"
+  },
+  "breaks": {
+    "soundboard-plasmo": "<${version} >${version}"
   }
 }

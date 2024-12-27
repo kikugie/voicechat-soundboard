@@ -7,7 +7,6 @@ import io.wispforest.owo.ui.base.BaseComponent
 import io.wispforest.owo.ui.base.BaseParentComponent
 import io.wispforest.owo.ui.core.*
 import net.minecraft.client.render.RenderLayer
-import net.minecraft.client.render.RenderLayers
 import kotlin.time.Duration
 
 // 0..1

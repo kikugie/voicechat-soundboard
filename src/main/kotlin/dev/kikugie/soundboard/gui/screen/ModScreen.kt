@@ -8,7 +8,6 @@ import dev.kikugie.kowoui.util.CombinedAlignment
 import dev.kikugie.kowoui.verticalFlow
 import dev.kikugie.soundboard.gui.CONFIG_PANEL
 import dev.kikugie.soundboard.gui.widget.SidebarWidget
-import dev.kikugie.soundboard.util.currentScreen
 import io.wispforest.owo.ui.base.BaseOwoScreen
 import io.wispforest.owo.ui.container.FlowLayout
 import io.wispforest.owo.ui.container.StackLayout

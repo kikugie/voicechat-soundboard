@@ -1,15 +1,12 @@
 package dev.kikugie.soundboard.util
 
-import com.mojang.blaze3d.systems.RenderSystem
 import io.wispforest.owo.ui.core.Color
 import io.wispforest.owo.ui.core.Component
 import io.wispforest.owo.ui.core.OwoUIDrawContext
 import io.wispforest.owo.ui.core.ParentComponent
 import io.wispforest.owo.ui.inject.GreedyInputComponent
-import io.wispforest.owo.ui.parsing.UIModel
 import net.minecraft.client.font.TextRenderer
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.render.*
+import net.minecraft.client.render.RenderLayer
 import net.minecraft.text.Text
 import net.minecraft.util.Util
 import net.minecraft.util.math.MathHelper
