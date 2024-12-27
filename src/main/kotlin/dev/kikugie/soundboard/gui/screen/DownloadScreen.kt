@@ -30,7 +30,7 @@ import java.lang.ref.WeakReference
 import java.net.URI
 import kotlin.io.path.exists
 
-class DownloadScreen : BaseOwoScreen<StackLayout>() {
+class DownloadScreen : ModScreen() {
     companion object : ScreenManager(DownloadScreen::class) {
         const val FILE_PATH = "soundboard.downloader.path"
         const val URL = "soundboard.downloader.url"
@@ -46,120 +46,97 @@ class DownloadScreen : BaseOwoScreen<StackLayout>() {
         const val INVALID_URL = "soundboard.downloader.tooltip.invalid_url"
     }
 
-    private lateinit var root: StackLayout
-
-    override fun shouldPause(): Boolean = false
-    override fun createAdapter(): OwoUIAdapter<StackLayout> = OwoUIAdapter.create(this) { h, v ->
-        stack {
-            horizontalSizing = h
-            verticalSizing = v
-            padding = both(60, 30)
-            alignment = CombinedAlignment.CENTER
-        }
+    override fun build(component: StackLayout) {
+        super.build(component)
+        root.allowOverflow = true
     }
 
-    override fun build(component: StackLayout) {
-        component.allowOverflow = true
-        root = component + setup()
-        root.childById<FlowLayout>("container")!!.apply {
-            gap = 2
-            this += label(FILE_PATH.translation()) {
-                tooltipText = FILE_TOOLTIP.translation()
+    override fun FlowLayout.configure() {
+        gap = 2
+        this += label(FILE_PATH.translation()) {
+            tooltipText = FILE_TOOLTIP.translation()
+        }
+        this += coloredTextBox {
+            id = "path"
+            maxLength = Short.MAX_VALUE.toInt()
+            drawBackground = false
+            color {
+                val path = it.resolvePath()
+                when {
+                    path == null -> {
+                        tooltipText = INVALID_PATH.translation()
+                        Color.RED
+                    }
+
+                    Downloader.isDownloading(path) -> {
+                        tooltipText = DOWNLOADING_PATH.translation()
+                        Color.ofDye(DyeColor.YELLOW)
+                    }
+
+                    path.exists() -> {
+                        tooltipText = OVERWRITE_PATH.translation()
+                        Color.ofDye(DyeColor.YELLOW)
+                    }
+
+                    else -> {
+                        tooltip = null
+                        null
+                    }
+                }
             }
+        }.wrap {
+            surface = Surface.PANEL_INSET
+            padding = of(1)
+            verticalSizing = fixed(12)
+        }
+
+        this += fixedSpacer(4)
+        this += label(URL.translation()) {
+            tooltipText = URL_TOOLTIP.translation()
+        }
+        this += horizontalFlow {
+            gap = 2
+            verticalAlignment = VerticalAlignment.CENTER
             this += coloredTextBox {
-                id = "path"
+                id = "url"
                 maxLength = Short.MAX_VALUE.toInt()
                 drawBackground = false
                 color {
-                    val path = it.resolvePath()
-                    when {
-                        path == null -> {
-                            tooltipText = INVALID_PATH.translation()
-                            Color.RED
-                        }
-
-                        Downloader.isDownloading(path) -> {
-                            tooltipText = DOWNLOADING_PATH.translation()
-                            Color.ofDye(DyeColor.YELLOW)
-                        }
-
-                        path.exists() -> {
-                            tooltipText = OVERWRITE_PATH.translation()
-                            Color.ofDye(DyeColor.YELLOW)
-                        }
-
-                        else -> {
-                            tooltip = null
-                            null
-                        }
+                    if (runCatching { URI.create(it) }.isFailure) {
+                        tooltipText = INVALID_URL.translation()
+                        Color.RED
+                    } else {
+                        tooltip = null
+                        Color.ofDye(DyeColor.LIGHT_BLUE)
                     }
                 }
             }.wrap {
                 surface = Surface.PANEL_INSET
                 padding = of(1)
+                horizontalSizing = expand()
                 verticalSizing = fixed(12)
             }
-
-            this += fixedSpacer(4)
-            this += label(URL.translation()) {
-                tooltipText = URL_TOOLTIP.translation()
+            this += button(">>".text()) {
+                id = "download"
+                sizing = fixed(12)
+                tooltipText = DOWNLOAD.translation()
+                renderer = ButtonComponent.Renderer.flat(0, 0, 0)
             }
-            this += horizontalFlow {
-                gap = 2
-                verticalAlignment = VerticalAlignment.CENTER
-                this += coloredTextBox {
-                    id = "url"
-                    maxLength = Short.MAX_VALUE.toInt()
-                    drawBackground = false
-                    color {
-                        if (runCatching { URI.create(it) }.isFailure) {
-                            tooltipText = INVALID_URL.translation()
-                            Color.RED
-                        } else {
-                            tooltip = null
-                            Color.ofDye(DyeColor.LIGHT_BLUE)
-                        }
-                    }
-                }.wrap {
-                    surface = Surface.PANEL_INSET
-                    padding = of(1)
-                    horizontalSizing = expand()
-                    verticalSizing = fixed(12)
-                }
-                this += button(">>".text()) {
-                    id = "download"
-                    sizing = fixed(12)
-                    tooltipText = DOWNLOAD.translation()
-                    renderer = ButtonComponent.Renderer.flat(0, 0, 0)
-                }
-            }
-
-            this += fixedSpacer(4)
-            this += label(FOOTER.translation()) {
-                horizontalSizing = fill()
-                cursorStyle = CursorStyle.HAND
-                onMouseDown { _, _, _ ->
-                    ConfirmLinkScreen.open(this@DownloadScreen, "https://cobalt.tools/")
-                    true
-                }
-            }
-            configure(this)
         }
+
+        this += fixedSpacer(4)
+        this += label(FOOTER.translation()) {
+            horizontalSizing = fill()
+            cursorStyle = CursorStyle.HAND
+            onMouseDown { _, _, _ ->
+                ConfirmLinkScreen.open(this@DownloadScreen, "https://cobalt.tools/")
+                true
+            }
+        }
+        button(this)
     }
 
-    private fun setup() = horizontalFlow {
-        gap = 2
-        horizontalSizing = fill()
-        surface = CONFIG_PANEL
-        padding = of(5)
-        this += verticalFlow {
-            id = "container"
-            horizontalSizing = expand()
-        }
-        this += SidebarWidget(this@DownloadScreen)
-    }
-
-    private fun configure(layout: FlowLayout) = with(layout) {
+    private fun button(layout: FlowLayout) = with(layout) {
         val path = childById<TextBoxComponent>("path")!!
         val url = childById<TextBoxComponent>("url")!!
 

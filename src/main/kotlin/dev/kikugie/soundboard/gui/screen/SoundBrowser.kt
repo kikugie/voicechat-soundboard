@@ -15,20 +15,17 @@ import dev.kikugie.soundboard.audio.registry.SoundRegistry
 import dev.kikugie.soundboard.entrypoint.SoundboardAccess
 import dev.kikugie.soundboard.gui.CONFIG_PANEL
 import dev.kikugie.soundboard.gui.component.ScrollingButtonComponent
-import dev.kikugie.soundboard.gui.widget.SidebarWidget
 import dev.kikugie.soundboard.gui.widget.SoundSettingsWidget
 import dev.kikugie.soundboard.mixin.owo_ui.ScrollContainerAccessor
 import dev.kikugie.soundboard.util.ctrlDown
 import dev.kikugie.soundboard.util.navigate
 import dev.kikugie.soundboard.util.shiftDown
 import dev.kikugie.soundboard.util.then
-import io.wispforest.owo.ui.base.BaseOwoScreen
 import io.wispforest.owo.ui.container.FlowLayout
 import io.wispforest.owo.ui.container.GridLayout
 import io.wispforest.owo.ui.container.ScrollContainer.Scrollbar.vanilla
 import io.wispforest.owo.ui.container.StackLayout
 import io.wispforest.owo.ui.core.Insets.*
-import io.wispforest.owo.ui.core.OwoUIAdapter
 import io.wispforest.owo.ui.core.ParentComponent
 import io.wispforest.owo.ui.core.Positioning.relative
 import io.wispforest.owo.ui.core.Sizing.expand
@@ -38,7 +35,7 @@ import net.minecraft.text.Text
 import java.nio.file.Path
 import kotlin.math.ceil
 
-class SoundBrowser : BaseOwoScreen<StackLayout>() {
+class SoundBrowser : ModScreen() {
     companion object : ScreenManager(SoundBrowser::class) {
         private const val FILE_TOOLTIP = "soundboard.browser.tooltip.file"
         private const val DIRECTORY_TOOLTIP = "soundboard.browser.tooltip.directory"
@@ -47,7 +44,6 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
         private var collapsed: MutableSet<SoundId> = mutableSetOf()
     }
 
-    private lateinit var root: StackLayout
     private var favourites: ParentComponent? = null
     private var scrollbar: ScrollContainerAccessor? = null
     internal var settings: SoundSettingsWidget? = null
@@ -58,7 +54,6 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
         settings = null
     }
 
-    @JvmOverloads
     fun createFavourites(container: FlowLayout = root.childById<FlowLayout>("container")!!) {
         favourites?.let { container.removeChild(it) }
         favourites = create(SoundRegistry.favourites, false)
@@ -76,46 +71,26 @@ class SoundBrowser : BaseOwoScreen<StackLayout>() {
         super.close()
     }
 
-    override fun shouldPause(): Boolean = false
-
-    override fun createAdapter(): OwoUIAdapter<StackLayout> = OwoUIAdapter.create(this) { h, v ->
-        stack {
-            horizontalSizing = h
-            verticalSizing = v
-            padding = both(60, 30)
-            alignment = CombinedAlignment.CENTER
-        }
-    }
-
     override fun build(component: StackLayout) {
         SoundRegistry.update()
-        root = component + setup()
-        root.childById<FlowLayout>("container")!!.apply {
-            createFavourites(this)
-            val groups = SoundRegistry.groups.mapNotNull {
-                create(it, it.id.directory.isEmpty())
-            }.toList()
-            this += groups
-        }
+        super.build(component)
     }
 
-    private fun setup() = horizontalFlow {
-        gap = 2
-        horizontalSizing = fill()
-        surface = CONFIG_PANEL
-        padding = of(5)
-        this += verticalScroll(verticalFlow {
-            id = "container"
-            horizontalSizing = fill()
-        }) {
-            id = "scroll"
-            sizing = expand()
-            scrollbarThickness = 10
-            scrollbar = vanilla()
-            surface = Surface.PANEL_INSET
-            padding = bottom(1)
-        }
-        this += SidebarWidget(this@SoundBrowser)
+    override fun setup(container: FlowLayout) = verticalScroll(container) {
+        id = "scroll"
+        sizing = expand()
+        scrollbarThickness = 10
+        scrollbar = vanilla()
+        surface = Surface.PANEL_INSET
+        padding = bottom(1)
+    }
+
+    override fun FlowLayout.configure() {
+        createFavourites(this)
+        val groups = SoundRegistry.groups.mapNotNull {
+            create(it, it.id.directory.isEmpty())
+        }.toList()
+        this += groups
     }
 
     private fun group(expanded: Boolean, entries: Int, title: Text) = collapsible(title, expanded) {

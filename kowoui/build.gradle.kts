@@ -46,9 +46,3 @@ tasks.processResources {
 
     filesMatching("fabric.mod.json") { expand(map) }
 }
-
-tasks.withType<KotlinCompile> {
-    compilerOptions {
-        freeCompilerArgs.add("-Xcontext-receivers")
-    }
-}

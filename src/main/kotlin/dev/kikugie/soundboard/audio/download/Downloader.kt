@@ -58,14 +58,14 @@ object Downloader {
                     is CancellationException -> LOGGER.info("Download cancelled for $url")
                     null -> {
                         LOGGER.info("Saved $url to $file")
-                        client.player?.sendMessage(SUCCESS.translation(file.invariantSeparatorsPathString))
+                        client.player?.sendMessage(SUCCESS.translation(file.invariantSeparatorsPathString), false)
                     }
 
                     else -> {
                         LOGGER.error("Failed to download $url", it)
                         // TODO should open a popup if screen has been closed
                         ref.get()?.createWidget(it) ?: client.player
-                            ?.sendMessage(FAILURE.translation(file.invariantSeparatorsPathString))
+                            ?.sendMessage(FAILURE.translation(file.invariantSeparatorsPathString), false)
                     }
                 }
             }

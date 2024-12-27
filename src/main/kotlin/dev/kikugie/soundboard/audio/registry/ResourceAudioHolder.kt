@@ -27,10 +27,8 @@ object ResourceAudioHolder : SimpleResourceReloadListener<GroupMap> {
     operator fun get(id: SoundId) = sounds[id.parent()][id]
 
     override fun getFabricId(): Identifier = idOf("sounds")
-
     override fun load(
         manager: ResourceManager,
-        profiler: Profiler,
         executor: Executor
     ) = supplyAsync(executor) {
         manager.findResources("soundboard") { it.path.endsWith(".$FORMAT") }
@@ -49,7 +47,6 @@ object ResourceAudioHolder : SimpleResourceReloadListener<GroupMap> {
     override fun apply(
         data: GroupMap,
         manager: ResourceManager,
-        profiler: Profiler,
         executor: Executor
     ): CompletableFuture<Void> = runAsync(executor) {
         synchronized(this) { sounds = data }
