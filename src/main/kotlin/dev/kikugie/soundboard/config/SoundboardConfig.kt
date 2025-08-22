@@ -2,6 +2,7 @@ package dev.kikugie.soundboard.config
 
 import dev.kikugie.soundboard.LOGGER
 import dev.kikugie.soundboard.audio.data.SoundId
+import dev.kikugie.soundboard.config.AudioProviderType.MP3SPI
 import dev.kikugie.soundboard.config.AudioProviderType.STREAM
 import dev.kikugie.soundboard.config.CobaltAPIVersion.V7
 import dev.kikugie.soundboard.util.runOn

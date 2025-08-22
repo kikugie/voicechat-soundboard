@@ -24,8 +24,13 @@ object FileAudioHolder {
     val entries get() = update().let { groups.flatMap { it.entries.values.asSequence() } }
 
     operator fun get(id: SoundId): SoundEntry? {
-        val path = runCatching { BASE_DIR.resolve(id.path.removePrefix("/") + ".$FORMAT") }
-            .getOrNull() ?: return null
+        // Try to find a file with any supported format
+        val basePath = BASE_DIR.resolve(id.path.removePrefix("/"))
+        val path = SUPPORTED_FORMATS.asSequence()
+            .map { format -> runCatching { basePath.withExtension(format) }.getOrNull() }
+            .firstOrNull { it?.exists() == true }
+            ?: return null
+
         val props = path.withExtension("properties")
         val cached = cache(path) && (props.notExists() || cache(props))
         if (!cached) update()
@@ -36,10 +41,15 @@ object FileAudioHolder {
         if (cache(BASE_DIR)) return
         val titles: MutableMap<SoundId, Text?> = mutableMapOf()
         val buffer: MutableMap<SoundId, MutableList<SoundEntry>> = mutableMapOf()
-        BASE_DIR.walk(BREADTH_FIRST).filter { it.extension == FORMAT }.forEach { path ->
+        BASE_DIR.walk(BREADTH_FIRST).filter { path ->
+            SUPPORTED_FORMATS.contains(path.extension.lowercase())
+        }.forEach { path ->
             val id = BASE_DIR.relativize(path).invariantSeparatorsPathString.let {
                 if ('/' !in it) "/$it" else it
-            }.let { SoundId(MOD_ID, it.removeSuffix(".$FORMAT")) }
+            }.let { pathStr ->
+                val extension = path.extension
+                SoundId(MOD_ID, pathStr.removeSuffix(".$extension"))
+            }
             val parentId = id.parent()
             val props = path.withExtension("properties")
             val entry = sounds[parentId][id]?.takeIf { cache(path) && (props.notExists() || cache(props)) }

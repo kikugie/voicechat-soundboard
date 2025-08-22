@@ -155,5 +155,5 @@ class DownloadScreen : ModScreen() {
         Downloader.download(uri, dest, WeakReference(this@DownloadScreen.root))
     }
 
-    private fun String.resolvePath() = BASE_DIR.resolveOrNull("${removePrefix(".$FORMAT")}.wav")
+    private fun String.resolvePath() = BASE_DIR.resolveOrNull("${removePrefix(".wav").removePrefix(".mp3")}.wav")
 }

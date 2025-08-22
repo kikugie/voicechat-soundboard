@@ -21,6 +21,7 @@ modmenu = "13.0.0-beta.1"
 dev-auth = "1.2.0"
 okhttp = "4.12.0"
 okio = "3.9.1"
+lavaplayer = "2.2.1"
 
 [plugins]
 fabric-loom = { id = "fabric-loom", version.ref = "loom" }
@@ -47,4 +48,4 @@ modmenu = { group = "com.terraformersmc", name = "modmenu", version.ref = "modme
 devauth = { group = "me.djtheredstoner", name = "DevAuth-fabric", version.ref = "dev-auth" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
-
+lavaplayer = { group = "dev.arbjerg", name = "lavaplayer", version.ref = "lavaplayer" }

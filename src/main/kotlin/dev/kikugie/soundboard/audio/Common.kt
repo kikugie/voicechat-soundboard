@@ -13,7 +13,14 @@ import java.util.concurrent.Executor
 typealias GroupMap = Map<SoundId, SoundGroup>
 
 val BASE_DIR: Path = FabricLoader.getInstance().configDir.resolve("soundboard")
-const val FORMAT = "wav"
+val SUPPORTED_FORMATS = setOf("wav", "mp3")
+const val FORMAT = "wav" // Primary format for backward compatibility
+
+// Extension function to check if a path has a supported audio format
+fun String.hasSupportedAudioFormat(): Boolean = SUPPORTED_FORMATS.any { this.endsWith(".$it", ignoreCase = true) }
+
+// Extension function to get the file extension
+fun String.getAudioExtension(): String? = SUPPORTED_FORMATS.find { this.endsWith(".$it", ignoreCase = true) }
 
 internal fun runAsync(executor: Executor, action: () -> Unit) = runAsync(action, executor)
 internal fun <T> supplyAsync(executor: Executor, action: () -> T): CompletableFuture<T> = supplyAsync(action, executor)

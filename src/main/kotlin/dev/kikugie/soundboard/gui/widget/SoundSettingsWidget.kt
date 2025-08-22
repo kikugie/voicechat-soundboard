@@ -53,12 +53,17 @@ class SoundSettingsWidget(
     }
 
     private val data = entry.read(access.format)
-    private val duration = access.format.duration(data.size)
+    private val duration = if (data.isEmpty()) Duration.ZERO else access.format.duration(data.size)
     private val settings = AudioConfig[entry] ?: entry.settings ?: DEFAULT.clone()
 
     init {
         if (settings.end == Duration.INFINITE) settings.end = duration
-        create()
+        // Only create the UI if we have valid audio data
+        if (data.isNotEmpty()) {
+            create()
+        } else {
+            createUnsupportedFormatUI()
+        }
     }
 
     fun update() {
@@ -203,6 +208,82 @@ class SoundSettingsWidget(
                         AudioConfig.save()
                         access.scheduleArray(data, true, settings)
                     }
+                }
+            }
+        }
+    }
+
+    private fun createUnsupportedFormatUI() = with(this as FlowLayout) {
+        id = "unsupported-format-container"
+        padding = Insets.of(5)
+        var favourite = entry.id in Soundboard.config.favourites
+
+        // Info bar with close and favorite buttons (same as normal UI)
+        this += horizontalFlow {
+            id = "info-bar"
+            gap = 2
+            padding = bottom(2)
+            horizontalSizing = fill()
+            horizontalAlignment = HorizontalAlignment.RIGHT
+            verticalAlignment = VerticalAlignment.CENTER
+            this += ScrollingLabelComponent(entry.title).apply {
+                id = "title"
+                lineHeight = 8
+                horizontalSizing = expand()
+                verticalSizing = fixed(8)
+                center { x + (width - it) / 2 }
+            }
+            this += button(STAR_LABEL(favourite)) {
+                id = "favourite"
+                sizing = fixed(8)
+                renderer = Renderer.flat(0, 0, 0)
+                tooltipText = FAVOURITE_TOOLTIP(favourite)
+                onPress {
+                    favourite = !favourite
+                    message = STAR_LABEL(favourite)
+                    tooltipText = FAVOURITE_TOOLTIP(favourite)
+                    if (!favourite) CONFIG.favourites -= entry.id
+                    else CONFIG.favourites += entry.id
+                    CONFIG.save()
+                    SoundRegistry.update()
+                    (currentScreen as? SoundBrowser)?.createFavourites()
+                }
+            }
+            this += button(CLOSE.text()) {
+                id = "close"
+                sizing = fixed(8)
+                renderer = Renderer.flat(0, 0, 0)
+                tooltipText = CLOSE_TOOLTIP.translation()
+                onPress { (currentScreen as? SoundBrowser)?.closeSettings() }
+            }
+        }
+
+        // Error message for unsupported format
+        this += stack {
+            id = "error-container"
+            horizontalSizing = fill()
+            verticalSizing = expand(100)
+            surface = Surface.PANEL_INSET
+            padding = Insets.of(10)
+            this += verticalFlow {
+                horizontalAlignment = HorizontalAlignment.CENTER
+                verticalAlignment = VerticalAlignment.CENTER
+                gap = 5
+                this += label("⚠ Unsupported Audio Format".text()) {
+                    id = "error-title"
+                    horizontalAlignment = HorizontalAlignment.CENTER
+                }
+                this += label("This file format is not supported by the track editor.".text()) {
+                    id = "error-message"
+                    horizontalAlignment = HorizontalAlignment.CENTER
+                }
+                this += label("You can still play this file, but waveform editing is unavailable.".text()) {
+                    id = "error-help"
+                    horizontalAlignment = HorizontalAlignment.CENTER
+                }
+                this += label("For full functionality, convert to WAV format.".text()) {
+                    id = "error-suggestion"
+                    horizontalAlignment = HorizontalAlignment.CENTER
                 }
             }
         }

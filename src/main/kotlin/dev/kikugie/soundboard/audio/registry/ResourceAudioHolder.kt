@@ -30,7 +30,7 @@ object ResourceAudioHolder : SimpleResourceReloadListener<GroupMap> {
         manager: ResourceManager,
         executor: Executor
     ) = supplyAsync(executor) {
-        manager.findResources("soundboard") { it.path.endsWith(".$FORMAT") }
+        manager.findResources("soundboard") { it.path.hasSupportedAudioFormat() }
     }.composeAsync(executor) { resources ->
         val futures = resources.map { (id, file) -> supplyAsync(executor) { entry(manager, id, file) } }.toTypedArray()
         allOf(*futures).applyAsync(executor) { _ ->
@@ -52,9 +52,12 @@ object ResourceAudioHolder : SimpleResourceReloadListener<GroupMap> {
     }
 
     private fun entry(manager: ResourceManager, id: Identifier, file: Resource): SoundEntry {
+        // Get the actual file extension from the path
+        val fileExtension = id.path.getAudioExtension() ?: FORMAT
+
         // Null if default, don't assign the default
         val configuration =
-            manager.getResource(id.withPath { "${it.removeSuffix(FORMAT)}properties" }).getOrNull()?.let {
+            manager.getResource(id.withPath { "${it.removeSuffix(".$fileExtension")}.properties" }).getOrNull()?.let {
                 val map = runCatching { PropertiesReader.read(it) }.getOrNull() ?: return@let null
                 DEFAULT.cloneOrNull {
                     map["start"]?.toDoubleOrNull()?.coerceAtLeast(0.0)?.seconds?.let { start = it }
@@ -63,7 +66,7 @@ object ResourceAudioHolder : SimpleResourceReloadListener<GroupMap> {
                 }
             }
         // example:soundboard/sound.wav -> example:/sound
-        val path = id.withPath { it.removePrefix(MOD_ID).removeSuffix(".$FORMAT") }
+        val path = id.withPath { it.removePrefix(MOD_ID).removeSuffix(".$fileExtension") }
         return SoundEntry(SoundId(path), file::getInputStream, settings = configuration)
     }
 }

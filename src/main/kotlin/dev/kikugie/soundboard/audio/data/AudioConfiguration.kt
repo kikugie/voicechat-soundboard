@@ -14,9 +14,9 @@ data class AudioConfiguration(
     inline fun cloneOrNull(block: AudioConfiguration.() -> Unit) = clone(block).takeIf { it != DEFAULT }
 
     fun isDefault(dest: Duration = Duration.INFINITE) =
-        start <= Duration.ZERO && end in dest..Duration.INFINITE && volume == 1.0
+        start <= Duration.ZERO && end in dest..Duration.INFINITE && volume == 0.15
 
     companion object {
-        val DEFAULT = AudioConfiguration(Duration.ZERO, Duration.INFINITE, 1.0)
+        val DEFAULT = AudioConfiguration(Duration.ZERO, Duration.INFINITE, 0.15)
     }
 }

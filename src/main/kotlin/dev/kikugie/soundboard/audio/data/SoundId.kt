@@ -2,7 +2,7 @@ package dev.kikugie.soundboard.audio.data
 
 import dev.kikugie.soundboard.MOD_ID
 import dev.kikugie.soundboard.audio.BASE_DIR
-import dev.kikugie.soundboard.audio.FORMAT
+import dev.kikugie.soundboard.audio.SUPPORTED_FORMATS
 import kotlinx.serialization.Serializable
 import net.minecraft.util.Identifier
 import kotlin.io.path.exists
@@ -28,7 +28,12 @@ value class SoundId(val str: String) {
     fun parent() = SoundId(namespace, directory.ifEmpty { "/" })
     fun path(file: Boolean) = when {
         namespace != MOD_ID -> null
-        file -> BASE_DIR.resolve("${path.removePrefix("/")}.$FORMAT").takeIf { it.exists() }
+        file -> {
+            val basePath = BASE_DIR.resolve(path.removePrefix("/"))
+            SUPPORTED_FORMATS.asSequence()
+                .map { format -> basePath.resolveSibling("${basePath.fileName}.$format") }
+                .firstOrNull { it.exists() }
+        }
         directory.isEmpty() -> BASE_DIR
         else -> BASE_DIR.resolve(directory)
     }
