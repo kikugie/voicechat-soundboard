@@ -24,7 +24,7 @@ class SoundboardConfig(
     @JvmField @SerialName("board_columns")
     var columns: Int = 3,
     @JvmField @SerialName("audio_provider")
-    var provider: AudioProviderType = MP3SPI,
+    var provider: AudioProviderType = STREAM,
     @JvmField @SerialName("audio_volume")
     var volume: Double = 1.0,
     @JvmField @SerialName("cobalt_api_endpoint")

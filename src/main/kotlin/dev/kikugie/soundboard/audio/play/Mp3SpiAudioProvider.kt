@@ -113,19 +113,24 @@ class Mp3SpiAudioProvider(
             }
         }
 
-        // Strategy 4: List all files in directory and try fuzzy matching
+        // Strategy 4: List all files in directory and try fuzzy matching (including subdirectories)
         try {
-            Files.list(BASE_DIR).use { files ->
+            Files.walk(BASE_DIR).use { files ->
                 val matchingFile = files.filter { Files.isRegularFile(it) }
                     .filter { file ->
+                        val relativePath = BASE_DIR.relativize(file).toString().replace('\\', '/')
                         val name = file.fileName.toString()
                         // Try exact match first
+                        relativePath == fileName ||
                         name == fileName ||
                         // Try without extension
+                        relativePath.substringBeforeLast(".") == baseFileName ||
                         name.substringBeforeLast(".") == baseFileName ||
                         // Try case-insensitive match
+                        relativePath.lowercase() == fileName.lowercase() ||
                         name.lowercase() == fileName.lowercase() ||
                         // Try fuzzy match (contains the base name)
+                        relativePath.lowercase().contains(baseFileName.lowercase()) ||
                         name.lowercase().contains(baseFileName.lowercase())
                     }
                     .findFirst()
