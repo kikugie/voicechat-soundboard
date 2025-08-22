@@ -25,6 +25,7 @@ allprojects {
             forRepository { maven(url) }
             filter { groups.forEach(::includeGroup) }
         }
+        gradlePluginPortal()
         mavenCentral()
         maven("https://jitpack.io")
         strictMaven("https://api.modrinth.com/maven", "maven.modrinth")
@@ -53,6 +54,24 @@ dependencies {
 
     include(libs.okio)
     include(libs.owo.sentinel)
+    implementation("com.googlecode.soundlibs:mp3spi:${project.property("mp3spi_version")}") {
+        exclude(group = "junit", module = "junit")
+    }
+    include("com.googlecode.soundlibs:mp3spi:${project.property("mp3spi_version")}")
+
+    // Tritonus dependencies required by mp3spi
+    implementation("com.googlecode.soundlibs:tritonus-share:${project.property("tritonus_version")}") {
+        exclude(group = "junit", module = "junit")
+    }
+    include("com.googlecode.soundlibs:tritonus-share:${project.property("tritonus_version")}")
+
+    implementation("com.googlecode.soundlibs:jlayer:${project.property("jlayer_version")}") {
+        exclude(group = "junit", module = "junit")
+    }
+    include("com.googlecode.soundlibs:jlayer:${project.property("jlayer_version")}")
+
+    implementation("org.microhttp:microhttp:${project.property("microhttp_version")}")
+    include("org.microhttp:microhttp:${project.property("microhttp_version")}")
     modApi(libs.fabric.api)
     modApi(libs.modmenu)
     modApi(libs.owo) {

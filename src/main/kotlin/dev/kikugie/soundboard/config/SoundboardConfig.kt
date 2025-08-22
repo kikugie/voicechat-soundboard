@@ -2,6 +2,7 @@ package dev.kikugie.soundboard.config
 
 import dev.kikugie.soundboard.LOGGER
 import dev.kikugie.soundboard.audio.data.SoundId
+import dev.kikugie.soundboard.config.AudioProviderType.MP3SPI
 import dev.kikugie.soundboard.config.AudioProviderType.STREAM
 import dev.kikugie.soundboard.config.CobaltAPIVersion.V7
 import dev.kikugie.soundboard.util.runOn
@@ -23,7 +24,7 @@ class SoundboardConfig(
     @JvmField @SerialName("board_columns")
     var columns: Int = 3,
     @JvmField @SerialName("audio_provider")
-    var provider: AudioProviderType = STREAM,
+    var provider: AudioProviderType = MP3SPI,
     @JvmField @SerialName("audio_volume")
     var volume: Double = 1.0,
     @JvmField @SerialName("cobalt_api_endpoint")

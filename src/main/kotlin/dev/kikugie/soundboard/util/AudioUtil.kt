@@ -26,11 +26,30 @@ fun AudioFormat.offset(duration: Duration): Int =
 val AudioInputStream.duration: Duration
     get() = format.duration(frameLength)
 
-fun InputStream.convert(format: AudioFormat) =
-    convert(AudioSystem.getAudioInputStream(BufferedInputStream(this)), format)
+fun InputStream.convert(format: AudioFormat): AudioInputStream? {
+    val bufferedStream = BufferedInputStream(this)
 
-fun SoundEntry.read(format: AudioFormat) =
-    supplier().use { bytesToShorts(it.convert(format).readAllBytes()) }
+    return try {
+        // Try with standard AudioSystem (works for WAV and other supported formats)
+        convert(AudioSystem.getAudioInputStream(bufferedStream), format)
+    } catch (e: javax.sound.sampled.UnsupportedAudioFileException) {
+        // Handle unsupported formats gracefully - return null instead of throwing
+        bufferedStream.close()
+        null
+    }
+}
+
+fun SoundEntry.read(format: AudioFormat): ShortArray =
+    supplier().use { inputStream ->
+        val audioStream = inputStream.convert(format)
+        if (audioStream == null) {
+            // Return empty array for unsupported formats
+            ShortArray(0)
+        } else {
+            val bytes = audioStream.readAllBytes()
+            bytesToShorts(bytes)
+        }
+    }
 
 fun convert(stream: AudioInputStream, targetFormat: AudioFormat): AudioInputStream {
     val originalFormat = stream.format
